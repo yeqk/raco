@@ -28,14 +28,13 @@ class SimpleBlocDelegate extends BlocDelegate {
 
 void main() {
   BlocSupervisor.delegate = SimpleBlocDelegate();
-  final userRepository = UserRepository();
   runApp(
     BlocProvider<AuthenticationBloc>(
       builder: (context) {
-        return AuthenticationBloc(userRepository: userRepository)
+        return AuthenticationBloc()
           ..dispatch(AppStartedEvent());
       },
-      child: App(userRepository: userRepository),
+      child: App(),
     ),
   );
 }

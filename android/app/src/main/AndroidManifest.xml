@@ -10,8 +10,8 @@
         android:allowBackup="false"
         android:fullBackupContent="true"
         android:name="io.flutter.app.FlutterApplication"
-        android:label="raco"
-        android:icon="@mipmap/ic_launcher">
+        android:label="El Racó"
+        android:icon="@mipmap/ic_fib">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

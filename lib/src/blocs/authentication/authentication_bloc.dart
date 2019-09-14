@@ -1,13 +1,10 @@
 import 'dart:async';
-import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
 import 'package:raco/src/resources/user_repository.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
 
 class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
-  final UserRepository userRepository;
-
-  AuthenticationBloc({@required this.userRepository}): assert(userRepository != null);
+  final UserRepository userRepository = UserRepository.instance;
 
   @override
   AuthenticationState get initialState => AuthenticationUninitializedState();
@@ -17,19 +14,19 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       AuthenticationEvent event,
       ) async* {
     if (event is AppStartedEvent) {
-      final bool hasCredentails = await userRepository.hasCredentials();
-      if (hasCredentails) {
+      final bool hasCredentials = await userRepository.hasCredentials();
+      final bool isVisitor = await userRepository.isLoggedAsVisitor();
+      if (hasCredentials) {
         yield AuthenticationAuthenticatedState();
       } else {
-        yield AuthenticationUnauthenticatedState();
+        if (isVisitor) {
+          yield AuthenticationVisitorLoggedState();
+        }
+        else {
+          yield AuthenticationUnauthenticatedState();
+        }
       }
 
-      final bool isVisitor = await userRepository.isLoggedAsVisitor();
-      if (isVisitor) {
-        yield AuthenticationVisitorLoggedState();
-      } else {
-        yield AuthenticationUnauthenticatedState();
-      }
     }
 
     if (event is LoggedInEvent) {

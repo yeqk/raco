@@ -4,9 +4,8 @@ class SplashRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.red,
+      backgroundColor: Color(0xff2f9ae5),
       body: Center(
-        child: Text('Splash Screen'),
       ),
     );
   }

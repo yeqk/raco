@@ -4,18 +4,18 @@ import 'package:oauth2/oauth2.dart';
 class UserRepository {
   final storage = new FlutterSecureStorage();
 
-  final publicClientID = 'dj2tovfZGbC8flQi1dTholJCmKO8Puyn5dG9S1ZG';
+  UserRepository._internal();
+
+  static final UserRepository instance = UserRepository._internal();
 
   Future<void> deleteCredentials() async {
     /// delete from keystore/keychain
-
     await storage.deleteAll();
     return;
   }
 
   Future<void> persistCredentials(Credentials credentials) async {
     /// write to keystore/keychain
-
     await storage.write(key: 'accessToken', value: credentials.accessToken);
     await storage.write(key: 'refreshToken', value: credentials.refreshToken);
     await storage.write(key: 'tokenEndpoint', value: credentials.tokenEndpoint.toString());
@@ -29,10 +29,10 @@ class UserRepository {
 
   Future<bool> hasCredentials() async {
     /// read from keystore/keychain
-
     bool hasCreds = true;
     String at = await storage.read(key: 'accessToken');
     if(at == null) return false;
+    /*
     String rt = await storage.read(key: 'refreshToken');
     if(rt == null) return false;
     String te = await storage.read(key: 'tokenEndpoint');
@@ -46,6 +46,8 @@ class UserRepository {
     if (exp == null) {
       return false;
     }
+    */
+
     return hasCreds;
   }
 
@@ -61,7 +63,4 @@ class UserRepository {
     return false;
   }
 
-  Future<void> deleteVisitor() async {
-    await storage.delete(key: 'visitor');
-  }
 }

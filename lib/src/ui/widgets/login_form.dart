@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:raco/src/blocs/login/login_bloc.dart';
 import 'package:raco/src/blocs/login/login_event.dart';
 import 'package:raco/src/blocs/login/login_state.dart';
-import 'package:raco/src/ui/routes/routes.dart';
-import 'package:raco/src/resources/oauth2_data.dart';
 
 class LoginForm extends StatefulWidget {
   @override
