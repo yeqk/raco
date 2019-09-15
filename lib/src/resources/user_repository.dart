@@ -1,37 +1,75 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:core';
 import 'package:oauth2/oauth2.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 
 class UserRepository {
-  final storage = new FlutterSecureStorage();
+  final _storage = new FlutterSecureStorage();
+  static const String _storageKey = "Raco_";
 
+  //Singleton
   UserRepository._internal();
+  static final UserRepository _user = UserRepository._internal();
+  factory UserRepository() {
+    return _user;
+  }
 
-  static final UserRepository instance = UserRepository._internal();
+  Future<void> _writeToStorage(String key, String value) async {
+    await _storage.write(key: _storageKey + key, value: value);
+  }
+
+  Future<String> _readFromStorage(String key) async {
+    return await _storage.read(key: _storageKey + key);
+  }
+
+  Future<void> _deleteFromStorage(String key) async {
+    print("DEELETING: " + key);
+    if (await _readFromStorage(key) !=  null) {
+      await _storage.delete(key: _storageKey+key);
+    }
+  }
+
+  Future<bool> _writeToPreferences(String key, String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString(_storageKey + key, value);
+  }
+
+  Future<String> _readFromPreferences(String key) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_storageKey + key) ?? '';
+  }
 
   Future<void> deleteCredentials() async {
     /// delete from keystore/keychain
-    await storage.deleteAll();
-    return;
+    await _deleteFromStorage('accessToken');
+    await _deleteFromStorage('refreshToken');
+    await _deleteFromStorage('tokenEndpoint');
+    int n = int.parse(await _readFromStorage('nscopes'));
+    for (int i = 0; i < n; i++) {
+      await _deleteFromStorage('scope' + i.toString());
+    }
+    await _deleteFromStorage('nscopes');
+    await _deleteFromStorage('expiration');
   }
 
   Future<void> persistCredentials(Credentials credentials) async {
     /// write to keystore/keychain
-    await storage.write(key: 'accessToken', value: credentials.accessToken);
-    await storage.write(key: 'refreshToken', value: credentials.refreshToken);
-    await storage.write(key: 'tokenEndpoint', value: credentials.tokenEndpoint.toString());
-    await storage.write(key: 'nscopes', value: credentials.scopes.length.toString());
+    await _writeToStorage('accessToken', credentials.accessToken);
+    await _writeToStorage('refreshToken', credentials.refreshToken);
+    await _writeToStorage('tokenEndpoint', credentials.tokenEndpoint.toString());
+    await _writeToStorage('nscopes', credentials.scopes.length.toString());
     for (int i = 0; i < credentials.scopes.length; i++) {
-      await storage.write(key: 'scope'+ i.toString(), value: credentials.scopes[i]);
+      await _writeToStorage('scope' + i.toString(), credentials.scopes[i]);
     }
-    await storage.write(key: 'expiration', value: credentials.expiration.toIso8601String());
-    return;
+    await _writeToStorage('expiration', credentials.expiration.toIso8601String());
   }
 
   Future<bool> hasCredentials() async {
     /// read from keystore/keychain
     bool hasCreds = true;
-    String at = await storage.read(key: 'accessToken');
-    if(at == null) return false;
+    String at = await _readFromStorage('accessToken');
+    if (at == null) return false;
     /*
     String rt = await storage.read(key: 'refreshToken');
     if(rt == null) return false;
@@ -51,16 +89,31 @@ class UserRepository {
     return hasCreds;
   }
 
-  Future<void> setLoggedAsVisitor() async{
-    await storage.write(key: 'visitor', value: 'true');
+  Future<void> setLoggedAsVisitor() async {
+    await _writeToStorage('visitor', 'true');
   }
 
-  Future<bool> isLoggedAsVisitor() async{
-    String isVisitor = await storage.read(key: 'visitor');
+  Future<void> deleteVisitor() async {
+    await _deleteFromStorage('visitor');
+  }
+
+  Future<bool> isLoggedAsVisitor() async {
+    String isVisitor = await _readFromStorage('visitor');
     if (isVisitor == 'true') {
       return true;
     }
     return false;
   }
 
+  Future<String> getPreferredLanguage() async {
+    return _readFromPreferences('language');
+  }
+
+  Future<bool> setPreferredLanguage(String lang) async {
+    return _writeToPreferences('language', lang);
+  }
 }
+
+UserRepository user = UserRepository();
+
+

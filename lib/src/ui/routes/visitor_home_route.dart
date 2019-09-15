@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:raco/src/blocs/authentication/authentication_bloc.dart';
-import 'package:raco/src/blocs/authentication/authentication_event.dart';
+import 'package:raco/src/blocs/authentication/authentication.dart';
+import 'package:raco/src/resources/global_translations.dart';
 
 class VisitorHomeRoute extends StatelessWidget {
   @override
@@ -13,12 +11,11 @@ class VisitorHomeRoute extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Visitor Home'),
       ),
       body: Container(
         child: Center(
             child: RaisedButton(
-              child: Text('visitor logout'),
+              child: Text(allTranslations.text('signout')),
               onPressed: () {
                 authenticationBloc.dispatch(LoggedOutEvent());
               },

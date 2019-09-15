@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
+
 import 'package:raco/src/resources/authentication_data.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:raco/src/blocs/login/login.dart';
@@ -23,7 +23,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   @override
   Stream<LoginState> mapEventToState(LoginEvent event) async* {
     if (event is LoginButtonPressedEvent) {
-      yield LoginLoadingState();
       var grant = new oauth2.AuthorizationCodeGrant(
           AuthenticationData.identifier, Uri.parse(AuthenticationData.authorizationEndpoint),
           Uri.parse(AuthenticationData.tokenEndpoint),

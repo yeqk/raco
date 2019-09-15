@@ -1,0 +1,9 @@
+{
+  "en"       : "English",
+  "es"       : "Spanish",
+  "ca"       : "Catalan",
+  "signin"   : "Sign in",
+  "guest_signin" : "Sign in as a guest",
+  "signout"  : "Sign out",
+  "home"     : "El Racó de la FIB"
+}

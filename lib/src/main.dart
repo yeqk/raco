@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:raco/src/resources/user_repository.dart';
+import 'package:raco/src/blocs/translations/translations.dart';
+import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/ui/app.dart';
 import 'blocs/authentication/authentication.dart';
 
@@ -26,15 +27,24 @@ class SimpleBlocDelegate extends BlocDelegate {
   }
 }
 
-void main() {
+void main() async {
   BlocSupervisor.delegate = SimpleBlocDelegate();
-  runApp(
-    BlocProvider<AuthenticationBloc>(
-      builder: (context) {
-        return AuthenticationBloc()
-          ..dispatch(AppStartedEvent());
-      },
-      child: App(),
-    ),
-  );
+  await allTranslations.init();
+
+  runApp(MultiBlocProvider(
+    providers: [
+      BlocProvider<AuthenticationBloc>(
+        builder: (context) {
+          return AuthenticationBloc()..dispatch(AppStartedEvent());
+        },
+      ),
+      BlocProvider<TranslationsBloc>(
+        builder: (context) {
+          return TranslationsBloc();
+        },
+      ),
+    ],
+
+    child: App(),
+  ));
 }

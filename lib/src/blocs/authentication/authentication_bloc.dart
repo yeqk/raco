@@ -4,7 +4,6 @@ import 'package:raco/src/resources/user_repository.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
 
 class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
-  final UserRepository userRepository = UserRepository.instance;
 
   @override
   AuthenticationState get initialState => AuthenticationUninitializedState();
@@ -14,8 +13,8 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       AuthenticationEvent event,
       ) async* {
     if (event is AppStartedEvent) {
-      final bool hasCredentials = await userRepository.hasCredentials();
-      final bool isVisitor = await userRepository.isLoggedAsVisitor();
+      final bool hasCredentials = await user.hasCredentials();
+      final bool isVisitor = await user.isLoggedAsVisitor();
       if (hasCredentials) {
         yield AuthenticationAuthenticatedState();
       } else {
@@ -23,6 +22,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
           yield AuthenticationVisitorLoggedState();
         }
         else {
+          print("AUTHENTICATION UNANTUEHTICATED STATE REBUILD");
           yield AuthenticationUnauthenticatedState();
         }
       }
@@ -31,19 +31,24 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
 
     if (event is LoggedInEvent) {
       yield AuthenticationLoadingState();
-      await userRepository.persistCredentials(event.credentials);
+      await user.persistCredentials(event.credentials);
       yield AuthenticationAuthenticatedState();
     }
 
     if (event is LoggedOutEvent) {
       yield AuthenticationLoadingState();
-      await userRepository.deleteCredentials();
+      if (await user.isLoggedAsVisitor()) {
+        await user.deleteVisitor();
+      }
+      if (await user.hasCredentials()) {
+        await user.deleteCredentials();
+      }
       yield AuthenticationUnauthenticatedState();
     }
 
     if (event is LoggedAsVisitorEvent) {
       yield AuthenticationLoadingState();
-      await userRepository.setLoggedAsVisitor();
+      await user.setLoggedAsVisitor();
       yield AuthenticationVisitorLoggedState();
     }
 

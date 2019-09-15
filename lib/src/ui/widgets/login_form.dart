@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:raco/src/blocs/login/login_bloc.dart';
-import 'package:raco/src/blocs/login/login_event.dart';
-import 'package:raco/src/blocs/login/login_state.dart';
+import 'package:raco/src/blocs/login/login.dart';
+import 'package:raco/src/blocs/translations/translations.dart';
+import 'package:raco/src/resources/global_translations.dart';
 
 class LoginForm extends StatefulWidget {
   @override
@@ -10,10 +10,10 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
-
   @override
   Widget build(BuildContext context) {
     final _loginBloc = BlocProvider.of<LoginBloc>(context);
+    final _translationBloc = BlocProvider.of<TranslationsBloc>(context);
 
     _onLoginButtonPressed() {
       _loginBloc.dispatch(LoginButtonPressedEvent(context: context));
@@ -23,26 +23,35 @@ class _LoginFormState extends State<LoginForm> {
       _loginBloc.dispatch(VisitButtonPressedEvent());
     }
 
-    return BlocBuilder<LoginBloc, LoginState>(
-      bloc: _loginBloc,
-      builder: (context, state) {
+    _onChangeLanguagePressed(String code) {
+      _translationBloc.dispatch(TranslationsChangedEvent(newLangCode: code));
+    }
 
-          return Center(
-              child: Form(
-                child: Column(
-                  children: [
-                    RaisedButton(
-                      onPressed: _onLoginButtonPressed,
-                      child: Text('Login'),
-                    ),
-                    RaisedButton(
-                      onPressed: _onVisitButtonPressed,
-                      child: Text('Visit'),
-                    ),
-                  ],
-                ),
-              ));
-      },
+    return Center(
+      child: Column(
+        children: [
+          RaisedButton(
+            onPressed: _onLoginButtonPressed,
+            child: Text(allTranslations.text('signin')),
+          ),
+          RaisedButton(
+            onPressed: _onVisitButtonPressed,
+            child: Text(allTranslations.text('guest_signin')),
+          ),
+          RaisedButton(
+            onPressed: () => _onChangeLanguagePressed('es'),
+            child: Text(allTranslations.text('es')),
+          ),
+          RaisedButton(
+            onPressed: () => _onChangeLanguagePressed('ca'),
+            child: Text(allTranslations.text('ca')),
+          ),
+          RaisedButton(
+            onPressed: () => _onChangeLanguagePressed('en'),
+            child: Text(allTranslations.text('en')),
+          ),
+        ],
+      ),
     );
   }
 }
