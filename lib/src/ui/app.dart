@@ -6,17 +6,20 @@ import 'package:raco/src/blocs/translations/translations.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/ui/routes/routes.dart';
 import 'package:raco/src/ui/widgets/loading_indocator.dart';
-
+import 'package:raco/src/utils/app_colors.dart';
 
 class App extends StatelessWidget {
 
   App({Key key}) : super(key: key);
+
+
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TranslationsBloc, TranslationsState>(
       bloc: BlocProvider.of<TranslationsBloc>(context),
       builder: (context, state) {
+
         Locale newLocale;
         if (state is TranslationsChangedState) {
           newLocale = state.newLocale;
@@ -24,7 +27,7 @@ class App extends StatelessWidget {
         return MaterialApp(
           title: "El Racó",
           theme: ThemeData(
-              primaryColor: Color(0xff2f9ae5)
+              primaryColor: AppColors.primary,
           ),
           locale: newLocale ?? allTranslations.locale,
           localizationsDelegates: [

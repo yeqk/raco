@@ -45,6 +45,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
               .queryParameters);
           authenticationBloc.dispatch(LoggedInEvent(credentials: client.credentials));
           Navigator.pop(event.context);
+
         }
       });
 
