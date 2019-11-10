@@ -4,6 +4,18 @@
   "ca"       : "Català",
   "signin"   : "Iniciar sessió",
   "guest_signin" : "Iniciar sessió com a convidat",
-  "signout"  : "Tancar sessió",
-  "home"     : "El Racó de la FIB"
+  "home"     : "El Racó de la FIB",
+
+  "schedule" : "Horari",
+  "notes"    : "Avisos",
+  "events"   : "Esdeveniments",
+  "news"     : "Notícies",
+
+  "subjects" : "Assignatures",
+  "exams"    : "Exàmens",
+  "grades"   : "Notes",
+  "labs"     : "Ocupació Labs",
+  "feedback" : "Feedback",
+  "configuration" : "Configuració",
+  "signout"  : "Tancar sessió"
 }

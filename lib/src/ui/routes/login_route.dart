@@ -100,8 +100,7 @@ class LoginRoute extends StatelessWidget {
   Widget loginButtonsSection(VoidCallback onLoginTap, VoidCallback onVisitTap) {
 
     return Container(
-      height: 210,
-      padding: EdgeInsets.only(top: ScreenUtil().setHeight(90)),
+      padding: EdgeInsets.only(top: ScreenUtil().setHeight(160)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -122,6 +121,7 @@ class LoginRoute extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(30))),
           ),
+          /*
           ButtonTheme(
             minWidth: ScreenUtil().setWidth(260),
             height: ScreenUtil().setWidth(45),
@@ -139,6 +139,8 @@ class LoginRoute extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(30))),
           ),
+          */
+
         ],
       ),
     );

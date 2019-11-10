@@ -48,7 +48,6 @@ class GlobalTranslations {
     String language = newLanguage;
     if (language == null) {
       language = await  user.getPreferredLanguage();
-      print('aui');
     }
 
     if (language == '') {

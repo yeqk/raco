@@ -4,6 +4,18 @@
   "ca"       : "Catalan",
   "signin"   : "Sign in",
   "guest_signin" : "Sign in as a guest",
-  "signout"  : "Sign out",
-  "home"     : "El Racó de la FIB"
+  "home"     : "El Racó de la FIB",
+
+  "schedule" : "Schedule",
+  "notes"    : "Notes",
+  "events"   : "Events",
+  "news"     : "News",
+
+  "subjects" : "Subjects",
+  "exams"    : "Exams",
+  "grades"   : "Grades",
+  "labs"     : "Labs Ocupation",
+  "feedback" : "Feedback",
+  "configuration" : "Configuration",
+  "signout"  : "Sign out"
 }
