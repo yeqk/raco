@@ -1,7 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:bloc/bloc.dart';
+import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/resources/user_repository.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
+import 'package:raco/src/repositories/repositories.dart';
+import 'package:http/http.dart' as http;
+import 'package:raco/src/models/models.dart';
 
 class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
 
@@ -22,7 +27,6 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
           yield AuthenticationVisitorLoggedState();
         }
         else {
-          print("AUTHENTICATION UNANTUEHTICATED STATE REBUILD");
           yield AuthenticationUnauthenticatedState();
         }
       }
@@ -32,6 +36,21 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     if (event is LoggedInEvent) {
       yield AuthenticationLoadingState();
       await user.persistCredentials(event.credentials);
+      RacoRepository rr = new RacoRepository(racoApiClient: RacoApiClient(
+        httpClient: http.Client(),
+      ));
+      print("GGGGGGGGGGEEEEEEEEEEEEEEETTTT");
+      String accessToken = await user.getAccessToken();
+      String lang = await user.getPreferredLanguage();
+      Me me = await rr.getMe(accessToken, lang);
+      print("CAACACA");
+      await rr.getImage(accessToken, lang);
+      Dme dme = Dme();
+      dme.username = me.username;
+      dme.nom = me.nom;
+      dme.cognoms = me.cognoms;
+      dme.email = me.email;
+      await user.writeToPreferences('me', jsonEncode(me));
       yield AuthenticationAuthenticatedState();
     }
 

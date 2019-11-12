@@ -24,20 +24,24 @@ class UserRepository {
   }
 
   Future<void> _deleteFromStorage(String key) async {
-    print("DEELETING: " + key);
     if (await _readFromStorage(key) !=  null) {
       await _storage.delete(key: _storageKey+key);
     }
   }
 
-  Future<bool> _writeToPreferences(String key, String value) async {
+  Future<bool> writeToPreferences(String key, String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.setString(_storageKey + key, value);
   }
 
-  Future<String> _readFromPreferences(String key) async {
+  Future<String> readFromPreferences(String key) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(_storageKey + key) ?? '';
+  }
+  
+  Future <bool> removeFromPreferences(String key) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.remove(_storageKey + key);
   }
 
   Future<void> deleteCredentials() async {
@@ -63,6 +67,10 @@ class UserRepository {
       await _writeToStorage('scope' + i.toString(), credentials.scopes[i]);
     }
     await _writeToStorage('expiration', credentials.expiration.toIso8601String());
+  }
+
+  Future<String> getAccessToken() async {
+    return await _readFromStorage('accessToken');
   }
 
   Future<bool> hasCredentials() async {
@@ -106,12 +114,13 @@ class UserRepository {
   }
 
   Future<String> getPreferredLanguage() async {
-    return _readFromPreferences('language');
+    return readFromPreferences('language');
   }
 
   Future<bool> setPreferredLanguage(String lang) async {
-    return _writeToPreferences('language', lang);
+    return writeToPreferences('language', lang);
   }
+  
 }
 
 UserRepository user = UserRepository();

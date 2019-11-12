@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as prefix0;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
+import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/resources/global_translations.dart';
 
 class DrawerMenu extends Drawer {
   @override
   Widget build(BuildContext context) {
+
 
     final AuthenticationBloc authenticationBloc =
     BlocProvider.of<AuthenticationBloc>(context);
@@ -16,12 +18,13 @@ class DrawerMenu extends Drawer {
       authenticationBloc.dispatch(LoggedOutEvent());
     }
 
+    String nom = Dme().nom + ' ' + Dme().cognoms;
     return new Drawer(
       child: new ListView(
         children: <Widget>[
           UserAccountsDrawerHeader(
-            accountName: Text("Name test"),
-            accountEmail: Text("email@email.com"),
+            accountName: Text(nom),
+            accountEmail: Text(Dme().email),
             currentAccountPicture: CircleAvatar(
               backgroundColor:
               Theme.of(context).platform == TargetPlatform.iOS
