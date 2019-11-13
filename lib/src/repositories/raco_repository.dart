@@ -13,7 +13,7 @@ class RacoRepository {
     return await racoApiClient.getMe(accessToken, lang);
   }
 
-  Future<void> getImage(String accessToken, String lang) async {
-    await racoApiClient.getImage(accessToken, lang);
+  Future<String> getImage(String accessToken, String lang) async {
+    return await racoApiClient.getImage(accessToken, lang);
   }
 }

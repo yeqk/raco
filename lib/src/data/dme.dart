@@ -11,6 +11,7 @@ class Dme {
   String nom;
   String cognoms;
   String email;
+  String imgPath;
 
 
 }

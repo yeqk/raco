@@ -21,6 +21,14 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       final bool hasCredentials = await user.hasCredentials();
       final bool isVisitor = await user.isLoggedAsVisitor();
       if (hasCredentials) {
+        Dme dme = Dme();
+        Map aux = jsonDecode(await user.readFromPreferences('me'));
+        Me me = Me.fromJson(aux);
+        dme.imgPath = await user.readFromPreferences('imgPath');
+        dme.username = me.username;
+        dme.nom = me.nom;
+        dme.cognoms = me.cognoms;
+        dme.email = me.email;
         yield AuthenticationAuthenticatedState();
       } else {
         if (isVisitor) {
@@ -44,13 +52,15 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       String lang = await user.getPreferredLanguage();
       Me me = await rr.getMe(accessToken, lang);
       print("CAACACA");
-      await rr.getImage(accessToken, lang);
+      String imgPaht = await rr.getImage(accessToken, lang);
       Dme dme = Dme();
+      dme.imgPath = imgPaht;
       dme.username = me.username;
       dme.nom = me.nom;
       dme.cognoms = me.cognoms;
       dme.email = me.email;
       await user.writeToPreferences('me', jsonEncode(me));
+      await user.writeToPreferences('imgPath', imgPaht);
       yield AuthenticationAuthenticatedState();
     }
 

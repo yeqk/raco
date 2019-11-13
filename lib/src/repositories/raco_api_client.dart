@@ -3,6 +3,10 @@ import 'dart:async';
 
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
+import 'dart:io' as Io;
+import 'package:image/image.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:raco/src/models/me.dart';
 import 'package:raco/src/resources/user_repository.dart';
 
@@ -26,10 +30,15 @@ class RacoApiClient {
     return Me.fromJson(meMap);
   }
 
-  Future<void> getImage(String accessToken, String lang) async {
+  Future<String> getImage(String accessToken, String lang) async {
     final locationUrl = '$baseUrl/jo/foto.jpg';
-    Map<String, String> headers = {'Accept' : 'image/apng', 'Accept-Language' : lang, 'Authorization' : 'Bearer ' + accessToken};
-    final response = await this.httpClient.get(locationUrl, headers: headers);
-    print("IMMMMMMMMMMMA: " + response.body);
+    Map<String, String> headers = {'Authorization' : 'Bearer ' + accessToken};
+    final directory = await getApplicationDocumentsDirectory();
+    String localPath = directory.path;
+    Io.File file =  await DefaultCacheManager().getSingleFile(locationUrl, headers: headers);
+    Image image = decodeImage(file.readAsBytesSync());
+    Io.File imgFile = new Io.File('$localPath/foto.jpg')
+      ..writeAsBytesSync(encodePng(image));
+    return imgFile.path;
   }
 }
