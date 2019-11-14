@@ -7,6 +7,7 @@ import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:raco/src/repositories/repositories.dart';
 import 'package:http/http.dart' as http;
 import 'package:raco/src/models/models.dart';
+import 'package:flutter/painting.dart';
 
 class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
 
@@ -47,11 +48,13 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       RacoRepository rr = new RacoRepository(racoApiClient: RacoApiClient(
         httpClient: http.Client(),
       ));
-      print("GGGGGGGGGGEEEEEEEEEEEEEEETTTT");
       String accessToken = await user.getAccessToken();
       String lang = await user.getPreferredLanguage();
       Me me = await rr.getMe(accessToken, lang);
-      print("CAACACA");
+
+      //Clear image cache to update avatar
+      imageCache.clear();
+
       String imgPaht = await rr.getImage(accessToken, lang);
       Dme dme = Dme();
       dme.imgPath = imgPaht;
@@ -59,6 +62,9 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       dme.nom = me.nom;
       dme.cognoms = me.cognoms;
       dme.email = me.email;
+      Classes classes = await rr.getClasses(accessToken, lang);
+
+      print('NOOOOOOOOOOM: ' + me.nom + me.cognoms);
       await user.writeToPreferences('me', jsonEncode(me));
       await user.writeToPreferences('imgPath', imgPaht);
       yield AuthenticationAuthenticatedState();

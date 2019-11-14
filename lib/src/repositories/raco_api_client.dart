@@ -7,6 +7,7 @@ import 'dart:io' as Io;
 import 'package:image/image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:raco/src/models/classes.dart';
 import 'package:raco/src/models/me.dart';
 import 'package:raco/src/resources/user_repository.dart';
 
@@ -26,7 +27,7 @@ class RacoApiClient {
     if (response.statusCode != 200) {
       throw Exception('Error getting me information.');
     }
-    Map meMap = jsonDecode(response.body);
+    Map meMap = jsonDecode(utf8.decode(response.bodyBytes));
     return Me.fromJson(meMap);
   }
 
@@ -38,7 +39,18 @@ class RacoApiClient {
     Io.File file =  await DefaultCacheManager().getSingleFile(locationUrl, headers: headers);
     Image image = decodeImage(file.readAsBytesSync());
     Io.File imgFile = new Io.File('$localPath/foto.jpg')
-      ..writeAsBytesSync(encodePng(image));
+      ..writeAsBytesSync(encodePng(image), flush: true);
     return imgFile.path;
+  }
+
+  Future<Classes> getClasses(String accessToken, String lang) async {
+    final locationUrl = '$baseUrl/jo/classes';
+    Map<String, String> headers = {'Accept' : 'application/json', 'Accept-Language' : lang, 'Authorization' : 'Bearer ' + accessToken};
+    final response = await this.httpClient.get(locationUrl, headers: headers);
+    if (response.statusCode != 200) {
+      throw Exception('Error getting me information.');
+    }
+    Map classesMap = jsonDecode(response.body);
+    return Classes.fromJson(classesMap);
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:meta/meta.dart';
+import 'package:raco/src/models/classes.dart';
 import 'package:raco/src/models/models.dart';
 import 'raco_api_client.dart';
 
@@ -15,5 +16,9 @@ class RacoRepository {
 
   Future<String> getImage(String accessToken, String lang) async {
     return await racoApiClient.getImage(accessToken, lang);
+  }
+
+  Future<Classes> getClasses(String accessToken, String lang) async {
+    return await racoApiClient.getClasses(accessToken, lang);
   }
 }

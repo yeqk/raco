@@ -28,6 +28,8 @@ class App extends StatelessWidget {
           title: "El Racó",
           theme: ThemeData(
               primaryColor: AppColors.primary,
+              accentColor: AppColors.accentColor,
+
           ),
           locale: newLocale ?? allTranslations.locale,
           localizationsDelegates: [
