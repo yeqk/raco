@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:raco/src/models/classes.dart';
 import 'package:raco/src/models/me.dart';
 import 'package:raco/src/resources/user_repository.dart';
+import 'package:raco/src/utils/file_names.dart';
 
 class RacoApiClient {
   static const baseUrl = 'https://api.fib.upc.edu/v2';
@@ -36,10 +37,11 @@ class RacoApiClient {
     Map<String, String> headers = {'Authorization' : 'Bearer ' + accessToken};
     final directory = await getApplicationDocumentsDirectory();
     String localPath = directory.path;
-    Io.File file =  await DefaultCacheManager().getSingleFile(locationUrl, headers: headers);
+    FileInfo fileInfo =  await DefaultCacheManager().downloadFile(locationUrl, authHeaders: headers);
+    Io.File file = fileInfo.file;
     Image image = decodeImage(file.readAsBytesSync());
-    Io.File imgFile = new Io.File('$localPath/foto.jpg')
-      ..writeAsBytesSync(encodePng(image), flush: true);
+    Io.File imgFile = new Io.File(localPath + '/' + FileNames.AVATAR)
+      ..writeAsBytesSync(encodeJpg(image), flush: true);
     return imgFile.path;
   }
 
