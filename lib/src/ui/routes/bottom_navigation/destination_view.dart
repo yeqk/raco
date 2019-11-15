@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:raco/src/blocs/drawer_menu/drawer_bloc.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/ui/routes/bottom_navigation/destination.dart';
+import 'package:raco/src/ui/routes/bottom_navigation/schedule.dart';
 import 'package:raco/src/ui/routes/drawer_menu/drawer_menu.dart';
 
 class DestinationView extends StatefulWidget {
@@ -41,16 +42,38 @@ class _DestinationViewState extends State<DestinationView> {
         centerTitle: true,
       ),
       backgroundColor: widget.destination.color[100],
-      body: Container(
-        padding: const EdgeInsets.all(32.0),
-        alignment: Alignment.center,
-        child: TextField(),
-      ),
+      body: _buildBody(),
     );
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  Widget _buildBody() {
+    if (widget.destination.index == 0) { //schedule
+      return Schedule();
+    } else if (widget.destination.index == 1) { //notes
+      return Container(
+        padding: const EdgeInsets.all(32.0),
+        alignment: Alignment.center,
+        child: RaisedButton(),
+      );
+    } else if (widget.destination.index == 2) { //events
+      return Container(
+        padding: const EdgeInsets.all(32.0),
+        alignment: Alignment.center,
+        child: RaisedButton(),
+      );
+    } else if (widget.destination.index == 3) { //news
+      return Container(
+        padding: const EdgeInsets.all(32.0),
+        alignment: Alignment.center,
+        child: RaisedButton(),
+      );
+    } else {
+      return null;
+    }
   }
 }
