@@ -1,3 +1,4 @@
+import 'package:raco/src/models/assignatures.dart';
 import 'package:raco/src/models/classes.dart';
 
 class Dme {
@@ -16,6 +17,8 @@ class Dme {
   String imgPath;
   //key = row + '|' + col
   Map<String, Classe> schedule;
+  Assignatures assignatures;
+  Map<String, String> assigColors;
 
 
 }

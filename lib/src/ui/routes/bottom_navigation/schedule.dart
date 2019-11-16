@@ -237,12 +237,15 @@ class Schedule extends StatelessWidget {
   Widget _elemtnt(int row, int col, BuildContext context) {
     String key = row.toString() + '|' + col.toString();
     Map<String, Classe> sched = Dme().schedule;
+
+    // int colorValue = int.parse(Dme().assigColors[sched[key].codiAssig]);
     if (sched.containsKey(key)) {
+      int codi = int.parse(Dme().assigColors[sched[key].codiAssig]);
       String cont =
-          sched[key].codiAssig + ' ' + sched[key].grup + sched[key].tipus;
+          sched[key].codiAssig + ' ' + sched[key].grup + ' ' + sched[key].tipus;
       return Container(
         width: MediaQuery.of(context).size.width / 6,
-        color: Colors.lightGreen,
+        color: Color(codi),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[

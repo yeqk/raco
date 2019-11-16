@@ -23,9 +23,9 @@ class Assignatura {
   String grup;
   String sigles;
   @JsonKey(name: "codi_upc")
-  String codiUPC;
+  int codiUPC;
   String semestre;
-  String credits;
+  double credits;
   String nom;
 
   Assignatura(this.id, this.url, this.guia, this.grup, this.sigles,

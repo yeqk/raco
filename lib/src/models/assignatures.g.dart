@@ -29,9 +29,9 @@ Assignatura _$AssignaturaFromJson(Map<String, dynamic> json) {
     json['guia'] as String,
     json['grup'] as String,
     json['sigles'] as String,
-    json['codi_upc'] as String,
+    json['codi_upc'] as int,
     json['semestre'] as String,
-    json['credits'] as String,
+    (json['credits'] as num)?.toDouble(),
     json['nom'] as String,
   );
 }
