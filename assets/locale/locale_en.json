@@ -23,5 +23,17 @@
   "tue" : "Tue",
   "wed" : "Wed",
   "thu" : "Thu.",
-  "fri" : "Fri"
+  "fri" : "Fri",
+
+  "default_loading" : "Loading...",
+  "personal_info_loading" : "Loading personal information...",
+  "schedule_loading" : "Loading schedule...",
+  "notes_loading" : "Loading notes...",
+  "events_loading" : "Loading events...",
+  "news_loading" : "Loading news...",
+  "subjects_loading" : "Loading subjects...",
+  "exam_loading" : "Loading exams...",
+  "labs_loading" : "Loading labs ocupation...",
+  "clossing_loading" : "Signing out..."
+
 }

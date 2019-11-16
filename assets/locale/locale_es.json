@@ -23,5 +23,16 @@
   "tue" : "Ma.",
   "wed" : "Mi.",
   "thu" : "Ju.",
-  "fri" : "Vi."
+  "fri" : "Vi.",
+
+  "default_loading" : "Cargando...",
+  "personal_info_loading" : "Cargando información personal...",
+  "schedule_loading" : "Cargando horario...",
+  "notes_loading" : "Cargando avisos...",
+  "events_loading" : "Cargando eventos...",
+  "news_loading" : "Cargando noticias...",
+  "subjects_loading" : "Cargando asignaturas...",
+  "exam_loading" : "Cargando exámenes...",
+  "labs_loading" : "Cargando ocupación de los Labs...",
+  "clossing_loading" : "Cerrando sesión..."
 }

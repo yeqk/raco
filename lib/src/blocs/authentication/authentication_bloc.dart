@@ -3,9 +3,12 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:math';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:raco/src/blocs/loading_text/loading_text.dart';
 import 'package:raco/src/data/dme.dart';
+import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/resources/user_repository.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:raco/src/repositories/repositories.dart';
@@ -17,6 +20,12 @@ import 'package:raco/src/utils/read_write_file.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
+  final LoadingTextBloc loadingTextBloc;
+
+  AuthenticationBloc({
+    @required this.loadingTextBloc,
+  }) : assert(loadingTextBloc != null);
+
   @override
   AuthenticationState get initialState => AuthenticationUninitializedState();
 
@@ -28,6 +37,7 @@ class AuthenticationBloc
       final bool hasCredentials = await user.hasCredentials();
       final bool isVisitor = await user.isLoggedAsVisitor();
       if (hasCredentials) {
+        yield AuthenticationLoadingState();
         await _loadData();
         yield AuthenticationAuthenticatedState();
       } else {
@@ -48,6 +58,7 @@ class AuthenticationBloc
 
     if (event is LoggedOutEvent) {
       yield AuthenticationLoadingState();
+      loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('clossing_loading')));
       if (await user.isLoggedAsVisitor()) {
         await user.deleteVisitor();
       }
@@ -67,9 +78,10 @@ class AuthenticationBloc
   }
 
   Future<void> _loadData() async {
+    //load personal information
+    loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('personal_info_loading')));
     //singleton data object
     Dme dme = Dme();
-
     //read data from local files
     Me me = Me.fromJson(
         jsonDecode(await ReadWriteFile().readStringFromFile(FileNames.JO)));
@@ -81,17 +93,21 @@ class AuthenticationBloc
     dme.email = me.email;
 
     //Load schedule information
+    loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('schedule_loading')));
     Classes classes = Classes.fromJson(jsonDecode(
         await ReadWriteFile().readStringFromFile(FileNames.CLASSES)));
     _fillSchedule(classes);
 
     //Load subjects information
+    loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('subjects_loading')));
     Assignatures assignatures = Assignatures.fromJson(jsonDecode(
         await ReadWriteFile().readStringFromFile(FileNames.ASSIGNATURES)));
     _loadAssignatureColor(assignatures);
   }
 
   Future<void> _downloadData() async {
+    //load personal information
+    loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('personal_info_loading')));
     RacoRepository rr = new RacoRepository(
         racoApiClient: RacoApiClient(
       httpClient: http.Client(),
@@ -113,20 +129,23 @@ class AuthenticationBloc
     dme.cognoms = me.cognoms;
     dme.email = me.email;
 
+    await ReadWriteFile().writeStringToFile(FileNames.JO, jsonEncode(me));
+
     //Schedule information
+    loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('schedule_loading')));
     Classes classes = await rr.getClasses(accessToken, lang);
     _fillSchedule(classes);
+    await ReadWriteFile()
+        .writeStringToFile(FileNames.CLASSES, jsonEncode(classes));
 
     //Subjects information
+    loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('subjects_loading')));
     Assignatures assignatures = await rr.getAssignatures(accessToken, lang);
     _assignColor(assignatures);
     await ReadWriteFile()
         .writeStringToFile(FileNames.ASSIGNATURES, jsonEncode(assignatures));
 
-    //write file to local files for offline uses
-    await ReadWriteFile().writeStringToFile(FileNames.JO, jsonEncode(me));
-    await ReadWriteFile()
-        .writeStringToFile(FileNames.CLASSES, jsonEncode(classes));
+
   }
 
   void _fillSchedule(Classes classes) {

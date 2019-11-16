@@ -23,5 +23,16 @@
   "tue" : "Dt.",
   "wed" : "Dc.",
   "thu" : "Dj.",
-  "fri" : "Dv."
+  "fri" : "Dv.",
+
+  "default_loading" : "Carregant...",
+  "personal_info_loading" : "Carregant informació personal...",
+  "schedule_loading" : "Carregant horari...",
+  "notes_loading" : "Carregant avisos...",
+  "events_loading" : "Carregant events...",
+  "news_loading" : "Carregant notícies",
+  "subjects_loading" : "Carregant assignatures...",
+  "exam_loading" : "Carregant exàmens",
+  "labs_loading" : "Carregant ocupació dels Labs...",
+  "clossing_loading" : "Tancant sessió..."
 }

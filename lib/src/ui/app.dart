@@ -5,7 +5,6 @@ import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:raco/src/blocs/translations/translations.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/ui/routes/routes.dart';
-import 'package:raco/src/ui/widgets/loading_indocator.dart';
 import 'package:raco/src/utils/app_colors.dart';
 
 class App extends StatelessWidget {
@@ -50,7 +49,7 @@ class App extends StatelessWidget {
                 return LoginRoute();
               }
               if (state is AuthenticationLoadingState) {
-                return LoadingIndicator();
+                return LoadingRoute();
               }
 
               if (state is AuthenticationVisitorLoggedState) {

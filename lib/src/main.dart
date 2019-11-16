@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:raco/src/blocs/loading_text/loading_text.dart';
 import 'package:raco/src/blocs/translations/translations.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/ui/app.dart';
@@ -33,9 +34,16 @@ void main() async {
   await allTranslations.init();
   runApp(MultiBlocProvider(
     providers: [
+      BlocProvider<LoadingTextBloc>(
+        builder: (context) {
+          return LoadingTextBloc();
+        },
+      ),
       BlocProvider<AuthenticationBloc>(
         builder: (context) {
-          return AuthenticationBloc()..dispatch(AppStartedEvent());
+          return AuthenticationBloc(
+            loadingTextBloc: BlocProvider.of<LoadingTextBloc>(context),
+          )..dispatch(AppStartedEvent());
         },
       ),
       BlocProvider<TranslationsBloc>(
