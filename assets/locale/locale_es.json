@@ -7,7 +7,7 @@
   "home"     : "El Racó de la FIB",
 
   "schedule" : "Horario",
-  "notes"    : "Avisos",
+  "notices"    : "Avisos",
   "events"   : "Eventos",
   "news"     : "Noticias",
 
@@ -28,7 +28,7 @@
   "default_loading" : "Cargando...",
   "personal_info_loading" : "Cargando información personal...",
   "schedule_loading" : "Cargando horario...",
-  "notes_loading" : "Cargando avisos...",
+  "notices_loading" : "Cargando avisos...",
   "events_loading" : "Cargando eventos...",
   "news_loading" : "Cargando noticias...",
   "subjects_loading" : "Cargando asignaturas...",

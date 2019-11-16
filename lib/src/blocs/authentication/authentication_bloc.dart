@@ -102,7 +102,12 @@ class AuthenticationBloc
     loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('subjects_loading')));
     Assignatures assignatures = Assignatures.fromJson(jsonDecode(
         await ReadWriteFile().readStringFromFile(FileNames.ASSIGNATURES)));
-    _loadAssignatureColor(assignatures);
+    _loadSubjectColor(assignatures);
+
+    //Load notices information
+    loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('notices')));
+    Avisos avisos = Avisos.fromJson(jsonDecode(
+        await ReadWriteFile().readStringFromFile(FileNames.AVISOS)));
   }
 
   Future<void> _downloadData() async {
@@ -145,7 +150,11 @@ class AuthenticationBloc
     await ReadWriteFile()
         .writeStringToFile(FileNames.ASSIGNATURES, jsonEncode(assignatures));
 
-
+    //Notices information
+    loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('notices_loading')));
+    Avisos avisos = await rr.getAvisos(accessToken, lang);
+    await ReadWriteFile()
+        .writeStringToFile(FileNames.ASSIGNATURES, jsonEncode(assignatures));
   }
 
   void _fillSchedule(Classes classes) {
@@ -176,7 +185,7 @@ class AuthenticationBloc
     }
   }
 
-  void _loadAssignatureColor(Assignatures assignatures) async {
+  void _loadSubjectColor(Assignatures assignatures) async {
     Dme().assigColors = new HashMap();
     for (Assignatura a in assignatures.results) {
       String colorValue = await user.readFromPreferences(a.id);

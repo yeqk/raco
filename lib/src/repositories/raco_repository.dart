@@ -26,4 +26,8 @@ class RacoRepository {
   Future<Assignatures> getAssignatures(String accessToken, String lang) async {
     return await racoApiClient.getAssignatures(accessToken, lang);
   }
+
+  Future<Avisos> getAvisos(String accessToken, String lang) async {
+    return await racoApiClient.getAvisos(accessToken, lang);
+  }
 }

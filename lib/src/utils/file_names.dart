@@ -3,5 +3,5 @@ class FileNames {
   static final AVATAR = 'avatar.jpg';
   static final CLASSES = 'classes.json';
   static final ASSIGNATURES = 'assignatures.json';
-
+  static final AVISOS  = 'avisos.json';
 }

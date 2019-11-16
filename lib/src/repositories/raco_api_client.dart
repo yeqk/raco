@@ -8,6 +8,7 @@ import 'package:image/image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:raco/src/models/assignatures.dart';
+import 'package:raco/src/models/avisos.dart';
 import 'package:raco/src/models/classes.dart';
 import 'package:raco/src/models/me.dart';
 import 'package:raco/src/resources/user_repository.dart';
@@ -66,5 +67,16 @@ class RacoApiClient {
     }
     Map assigMap = jsonDecode(response.body);
     return Assignatures.fromJson(assigMap);
+  }
+
+  Future<Avisos> getAvisos(String accessToken, String lang) async {
+    final locationUrl = '$baseUrl/jo/avisos';
+    Map<String, String> headers = {'Accept' : 'application/json', 'Accept-Language' : lang, 'Authorization' : 'Bearer ' + accessToken};
+    final response = await this.httpClient.get(locationUrl, headers: headers);
+    if (response.statusCode != 200) {
+      throw Exception('Error getting me information.');
+    }
+    Map avisosMap = jsonDecode(response.body);
+    return Avisos.fromJson(avisosMap);
   }
 }
