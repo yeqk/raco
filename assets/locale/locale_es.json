@@ -17,5 +17,11 @@
   "labs"     : "Ocupación Labs",
   "feedback" : "Feedback",
   "configuration" : "Configuración",
-  "signout"  : "Cerrar sesión"
+  "signout"  : "Cerrar sesión",
+
+  "mon" : "Lu.",
+  "tue" : "Ma.",
+  "wed" : "Mi.",
+  "thu" : "Ju.",
+  "fri" : "Vi."
 }

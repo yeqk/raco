@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:raco/src/data/dme.dart';
+import 'package:raco/src/models/classes.dart';
+import 'package:raco/src/resources/global_translations.dart';
 
 class Schedule extends StatelessWidget {
   @override
@@ -27,7 +31,7 @@ class Schedule extends StatelessWidget {
     return Container(
       color: Colors.white,
       padding: EdgeInsets.only(
-          top: ScreenUtil().setHeight(20), bottom: ScreenUtil().setHeight(5)),
+          top: ScreenUtil().setHeight(10), bottom: ScreenUtil().setHeight(5)),
       child: Row(
         children: <Widget>[
           Container(
@@ -39,31 +43,31 @@ class Schedule extends StatelessWidget {
           Container(
             width: MediaQuery.of(context).size.width / 6,
             child: Center(
-              child: Text('1'),
+              child: Text(allTranslations.text('mon')),
             ),
           ),
           Container(
             width: MediaQuery.of(context).size.width / 6,
             child: Center(
-              child: Text('2'),
+              child: Text(allTranslations.text('tue')),
             ),
           ),
           Container(
             width: MediaQuery.of(context).size.width / 6,
             child: Center(
-              child: Text('3'),
+              child: Text(allTranslations.text('wed')),
             ),
           ),
           Container(
             width: MediaQuery.of(context).size.width / 6,
             child: Center(
-              child: Text('4'),
+              child: Text(allTranslations.text('thu')),
             ),
           ),
           Container(
             width: MediaQuery.of(context).size.width / 6,
             child: Center(
-              child: Text('5'),
+              child: Text(allTranslations.text('fri')),
             ),
           ),
         ],
@@ -181,39 +185,77 @@ class Schedule extends StatelessWidget {
             color: rowColor,
             width: MediaQuery.of(context).size.width / 6,
             child: Center(
-              child: Text('5'),
+              child: _elemtnt(index, 0, context),
             ),
           ),
           Container(
             color: rowColor,
             width: MediaQuery.of(context).size.width / 6,
             child: Center(
-              child: Text('5'),
+              child: _elemtnt(index, 1, context),
             ),
           ),
           Container(
             color: rowColor,
             width: MediaQuery.of(context).size.width / 6,
             child: Center(
-              child: Text('5'),
+              child: _elemtnt(index, 2, context),
             ),
           ),
           Container(
             color: rowColor,
             width: MediaQuery.of(context).size.width / 6,
             child: Center(
-              child: Text('5'),
+              child: _elemtnt(index, 3, context),
             ),
           ),
           Container(
             color: rowColor,
             width: MediaQuery.of(context).size.width / 6,
             child: Center(
-              child: Text('5'),
+              child: _elemtnt(index, 4, context),
             ),
           ),
         ],
       ),
     );
+  }
+
+/*
+  Widget _elemtnt(int row, int col) {
+    Map<int,Map<int,Classe>> sched = Dme().schedule;
+    if (sched.containsKey(row)) {
+      Map<int,Classe> days = sched[row];
+      if (days.containsKey(col)) {
+        Classe classe = days[col];
+        return Text(classe.codiAssig);
+      }
+    }
+    return Text('');
+  }
+  */
+  Widget _elemtnt(int row, int col, BuildContext context) {
+    String key = row.toString() + '|' + col.toString();
+    Map<String, Classe> sched = Dme().schedule;
+    if (sched.containsKey(key)) {
+      String cont =
+          sched[key].codiAssig + ' ' + sched[key].grup + sched[key].tipus;
+      return Container(
+        width: MediaQuery.of(context).size.width / 6,
+        color: Colors.lightGreen,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            FittedBox(
+              child: Text(cont),
+            ),
+            FittedBox(
+              child: Text(sched[key].aules),
+            )
+          ],
+        ),
+      );
+    }
+    return Text('');
   }
 }

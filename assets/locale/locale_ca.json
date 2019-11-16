@@ -17,5 +17,11 @@
   "labs"     : "Ocupació Labs",
   "feedback" : "Feedback",
   "configuration" : "Configuració",
-  "signout"  : "Tancar sessió"
+  "signout"  : "Tancar sessió",
+
+  "mon" : "Dl.",
+  "tue" : "Dt.",
+  "wed" : "Dc.",
+  "thu" : "Dj.",
+  "fri" : "Dv."
 }

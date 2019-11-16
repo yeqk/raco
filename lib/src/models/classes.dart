@@ -18,7 +18,7 @@ class Classes {
 class Classe {
   @JsonKey(name: "codi_assig")
   String codiAssig;
-  String group;
+  String grup;
   @JsonKey(name: "dia_setmana")
   int diaSetmana;
   String inici;
@@ -26,7 +26,7 @@ class Classe {
   String tipus;
   String aules;
 
-  Classe(this.codiAssig, this.group, this.diaSetmana, this.inici, this.durada,
+  Classe(this.codiAssig, this.grup, this.diaSetmana, this.inici, this.durada,
       this.tipus, this.aules);
 
   factory Classe.fromJson(Map<String, dynamic> json) => _$ClasseFromJson(json);

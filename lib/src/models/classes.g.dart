@@ -24,7 +24,7 @@ Map<String, dynamic> _$ClassesToJson(Classes instance) => <String, dynamic>{
 Classe _$ClasseFromJson(Map<String, dynamic> json) {
   return Classe(
     json['codi_assig'] as String,
-    json['group'] as String,
+    json['grup'] as String,
     json['dia_setmana'] as int,
     json['inici'] as String,
     json['durada'] as int,
@@ -35,7 +35,7 @@ Classe _$ClasseFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$ClasseToJson(Classe instance) => <String, dynamic>{
       'codi_assig': instance.codiAssig,
-      'group': instance.group,
+      'grup': instance.grup,
       'dia_setmana': instance.diaSetmana,
       'inici': instance.inici,
       'durada': instance.durada,

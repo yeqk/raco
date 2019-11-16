@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/gestures.dart';
@@ -73,6 +74,7 @@ class AuthenticationBloc
         jsonDecode(await ReadWriteFile().readStringFromFile(FileNames.JO)));
     Classes classes = Classes.fromJson(jsonDecode(
     await ReadWriteFile().readStringFromFile(FileNames.CLASSES)));
+    _fillSchedule(classes);
 
     final directory = await getApplicationDocumentsDirectory();
     dme.imgPath = directory.path + '/' + FileNames.AVATAR;
@@ -103,11 +105,48 @@ class AuthenticationBloc
     dme.nom = me.nom;
     dme.cognoms = me.cognoms;
     dme.email = me.email;
+
+    //Schedule information
     Classes classes = await rr.getClasses(accessToken, lang);
+    _fillSchedule(classes);
 
     //write file to local files for offline uses
     await ReadWriteFile().writeStringToFile(FileNames.JO, jsonEncode(me));
     await ReadWriteFile()
         .writeStringToFile(FileNames.CLASSES, jsonEncode(classes));
+  }
+/*
+  void _fillSchedule(Classes classes) {
+    Map<int, Map<int, Classe>> schedule = {};
+    for (Classe cl in classes.results) {
+      //0-4 represents monday-friday
+      int col = cl.diaSetmana - 1;
+      //0-12 represents 8:00-20:00
+      int row = int.parse(cl.inici.split(":").first) - 8;
+      for(int i = 0; i < cl.durada; i++) {
+        schedule.update(row+i, (v) {
+          v.update(col, (cl)=> cl);
+          return v;
+        });
+      }
+    }
+    Dme dme = Dme();
+    dme.schedule = schedule;
+  }
+  */
+  void _fillSchedule(Classes classes) {
+    Map<String, Classe> schedule = new HashMap();
+    for (Classe cl in classes.results) {
+      //0-4 represents monday-friday
+      int col = cl.diaSetmana - 1;
+      //0-12 represents 8:00-20:00
+      int row = int.parse(cl.inici.split(":").first) - 8;
+      for(int i = 0; i < cl.durada; i++) {
+        String key = (row+1).toString() + '|' + col.toString();
+        schedule[key] = cl;
+      }
+    }
+    Dme dme = Dme();
+    dme.schedule = schedule;
   }
 }
