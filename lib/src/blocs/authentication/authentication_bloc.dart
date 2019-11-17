@@ -42,8 +42,7 @@ class AuthenticationBloc
         yield AuthenticationAuthenticatedState();
       } else {
         if (isVisitor) {
-          yield AuthenticationVisitorLoggedState();
-        } else {
+          yield AuthenticationVisitorLoggedState(); 
           yield AuthenticationUnauthenticatedState();
         }
       }

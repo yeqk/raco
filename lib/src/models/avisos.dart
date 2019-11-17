@@ -19,17 +19,16 @@ class Avisos {
 class Avis {
   int id;
   String titol;
-  @JsonKey(name: "codi_assig")
+  @JsonKey(name: 'codi_assig')
   String codiAssig;
   String text;
-  @JsonKey(name: "data_insercio")
+  @JsonKey(name: 'data_insercio')
   String dataInsercio;
-  @JsonKey(name: "data_modificacio")
+  @JsonKey(name: 'data_modificacio')
   String dataModificacio;
-  @JsonKey(name: "data_caducitat")
+  @JsonKey(name: 'data_caducitat')
   String dataCaducitat;
   List<Adjunt> adjunts;
-
 
   Avis(this.id, this.titol, this.codiAssig, this.text, this.dataInsercio,
       this.dataModificacio, this.adjunts);
@@ -41,11 +40,11 @@ class Avis {
 
 @JsonSerializable()
 class Adjunt {
-  @JsonKey(name: "tipus_mime")
+  @JsonKey(name: 'tipus_mime')
   String tipusMime;
   String nom;
   String url;
-  @JsonKey(name: "data_modificacio")
+  @JsonKey(name: 'data_modificacio')
   String dataModificacio;
   int mida;
 
