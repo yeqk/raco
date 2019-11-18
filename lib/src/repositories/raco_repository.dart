@@ -11,23 +11,55 @@ class RacoRepository {
   RacoRepository({@required this.racoApiClient})
       : assert(racoApiClient != null);
 
-  Future<Me> getMe(String accessToken, String lang) async {
-    return await racoApiClient.getMe(accessToken, lang);
+  Future<Me> getMe() async {
+    return await racoApiClient.getMe();
   }
 
-  Future<String> getImage(String accessToken, String lang) async {
-    return await racoApiClient.getImage(accessToken, lang);
+  Future<String> getImage() async {
+    return await racoApiClient.getImage();
   }
 
-  Future<Classes> getClasses(String accessToken, String lang) async {
-    return await racoApiClient.getClasses(accessToken, lang);
+  Future<String> getImageA5() async {
+    return await racoApiClient.getImageA5();
   }
 
-  Future<Assignatures> getAssignatures(String accessToken, String lang) async {
-    return await racoApiClient.getAssignatures(accessToken, lang);
+  Future<String> getImageC6() async {
+    return await racoApiClient.getImageC6();
   }
 
-  Future<Avisos> getAvisos(String accessToken, String lang) async {
-    return await racoApiClient.getAvisos(accessToken, lang);
+  Future<String> getImageB5() async {
+    return await racoApiClient.getImageB5();
+  }
+
+  Future<Classes> getClasses() async {
+    return await racoApiClient.getClasses();
+  }
+
+  Future<Assignatures> getAssignatures() async {
+    return await racoApiClient.getAssignatures();
+  }
+
+  Future<Avisos> getAvisos() async {
+    return await racoApiClient.getAvisos();
+  }
+
+  Future<Events> getEvents() async {
+    return await racoApiClient.getEvents();
+  }
+
+  Future<Noticies> getNoticies() async {
+    return await racoApiClient.getNoticies();
+  }
+
+  Future<ExamensLaboratori> getExamensLaboratori() async {
+    return await racoApiClient.getExamsLaboratori();
+  }
+
+  Future<Quadrimestre> getQuadrimestreActual() async {
+    return await racoApiClient.getQuadrimestreActual();
+  }
+
+  Future<Examens> getExamens(Quadrimestre actual) async {
+    return await racoApiClient.getExamens(actual);
   }
 }

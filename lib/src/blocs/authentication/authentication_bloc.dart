@@ -97,33 +97,56 @@ class AuthenticationBloc
         await ReadWriteFile().readStringFromFile(FileNames.CLASSES)));
     _fillSchedule(classes);
 
+    //Load notices information
+    loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('notices_loading')));
+    Avisos avisos = Avisos.fromJson(jsonDecode(
+        await ReadWriteFile().readStringFromFile(FileNames.AVISOS)));
+
+    //Load events
+    loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('events_loading')));
+    Events events = Events.fromJson(jsonDecode(
+        await ReadWriteFile().readStringFromFile(FileNames.EVENTS)));
+
+    //Load news
+    loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('news_loading')));
+    Noticies noticies = Noticies.fromJson(jsonDecode(
+        await ReadWriteFile().readStringFromFile(FileNames.NOTICIES)));
+
     //Load subjects information
     loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('subjects_loading')));
     Assignatures assignatures = Assignatures.fromJson(jsonDecode(
         await ReadWriteFile().readStringFromFile(FileNames.ASSIGNATURES)));
     _loadSubjectColor(assignatures);
 
-    //Load notices information
-    loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('notices')));
-    Avisos avisos = Avisos.fromJson(jsonDecode(
-        await ReadWriteFile().readStringFromFile(FileNames.AVISOS)));
+    //Load exams
+    loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('exam_loading')));
+    ExamensLaboratori labExams = ExamensLaboratori.fromJson(jsonDecode(
+        await ReadWriteFile().readStringFromFile(FileNames.EXAMENS_LABORATORI)));
+    Examens examens = Examens.fromJson(jsonDecode(
+        await ReadWriteFile().readStringFromFile(FileNames.EXAMENS)));
+
+    //Load lab ocupation
+    loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('labs_loading')));
+    String a5Path = directory.path + '/' + FileNames.A5;
+    String b5Path = directory.path + '/' + FileNames.B5
+    String c6Path = directory.path + '/' + FileNames.C6;
   }
 
   Future<void> _downloadData() async {
     //load personal information
     loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('personal_info_loading')));
-    RacoRepository rr = new RacoRepository(
-        racoApiClient: RacoApiClient(
-      httpClient: http.Client(),
-    ));
     String accessToken = await user.getAccessToken();
     String lang = await user.getPreferredLanguage();
+    RacoRepository rr = new RacoRepository(
+        racoApiClient: RacoApiClient(
+      httpClient: http.Client(), accessToken: accessToken, lang: lang
+    ));
 
-    Me me = await rr.getMe(accessToken, lang);
+    Me me = await rr.getMe();
 
     //Clear image cache to update avatar
     imageCache.clear();
-    String imgPaht = await rr.getImage(accessToken, lang);
+    String imgPaht = await rr.getImage();
 
     //singleton data object
     Dme dme = Dme();
@@ -137,23 +160,59 @@ class AuthenticationBloc
 
     //Schedule information
     loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('schedule_loading')));
-    Classes classes = await rr.getClasses(accessToken, lang);
+    Classes classes = await rr.getClasses();
     _fillSchedule(classes);
     await ReadWriteFile()
         .writeStringToFile(FileNames.CLASSES, jsonEncode(classes));
 
+    //Notices information
+    loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('notices_loading')));
+    Avisos avisos = await rr.getAvisos();
+    await ReadWriteFile()
+        .writeStringToFile(FileNames.AVISOS, jsonEncode(avisos));
+
+    //Events information
+    loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('events_loading')));
+    Events events = await rr.getEvents();
+    await ReadWriteFile()
+        .writeStringToFile(FileNames.EVENTS, jsonEncode(events));
+
+    //News information
+    loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('news_loading')));
+    Noticies noticies = await rr.getNoticies();
+    await ReadWriteFile()
+        .writeStringToFile(FileNames.EVENTS, jsonEncode(events));
+
     //Subjects information
     loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('subjects_loading')));
-    Assignatures assignatures = await rr.getAssignatures(accessToken, lang);
+    Assignatures assignatures = await rr.getAssignatures();
     _assignColor(assignatures);
     await ReadWriteFile()
         .writeStringToFile(FileNames.ASSIGNATURES, jsonEncode(assignatures));
 
-    //Notices information
-    loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('notices_loading')));
-    Avisos avisos = await rr.getAvisos(accessToken, lang);
+    //Exams information
+    loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('exam_loading')));
+    //Lab exams
+    ExamensLaboratori examensLaboratori = await rr.getExamensLaboratori();
     await ReadWriteFile()
-        .writeStringToFile(FileNames.ASSIGNATURES, jsonEncode(assignatures));
+        .writeStringToFile(FileNames.EXAMENS_LABORATORI, jsonEncode(examensLaboratori));
+    //Semester to obtain exams information
+    Quadrimestre actual = await rr.getQuadrimestreActual();
+    await ReadWriteFile()
+        .writeStringToFile(FileNames.QUADRIMESTRE, jsonEncode(actual));
+    //Get exams
+    Examens examens = await rr.getExamens(actual);
+    await ReadWriteFile()
+        .writeStringToFile(FileNames.EXAMENS, jsonEncode(examens));
+
+    //Labs ocupation
+    loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('labs_loading')));
+    await rr.getImageA5();
+    await rr.getImageB5();
+    await rr.getImageC6();
+
+
+
   }
 
   void _fillSchedule(Classes classes) {
