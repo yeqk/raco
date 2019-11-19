@@ -34,5 +34,7 @@
   "subjects_loading" : "Carregant assignatures...",
   "exam_loading" : "Carregant exàmens",
   "labs_loading" : "Carregant ocupació dels Labs...",
-  "clossing_loading" : "Tancant sessió..."
+  "clossing_loading" : "Tancant sessió...",
+
+  "all" : "Tots"
 }

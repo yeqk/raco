@@ -1,5 +1,7 @@
+import 'package:raco/src/models/assignatura_guia.dart';
 import 'package:raco/src/models/assignatures.dart';
 import 'package:raco/src/models/classes.dart';
+import 'package:raco/src/models/models.dart';
 
 class Dme {
   static final Dme _dme = Dme._internal();
@@ -18,7 +20,11 @@ class Dme {
   //key = row + '|' + col
   Map<String, Classe> schedule;
   Assignatures assignatures;
+  //random color for each subject Map<subject code, color code>
   Map<String, String> assigColors;
+  Map<String, AssignaturaURL> assigURL;
+  Map<String, AssignaturaGuia> assigGuia;
+  Avisos avisos;
 
 
 }

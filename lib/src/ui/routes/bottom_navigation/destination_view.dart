@@ -6,6 +6,7 @@ import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/ui/routes/bottom_navigation/destination.dart';
 import 'package:raco/src/ui/routes/bottom_navigation/schedule.dart';
 import 'package:raco/src/ui/routes/drawer_menu/drawer_menu.dart';
+import 'notices.dart';
 
 class DestinationView extends StatefulWidget {
   const DestinationView({ Key key, this.destination }) : super(key: key);
@@ -55,11 +56,7 @@ class _DestinationViewState extends State<DestinationView> {
     if (widget.destination.index == 0) { //schedule
       return Schedule();
     } else if (widget.destination.index == 1) { //notes
-      return Container(
-        padding: const EdgeInsets.all(32.0),
-        alignment: Alignment.center,
-        child: RaisedButton(),
-      );
+      return Notices();
     } else if (widget.destination.index == 2) { //events
       return Container(
         padding: const EdgeInsets.all(32.0),

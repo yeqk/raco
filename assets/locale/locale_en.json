@@ -34,6 +34,8 @@
   "subjects_loading" : "Loading subjects...",
   "exam_loading" : "Loading exams...",
   "labs_loading" : "Loading labs ocupation...",
-  "clossing_loading" : "Signing out..."
+  "clossing_loading" : "Signing out...",
+
+  "all" : "All"
 
 }

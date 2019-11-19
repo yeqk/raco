@@ -34,5 +34,7 @@
   "subjects_loading" : "Cargando asignaturas...",
   "exam_loading" : "Cargando exámenes...",
   "labs_loading" : "Cargando ocupación de los Labs...",
-  "clossing_loading" : "Cerrando sesión..."
+  "clossing_loading" : "Cerrando sesión...",
+
+  "all" : "Todos"
 }

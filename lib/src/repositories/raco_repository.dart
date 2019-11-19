@@ -39,6 +39,14 @@ class RacoRepository {
     return await racoApiClient.getAssignatures();
   }
 
+  Future<AssignaturaURL> getAssignaturaURL(Assignatura assignatura) async {
+    return await racoApiClient.getAssignaturaURL(assignatura);
+  }
+
+  Future<AssignaturaGuia> getAssignaturaGuia(Assignatura assignatura) async {
+    return await racoApiClient.getAssignaturaGuia(assignatura);
+  }
+
   Future<Avisos> getAvisos() async {
     return await racoApiClient.getAvisos();
   }

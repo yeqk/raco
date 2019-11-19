@@ -17,14 +17,19 @@ class RacoApiClient {
   String accessToken;
   String lang;
 
-
-  RacoApiClient({
-    @required this.httpClient, @required this.accessToken, @required this.lang
-  }) : assert(httpClient != null && accessToken != null && lang != null);
+  RacoApiClient(
+      {@required this.httpClient,
+      @required this.accessToken,
+      @required this.lang})
+      : assert(httpClient != null && accessToken != null && lang != null);
 
   Future<Me> getMe() async {
     final locationUrl = '$baseUrl/jo';
-    Map<String, String> headers = {'Accept' : 'application/json', 'Accept-Language' : lang, 'Authorization' : 'Bearer ' + accessToken};
+    Map<String, String> headers = {
+      'Accept': 'application/json',
+      'Accept-Language': lang,
+      'Authorization': 'Bearer ' + accessToken
+    };
     final response = await this.httpClient.get(locationUrl, headers: headers);
     if (response.statusCode != 200) {
       throw Exception('Error getting me information.');
@@ -35,10 +40,11 @@ class RacoApiClient {
 
   Future<String> getImage() async {
     final locationUrl = '$baseUrl/jo/foto.jpg';
-    Map<String, String> headers = {'Authorization' : 'Bearer ' + accessToken};
+    Map<String, String> headers = {'Authorization': 'Bearer ' + accessToken};
     final directory = await getApplicationDocumentsDirectory();
     String localPath = directory.path;
-    FileInfo fileInfo =  await DefaultCacheManager().downloadFile(locationUrl, authHeaders: headers);
+    FileInfo fileInfo = await DefaultCacheManager()
+        .downloadFile(locationUrl, authHeaders: headers);
     Io.File file = fileInfo.file;
     Image image = decodeImage(file.readAsBytesSync());
     Io.File imgFile = new Io.File(localPath + '/' + FileNames.AVATAR)
@@ -48,10 +54,11 @@ class RacoApiClient {
 
   Future<String> getImageA5() async {
     final locationUrl = '$baseUrl/laboratoris/imatges/A5.png';
-    Map<String, String> headers = {'Authorization' : 'Bearer ' + accessToken};
+    Map<String, String> headers = {'Authorization': 'Bearer ' + accessToken};
     final directory = await getApplicationDocumentsDirectory();
     String localPath = directory.path;
-    FileInfo fileInfo =  await DefaultCacheManager().downloadFile(locationUrl, authHeaders: headers);
+    FileInfo fileInfo = await DefaultCacheManager()
+        .downloadFile(locationUrl, authHeaders: headers);
     Io.File file = fileInfo.file;
     Image image = decodeImage(file.readAsBytesSync());
     Io.File imgFile = new Io.File(localPath + '/' + FileNames.A5)
@@ -61,10 +68,11 @@ class RacoApiClient {
 
   Future<String> getImageC6() async {
     final locationUrl = '$baseUrl/laboratoris/imatges/C6.png';
-    Map<String, String> headers = {'Authorization' : 'Bearer ' + accessToken};
+    Map<String, String> headers = {'Authorization': 'Bearer ' + accessToken};
     final directory = await getApplicationDocumentsDirectory();
     String localPath = directory.path;
-    FileInfo fileInfo =  await DefaultCacheManager().downloadFile(locationUrl, authHeaders: headers);
+    FileInfo fileInfo = await DefaultCacheManager()
+        .downloadFile(locationUrl, authHeaders: headers);
     Io.File file = fileInfo.file;
     Image image = decodeImage(file.readAsBytesSync());
     Io.File imgFile = new Io.File(localPath + '/' + FileNames.C6)
@@ -74,101 +82,172 @@ class RacoApiClient {
 
   Future<String> getImageB5() async {
     final locationUrl = '$baseUrl/laboratoris/imatges/B5.png';
-    Map<String, String> headers = {'Authorization' : 'Bearer ' + accessToken};
+    Map<String, String> headers = {'Authorization': 'Bearer ' + accessToken};
     final directory = await getApplicationDocumentsDirectory();
     String localPath = directory.path;
-    FileInfo fileInfo =  await DefaultCacheManager().downloadFile(locationUrl, authHeaders: headers);
+    FileInfo fileInfo = await DefaultCacheManager()
+        .downloadFile(locationUrl, authHeaders: headers);
     Io.File file = fileInfo.file;
     Image image = decodeImage(file.readAsBytesSync());
     Io.File imgFile = new Io.File(localPath + '/' + FileNames.B5)
       ..writeAsBytesSync(encodePng(image), flush: true);
     return imgFile.path;
   }
+
   Future<Classes> getClasses() async {
     final locationUrl = '$baseUrl/jo/classes';
-    Map<String, String> headers = {'Accept' : 'application/json', 'Accept-Language' : lang, 'Authorization' : 'Bearer ' + accessToken};
+    Map<String, String> headers = {
+      'Accept': 'application/json',
+      'Accept-Language': lang,
+      'Authorization': 'Bearer ' + accessToken
+    };
     final response = await this.httpClient.get(locationUrl, headers: headers);
     if (response.statusCode != 200) {
-      throw Exception('Error getting me information.');
+      throw Exception('Error getting schedule information.');
     }
-    Map classesMap = jsonDecode(response.body);
+    Map classesMap = jsonDecode(utf8.decode(response.bodyBytes));
     return Classes.fromJson(classesMap);
   }
 
   Future<Assignatures> getAssignatures() async {
     final locationUrl = '$baseUrl/jo/assignatures';
-    Map<String, String> headers = {'Accept' : 'application/json', 'Accept-Language' : lang, 'Authorization' : 'Bearer ' + accessToken};
+    Map<String, String> headers = {
+      'Accept': 'application/json',
+      'Accept-Language': lang,
+      'Authorization': 'Bearer ' + accessToken
+    };
     final response = await this.httpClient.get(locationUrl, headers: headers);
     if (response.statusCode != 200) {
-      throw Exception('Error getting me information.');
+      throw Exception('Error getting subjects information.');
     }
-    Map assigMap = jsonDecode(response.body);
+    Map assigMap = jsonDecode(utf8.decode(response.bodyBytes));
     return Assignatures.fromJson(assigMap);
+  }
+
+  Future<AssignaturaURL> getAssignaturaURL(Assignatura assignatura) async {
+    final locationUrl = assignatura.url;
+    if (locationUrl == null) {
+      return null;
+    }
+    Map<String, String> headers = {
+      'Accept': 'application/json',
+      'Accept-Language': lang,
+      'Authorization': 'Bearer ' + accessToken
+    };
+    final response = await this.httpClient.get(locationUrl, headers: headers);
+    if (response.statusCode != 200) {
+      throw Exception('Error getting subjects information.');
+    }
+    Map assigMap = jsonDecode(utf8.decode(response.bodyBytes));
+    return AssignaturaURL.fromJson(assigMap);
+  }
+
+  Future<AssignaturaGuia> getAssignaturaGuia(Assignatura assignatura) async {
+    final locationUrl = assignatura.guia;
+    if (locationUrl == null) {
+      return null;
+    }
+    Map<String, String> headers = {
+      'Accept': 'application/json',
+      'Accept-Language': lang,
+      'Authorization': 'Bearer ' + accessToken
+    };
+    final response = await this.httpClient.get(locationUrl, headers: headers);
+    if (response.statusCode != 200) {
+      throw Exception('Error getting subjects information.');
+    }
+    Map assigMap = jsonDecode(utf8.decode(response.bodyBytes));
+    return AssignaturaGuia.fromJson(assigMap);
   }
 
   Future<Avisos> getAvisos() async {
     final locationUrl = '$baseUrl/jo/avisos';
-    Map<String, String> headers = {'Accept' : 'application/json', 'Accept-Language' : lang, 'Authorization' : 'Bearer ' + accessToken};
+    Map<String, String> headers = {
+      'Accept': 'application/json',
+      'Accept-Language': lang,
+      'Authorization': 'Bearer ' + accessToken
+    };
     final response = await this.httpClient.get(locationUrl, headers: headers);
     if (response.statusCode != 200) {
-      throw Exception('Error getting me information.');
+      throw Exception('Error getting notices information.');
     }
-    Map avisosMap = jsonDecode(response.body);
+    Map avisosMap = jsonDecode(utf8.decode(response.bodyBytes));
     return Avisos.fromJson(avisosMap);
   }
 
   Future<Events> getEvents() async {
     final locationUrl = '$baseUrl/events';
-    Map<String, String> headers = {'Accept' : 'application/json', 'Accept-Language' : lang, 'Authorization' : 'Bearer ' + accessToken};
+    Map<String, String> headers = {
+      'Accept': 'application/json',
+      'Accept-Language': lang,
+      'Authorization': 'Bearer ' + accessToken
+    };
     final response = await this.httpClient.get(locationUrl, headers: headers);
     if (response.statusCode != 200) {
-      throw Exception('Error getting me information.');
+      throw Exception('Error getting events information.');
     }
-    Map eventsMap = jsonDecode(response.body);
+    Map eventsMap = jsonDecode(utf8.decode(response.bodyBytes));
     return Events.fromJson(eventsMap);
   }
 
   Future<Noticies> getNoticies() async {
     final locationUrl = '$baseUrl/noticies';
-    Map<String, String> headers = {'Accept' : 'application/json', 'Accept-Language' : lang, 'Authorization' : 'Bearer ' + accessToken};
+    Map<String, String> headers = {
+      'Accept': 'application/json',
+      'Accept-Language': lang,
+      'Authorization': 'Bearer ' + accessToken
+    };
     final response = await this.httpClient.get(locationUrl, headers: headers);
     if (response.statusCode != 200) {
-      throw Exception('Error getting me information.');
+      throw Exception('Error getting news information.');
     }
-    Map noticiesMap = jsonDecode(response.body);
+    Map noticiesMap = jsonDecode(utf8.decode(response.bodyBytes));
     return Noticies.fromJson(noticiesMap);
   }
 
   Future<ExamensLaboratori> getExamsLaboratori() async {
     final locationUrl = '$baseUrl/examens-laboratori';
-    Map<String, String> headers = {'Accept' : 'application/json', 'Accept-Language' : lang, 'Authorization' : 'Bearer ' + accessToken};
+    Map<String, String> headers = {
+      'Accept': 'application/json',
+      'Accept-Language': lang,
+      'Authorization': 'Bearer ' + accessToken
+    };
     final response = await this.httpClient.get(locationUrl, headers: headers);
     if (response.statusCode != 200) {
-      throw Exception('Error getting me information.');
+      throw Exception('Error getting labs information.');
     }
-    Map labExamsMap = jsonDecode(response.body);
+    Map labExamsMap = jsonDecode(utf8.decode(response.bodyBytes));
     return ExamensLaboratori.fromJson(labExamsMap);
   }
 
   Future<Quadrimestre> getQuadrimestreActual() async {
     final locationUrl = '$baseUrl/quadrimestres/actual';
-    Map<String, String> headers = {'Accept' : 'application/json', 'Accept-Language' : lang, 'Authorization' : 'Bearer ' + accessToken};
+    Map<String, String> headers = {
+      'Accept': 'application/json',
+      'Accept-Language': lang,
+      'Authorization': 'Bearer ' + accessToken
+    };
     final response = await this.httpClient.get(locationUrl, headers: headers);
     if (response.statusCode != 200) {
-      throw Exception('Error getting me information.');
+      throw Exception('Error getting quadrimestres information.');
     }
-    Map quadrimestreMap = jsonDecode(response.body);
+    Map quadrimestreMap = jsonDecode(utf8.decode(response.bodyBytes));
     return Quadrimestre.fromJson(quadrimestreMap);
   }
 
   Future<Examens> getExamens(Quadrimestre quadrimestre) async {
     final locationUrl = quadrimestre.examens;
-    Map<String, String> headers = {'Accept' : 'application/json', 'Accept-Language' : lang, 'Authorization' : 'Bearer ' + accessToken};
+    if (locationUrl == null) return null;
+    Map<String, String> headers = {
+      'Accept': 'application/json',
+      'Accept-Language': lang,
+      'Authorization': 'Bearer ' + accessToken
+    };
     final response = await this.httpClient.get(locationUrl, headers: headers);
     if (response.statusCode != 200) {
-      throw Exception('Error getting me information.');
+      throw Exception('Error getting exams information.');
     }
-    Map examensMap = jsonDecode(response.body);
+    Map examensMap = jsonDecode(utf8.decode(response.bodyBytes));
     return Examens.fromJson(examensMap);
   }
 }
