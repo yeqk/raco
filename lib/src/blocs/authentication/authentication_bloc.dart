@@ -42,9 +42,9 @@ class AuthenticationBloc
         yield AuthenticationAuthenticatedState();
       } else {
         if (isVisitor) {
-          yield AuthenticationVisitorLoggedState(); 
-          yield AuthenticationUnauthenticatedState();
+          yield AuthenticationVisitorLoggedState();
         }
+        yield AuthenticationUnauthenticatedState();
       }
     }
 
@@ -128,7 +128,7 @@ class AuthenticationBloc
     //Load lab ocupation
     loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('labs_loading')));
     String a5Path = directory.path + '/' + FileNames.A5;
-    String b5Path = directory.path + '/' + FileNames.B5
+    String b5Path = directory.path + '/' + FileNames.B5;
     String c6Path = directory.path + '/' + FileNames.C6;
   }
 
@@ -181,7 +181,7 @@ class AuthenticationBloc
     loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('news_loading')));
     Noticies noticies = await rr.getNoticies();
     await ReadWriteFile()
-        .writeStringToFile(FileNames.EVENTS, jsonEncode(events));
+        .writeStringToFile(FileNames.NOTICIES, jsonEncode(events));
 
     //Subjects information
     loadingTextBloc.dispatch(LoadTextEvent(text: allTranslations.text('subjects_loading')));
