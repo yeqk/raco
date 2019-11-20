@@ -7,6 +7,7 @@ import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/models/classes.dart';
 import 'package:raco/src/models/models.dart';
 import 'package:raco/src/resources/global_translations.dart';
+import 'package:intl/intl.dart';
 
 class Notices extends StatefulWidget {
   @override
@@ -78,10 +79,8 @@ class NoticiesState extends State<Notices> with SingleTickerProviderStateMixin {
             header: BezierCircleHeader(),
             controller: _refreshController,
             onRefresh: _onRefresh,
-            child: ListView.builder(
-              itemBuilder: (c, i) => Card(child: Center(child: Text(items[i]))),
-              itemExtent: 100.0,
-              itemCount: items.length,
+            child: ListView(
+              children: _avisos(Dme().avisos),
             ),
           ),
         ),
@@ -104,5 +103,22 @@ class NoticiesState extends State<Notices> with SingleTickerProviderStateMixin {
       );
     }).toList());
     return tabViews;
+  }
+
+  List<Widget> _avisos(Avisos avisos) {
+    List<Avis> listAvisos = avisos.results;
+    listAvisos.sort((a,b) {
+      DateFormat format = DateFormat('yyyy-M-dTH:m:s');
+      DateTime ta = format.parse(a.dataModificacio);
+      DateTime tb = format.parse(b.dataModificacio);
+      return tb.compareTo(ta);
+    });
+    return avisos.results.map((Avis avis) {
+      return Card(
+        child: Center(
+          child: Text(avis.titol),
+        ),
+      );
+    }).toList();
   }
 }

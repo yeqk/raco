@@ -17,6 +17,7 @@ import 'package:raco/src/models/models.dart';
 import 'package:flutter/painting.dart';
 import 'package:raco/src/utils/file_names.dart';
 import 'package:raco/src/utils/read_write_file.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
@@ -67,6 +68,8 @@ class AuthenticationBloc
         imageCache.clear();
         await user.deleteCredentials();
       }
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      preferences.clear();
       yield AuthenticationUnauthenticatedState();
     }
 
@@ -223,8 +226,12 @@ class AuthenticationBloc
     dme.assigGuia = new HashMap();
     for (Assignatura a in assignatures.results) {
       AssignaturaURL assigURL = await rr.getAssignaturaURL(a);
+      await ReadWriteFile()
+          .writeStringToFile(FileNames.ASSIGNATURA_URL, jsonEncode(assigURL));
       dme.assigURL[a.id] = assigURL;
       AssignaturaGuia assigGuia = await rr.getAssignaturaGuia(a);
+      await ReadWriteFile()
+          .writeStringToFile(FileNames.ASSIGNATURA_GUIA, jsonEncode(assigGuia));
       dme.assigGuia[a.id] = assigGuia;
     }
 
