@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -8,6 +9,9 @@ import 'package:raco/src/models/classes.dart';
 import 'package:raco/src/models/models.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'notice.dart';
 
 class Notices extends StatefulWidget {
   @override
@@ -48,7 +52,7 @@ class NoticiesState extends State<Notices> with SingleTickerProviderStateMixin {
       )
     ];
     tabs.addAll(assignatures.results.map((Assignatura a) {
-      print(a.nom);
+      print('HHHH:' + a.nom+ ':hhh');
       return Tab(
         text: a.id,
       );
@@ -107,18 +111,100 @@ class NoticiesState extends State<Notices> with SingleTickerProviderStateMixin {
 
   List<Widget> _avisos(Avisos avisos) {
     List<Avis> listAvisos = avisos.results;
-    listAvisos.sort((a,b) {
+    listAvisos.sort((a, b) {
       DateFormat format = DateFormat('yyyy-M-dTH:m:s');
       DateTime ta = format.parse(a.dataModificacio);
       DateTime tb = format.parse(b.dataModificacio);
       return tb.compareTo(ta);
     });
+
+    DateFormat format = DateFormat('yyyy-M-dTH:m:s');
+    var formatter = new DateFormat.yMMMMd(allTranslations.currentLanguage);
+
     return avisos.results.map((Avis avis) {
+      Color color;
+      if (Dme().assigColors[avis.codiAssig] == null) {
+        color = Colors.blueGrey;
+      } else {
+        int codi = int.parse(Dme().assigColors[avis.codiAssig]);
+        color = Color(codi);
+      }
+
+      DateTime ta = format.parse(avis.dataModificacio);
+      String time = formatter.format(ta);
+      if (avis.adjunts.length > 0) {
+        return Card(
+          child: InkWell(
+            onTap: () => _onTap(avis),
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: color,
+                child: FittedBox(
+                  child: Text(avis.codiAssig),
+                ),
+              ),
+              title: Text(avis.titol),
+              trailing: Container(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(avis.adjunts.length.toString()),
+                    Icon(Icons.attach_file)
+                  ],
+                ),
+              ),
+              subtitle: Text(time),
+            ),
+          ),
+        );
+      }
       return Card(
-        child: Center(
-          child: Text(avis.titol),
+        child: InkWell(
+          onTap: () => _onTap(avis),
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: color,
+              child: FittedBox(
+                child: Text(avis.codiAssig),
+              ),
+            ),
+            title: Text(avis.titol),
+            subtitle: Text(time),
+          ),
         ),
       );
     }).toList();
+  }
+
+/*
+  _onTap(Avis avis) {
+    print(avis.titol);
+    showDialog(
+        context: context,
+        builder: (_) => new AlertDialog(
+            title: new Text("Dialog Title"),
+            content: Container(
+              height: 300,
+              child: SingleChildScrollView(
+                child: Html(
+                  data: avis.text,
+                  onLinkTap: (url) => _onLinkTap(url),
+                ),
+              ),
+            )));
+  }
+
+ */
+  _onTap(Avis avis) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => Notice(avis: avis)));
+  }
+
+  _onLinkTap(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }

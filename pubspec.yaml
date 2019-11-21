@@ -39,6 +39,8 @@ dependencies:
   path_provider: ^1.4.2
   image: ^2.1.8
   pull_to_refresh: ^1.5.7
+  flutter_html: ^0.11.0
+  url_launcher: ^5.2.5
 
 dev_dependencies:
   build_runner: ^1.7.0

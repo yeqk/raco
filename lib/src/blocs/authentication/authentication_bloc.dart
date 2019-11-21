@@ -135,10 +135,13 @@ class AuthenticationBloc
       AssignaturaURL assigURL = AssignaturaURL.fromJson(jsonDecode(
           await ReadWriteFile().readStringFromFile(FileNames.ASSIGNATURA_URL)));
       dme.assigURL[a.id] = assigURL;
-      AssignaturaGuia assigGuia = AssignaturaGuia.fromJson(jsonDecode(
-          await ReadWriteFile()
-              .readStringFromFile(FileNames.ASSIGNATURA_GUIA)));
-      dme.assigGuia[a.id] = assigGuia;
+      String assigGuiaString =
+          await ReadWriteFile().readStringFromFile(FileNames.ASSIGNATURA_GUIA);
+      if (assigGuiaString != 'null') {
+        AssignaturaGuia assigGuia =
+        AssignaturaGuia.fromJson(jsonDecode(assigGuiaString));
+        dme.assigGuia[a.id] = assigGuia;
+      }
     }
 
     //Load exams
