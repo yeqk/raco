@@ -70,4 +70,8 @@ class RacoRepository {
   Future<Examens> getExamens(Quadrimestre actual) async {
     return await racoApiClient.getExamens(actual);
   }
+
+  Future<String> downloadAndSaveFile(String name, String url, String mimeType) async {
+    return await racoApiClient.downloadAndSaveFile(name, url, mimeType);
+  }
 }

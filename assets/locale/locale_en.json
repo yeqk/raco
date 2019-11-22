@@ -36,6 +36,8 @@
   "labs_loading" : "Loading labs ocupation...",
   "clossing_loading" : "Signing out...",
 
-  "all" : "All"
+  "all" : "All",
+  "attachments" : "attachments",
+  "downloading" : "Downloading file..."
 
 }

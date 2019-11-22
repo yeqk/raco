@@ -250,4 +250,19 @@ class RacoApiClient {
     Map examensMap = jsonDecode(utf8.decode(response.bodyBytes));
     return Examens.fromJson(examensMap);
   }
+
+  Future<String> downloadAndSaveFile(String name,String url, String mimeType) async {
+    final locationUrl = url;
+    Map<String, String> headers = {
+      'Authorization': 'Bearer ' + accessToken
+    };
+    final directory = await getApplicationDocumentsDirectory();
+    String localPath = directory.path;
+    FileInfo fileInfo = await DefaultCacheManager()
+        .downloadFile(locationUrl, authHeaders: headers);
+    Io.File file = fileInfo.file;
+    Io.File writted = new Io.File(localPath + '/' + name)
+      ..writeAsBytes(file.readAsBytesSync(), flush: true);
+    return writted.path;
+  }
 }

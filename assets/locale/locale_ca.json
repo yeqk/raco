@@ -36,5 +36,7 @@
   "labs_loading" : "Carregant ocupació dels Labs...",
   "clossing_loading" : "Tancant sessió...",
 
-  "all" : "Tots"
+  "all" : "Tots",
+  "attachments" : "fitxers adjunts",
+  "downloading" : "Descarregant fitxer..."
 }

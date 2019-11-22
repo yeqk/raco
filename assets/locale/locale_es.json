@@ -36,5 +36,7 @@
   "labs_loading" : "Cargando ocupación de los Labs...",
   "clossing_loading" : "Cerrando sesión...",
 
-  "all" : "Todos"
+  "all" : "Todos",
+  "attachments" : "ficheros adjuntos",
+  "downloading" : "Descargando archivo..."
 }
