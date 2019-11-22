@@ -48,6 +48,7 @@
         <key>NSAllowsArbitraryLoadsInWebContent</key>
         <true/>
     </dict>
-
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Share image to photo library</string>
 </dict>
 </plist>

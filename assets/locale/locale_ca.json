@@ -38,5 +38,6 @@
 
   "all" : "Tots",
   "attachments" : "fitxers adjunts",
-  "downloading" : "Descarregant fitxer..."
+  "downloading" : "Descarregant fitxer...",
+  "no_notices" : "No hi ha avisos"
 }

@@ -38,6 +38,7 @@
 
   "all" : "All",
   "attachments" : "attachments",
-  "downloading" : "Downloading file..."
+  "downloading" : "Downloading file...",
+  "no_notices" : "No notices"
 
 }
