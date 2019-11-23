@@ -121,6 +121,7 @@ class AuthenticationBloc
         .dispatch(LoadTextEvent(text: allTranslations.text('news_loading')));
     Noticies noticies = Noticies.fromJson(jsonDecode(
         await ReadWriteFile().readStringFromFile(FileNames.NOTICIES)));
+    Dme().noticies = noticies;
 
     //Load subjects information
     loadingTextBloc.dispatch(
@@ -214,8 +215,9 @@ class AuthenticationBloc
     loadingTextBloc
         .dispatch(LoadTextEvent(text: allTranslations.text('news_loading')));
     Noticies noticies = await rr.getNoticies();
+    Dme().noticies = noticies;
     await ReadWriteFile()
-        .writeStringToFile(FileNames.NOTICIES, jsonEncode(events));
+        .writeStringToFile(FileNames.NOTICIES, jsonEncode(noticies));
 
     //Subjects information
     loadingTextBloc.dispatch(

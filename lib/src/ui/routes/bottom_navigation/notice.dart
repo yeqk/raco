@@ -68,6 +68,7 @@ class Notice extends StatelessWidget {
     }
     body.add(Html(
       data: avis.text,
+      onLinkTap: (url) => _onLinkTap(url),
     ));
     return body;
   }

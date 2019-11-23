@@ -30,11 +30,11 @@ class Notices extends StatefulWidget {
 class NoticiesState extends State<Notices> with SingleTickerProviderStateMixin {
   Assignatures assignatures = Dme().assignatures;
   TabController _tabController;
-  RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController _refreshController;
 
   @override
   void initState() {
+    _refreshController = RefreshController(initialRefresh: false);
     int size = assignatures.count + 1;
     _tabController = new TabController(length: size, vsync: this);
     super.initState();
@@ -89,9 +89,7 @@ class NoticiesState extends State<Notices> with SingleTickerProviderStateMixin {
     Dme().avisos = avisos;
     await ReadWriteFile()
         .writeStringToFile(FileNames.AVISOS, jsonEncode(avisos));
-    setState(() {
-
-    });
+    setState(() {});
     _refreshController.refreshCompleted();
   }
 
@@ -162,8 +160,8 @@ class NoticiesState extends State<Notices> with SingleTickerProviderStateMixin {
       return tb.compareTo(ta);
     });
 
-    DateFormat format = DateFormat('yyyy-M-dTH:m:s');
-    var formatter = new DateFormat.yMMMMd(allTranslations.currentLanguage);
+    DateFormat parser = DateFormat('yyyy-M-dTH:m:s');
+    var formatter = DateFormat.yMd(allTranslations.currentLanguage).add_Hm();
 
     return avisos.map((Avis avis) {
       Color color;
@@ -174,7 +172,7 @@ class NoticiesState extends State<Notices> with SingleTickerProviderStateMixin {
         color = Color(codi);
       }
 
-      DateTime ta = format.parse(avis.dataModificacio);
+      DateTime ta = parser.parse(avis.dataModificacio);
       String time = formatter.format(ta);
       if (avis.adjunts.length > 0) {
         return Card(

@@ -39,5 +39,9 @@
   "all" : "Tots",
   "attachments" : "fitxers adjunts",
   "downloading" : "Descarregant fitxer...",
-  "no_notices" : "No hi ha avisos"
+  "no_notices" : "No hi ha avisos",
+  "no_news" : "No hi ha notícies",
+
+  "next_events" : "PROPERS ESDEVENIMENTS",
+  "up_to" : "FINS A"
 }

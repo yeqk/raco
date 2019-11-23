@@ -39,6 +39,10 @@
   "all" : "All",
   "attachments" : "attachments",
   "downloading" : "Downloading file...",
-  "no_notices" : "No notices"
+  "no_notices" : "No notices",
+  "no_news" : "No news",
+
+  "next_events" : "NEXT EVENTS",
+  "up_to" : "UP TO"
 
 }
