@@ -43,5 +43,11 @@
   "no_news" : "No hi ha notícies",
 
   "next_events" : "PROPERS ESDEVENIMENTS",
-  "up_to" : "FINS A"
+  "up_to" : "FINS A",
+
+  "final_exam" : "Examen final",
+  "midterm exam" : "Examen parcial",
+
+  "save" : "Guardar",
+  "cancel" : "Cancel·lar"
 }

@@ -154,9 +154,9 @@ class NoticiesState extends State<Notices> with SingleTickerProviderStateMixin {
 
   List<Widget> _avisos(List<Avis> avisos) {
     avisos.sort((a, b) {
-      DateFormat format = DateFormat('yyyy-M-dTH:m:s');
-      DateTime ta = format.parse(a.dataModificacio);
-      DateTime tb = format.parse(b.dataModificacio);
+      DateFormat parser = DateFormat('yyyy-M-dTH:m:s');
+      DateTime ta = parser.parse(a.dataModificacio);
+      DateTime tb = parser.parse(b.dataModificacio);
       return tb.compareTo(ta);
     });
 

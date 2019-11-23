@@ -9,6 +9,25 @@ part of 'examens_laboratori.dart';
 ExamensLaboratori _$ExamensLaboratoriFromJson(Map<String, dynamic> json) {
   return ExamensLaboratori(
     json['propers_examens_laboratori'] as String,
+    json['count'] as int,
+    (json['results'] as List)
+        ?.map((e) => e == null
+            ? null
+            : ExamenLaboratori.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
+  );
+}
+
+Map<String, dynamic> _$ExamensLaboratoriToJson(ExamensLaboratori instance) =>
+    <String, dynamic>{
+      'propers_examens_laboratori': instance.propersExamensLaboratori,
+      'count': instance.count,
+      'results': instance.results?.map((e) => e?.toJson())?.toList(),
+    };
+
+ExamenLaboratori _$ExamenLaboratoriFromJson(Map<String, dynamic> json) {
+  return ExamenLaboratori(
+    json['id'] as String,
     json['description'] as String,
     json['title'] as String,
     json['assig'] as String,
@@ -26,9 +45,9 @@ ExamensLaboratori _$ExamensLaboratoriFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$ExamensLaboratoriToJson(ExamensLaboratori instance) =>
+Map<String, dynamic> _$ExamenLaboratoriToJson(ExamenLaboratori instance) =>
     <String, dynamic>{
-      'propers_examens_laboratori': instance.propersExamensLaboratori,
+      'id': instance.id,
       'description': instance.description,
       'title': instance.title,
       'assig': instance.assig,

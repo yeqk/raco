@@ -25,7 +25,9 @@ class Dme {
   Map<String, AssignaturaURL> assigURL;
   Map<String, AssignaturaGuia> assigGuia;
   Avisos avisos;
+  Events events;
   Noticies noticies;
-
+  Examens examens;
+  ExamensLaboratori labExams;
 
 }

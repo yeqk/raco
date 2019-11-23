@@ -115,6 +115,7 @@ class AuthenticationBloc
         .dispatch(LoadTextEvent(text: allTranslations.text('events_loading')));
     Events events = Events.fromJson(
         jsonDecode(await ReadWriteFile().readStringFromFile(FileNames.EVENTS)));
+    dme.events = events;
 
     //Load news
     loadingTextBloc
@@ -151,8 +152,10 @@ class AuthenticationBloc
     ExamensLaboratori labExams = ExamensLaboratori.fromJson(jsonDecode(
         await ReadWriteFile()
             .readStringFromFile(FileNames.EXAMENS_LABORATORI)));
+    dme.labExams = labExams;
     Examens examens = Examens.fromJson(jsonDecode(
         await ReadWriteFile().readStringFromFile(FileNames.EXAMENS)));
+    dme.examens = examens;
 
     //Load lab ocupation
     loadingTextBloc
@@ -208,6 +211,7 @@ class AuthenticationBloc
     loadingTextBloc
         .dispatch(LoadTextEvent(text: allTranslations.text('events_loading')));
     Events events = await rr.getEvents();
+    dme.events = events;
     await ReadWriteFile()
         .writeStringToFile(FileNames.EVENTS, jsonEncode(events));
 
@@ -247,6 +251,7 @@ class AuthenticationBloc
     ExamensLaboratori examensLaboratori = await rr.getExamensLaboratori();
     await ReadWriteFile().writeStringToFile(
         FileNames.EXAMENS_LABORATORI, jsonEncode(examensLaboratori));
+    dme.labExams = examensLaboratori;
     //Semester to obtain exams information
     Quadrimestre actual = await rr.getQuadrimestreActual();
     await ReadWriteFile()
@@ -255,7 +260,7 @@ class AuthenticationBloc
     Examens examens = await rr.getExamens(actual);
     await ReadWriteFile()
         .writeStringToFile(FileNames.EXAMENS, jsonEncode(examens));
-
+    dme.examens = examens;
     //Labs ocupation
     loadingTextBloc
         .dispatch(LoadTextEvent(text: allTranslations.text('labs_loading')));

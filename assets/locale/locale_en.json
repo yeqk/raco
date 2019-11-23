@@ -43,6 +43,12 @@
   "no_news" : "No news",
 
   "next_events" : "NEXT EVENTS",
-  "up_to" : "UP TO"
+  "up_to" : "UP TO",
+
+  "final_exam" : "Examen final",
+  "midterm exam" : "Examen parcial",
+
+  "save" : "Save",
+  "cancel" : "Cancel"
 
 }
