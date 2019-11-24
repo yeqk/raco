@@ -53,6 +53,11 @@
 
   "start_date" : "Fecha de inicio",
   "end_date" : "Fecha de finalización",
+  "start" : "Inicio",
+  "end"   : "Fin",
 
-  "empty_field_error": "This field can't be empty"
+  "empty_field_error": "This field can't be empty",
+
+  "edit" : "Editar",
+  "delete" : "Borrar"
 }

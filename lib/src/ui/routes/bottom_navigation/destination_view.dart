@@ -235,7 +235,7 @@ class _DestinationViewState extends State<DestinationView> {
                                       formatter.parse(_endDateController.text);
                                   DateFormat customFormat =
                                       DateFormat('yyyy-M-dTH:m:s');
-                                  Dme().customEvents.results.add(CustomEvent(
+                                  Dme().customEvents.results.add(CustomEvent(DateTime.now().toIso8601String(),
                                       _titleController.text,
                                       _descriptionController.text,
                                       customFormat.format(ini),

@@ -24,6 +24,7 @@ Map<String, dynamic> _$CustomEventsToJson(CustomEvents instance) =>
 
 CustomEvent _$CustomEventFromJson(Map<String, dynamic> json) {
   return CustomEvent(
+    json['id'] as String,
     json['title'] as String,
     json['description'] as String,
     json['inici'] as String,
@@ -33,6 +34,7 @@ CustomEvent _$CustomEventFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$CustomEventToJson(CustomEvent instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'title': instance.title,
       'description': instance.description,
       'inici': instance.inici,

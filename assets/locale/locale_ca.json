@@ -53,6 +53,11 @@
 
   "start_date" : "Data d'inici",
   "end_date" : "Data de finalització",
+  "start" : "Inici",
+  "end"   : "Fi",
 
-  "empty_field_error": "Aquest camp no pot estar buit"
+  "empty_field_error": "Aquest camp no pot estar buit",
+
+  "edit" : "Editar",
+  "delete" : "Esborrar"
 }

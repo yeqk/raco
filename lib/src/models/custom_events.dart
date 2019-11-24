@@ -17,13 +17,14 @@ class CustomEvents {
 
 @JsonSerializable()
 class CustomEvent {
+  String id;
   String title;
   String description;
   String inici;
   String fi;
 
 
-  CustomEvent(this.title, this.description, this.inici, this.fi);
+  CustomEvent(this.id, this.title, this.description, this.inici, this.fi);
 
   factory CustomEvent.fromJson(Map<String, dynamic> json) =>
       _$CustomEventFromJson(json);
