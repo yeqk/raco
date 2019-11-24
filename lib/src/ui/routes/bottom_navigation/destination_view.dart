@@ -9,11 +9,11 @@ import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/models/custom_events.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/ui/routes/bottom_navigation/destination.dart';
+import 'package:raco/src/ui/routes/bottom_navigation/events_view.dart';
 import 'package:raco/src/ui/routes/bottom_navigation/schedule.dart';
 import 'package:raco/src/ui/routes/drawer_menu/drawer_menu.dart';
 import 'package:raco/src/utils/file_names.dart';
 import 'package:raco/src/utils/read_write_file.dart';
-import 'events.dart';
 import 'news.dart';
 import 'notices.dart';
 import 'package:intl/intl.dart';
@@ -313,7 +313,7 @@ class _DestinationViewState extends State<DestinationView> {
       return Notices();
     } else if (widget.destination.index == 2) {
       //events
-      return Events();
+      return EventsView();
     } else if (widget.destination.index == 3) {
       //news
       return News();
