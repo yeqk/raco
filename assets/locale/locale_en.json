@@ -49,6 +49,11 @@
   "midterm exam" : "Examen parcial",
 
   "save" : "Save",
-  "cancel" : "Cancel"
+  "cancel" : "Cancel",
+
+  "start_date" : "Start date",
+  "end_date" : "End date",
+
+  "empty_field_error": "Este campo no puede estar vacio"
 
 }

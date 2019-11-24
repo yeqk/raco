@@ -8,6 +8,7 @@ import 'package:flutter/gestures.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:raco/src/blocs/loading_text/loading_text.dart';
 import 'package:raco/src/data/dme.dart';
+import 'package:raco/src/models/custom_events.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/resources/user_repository.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
@@ -141,7 +142,7 @@ class AuthenticationBloc
           await ReadWriteFile().readStringFromFile(FileNames.ASSIGNATURA_GUIA);
       if (assigGuiaString != 'null') {
         AssignaturaGuia assigGuia =
-        AssignaturaGuia.fromJson(jsonDecode(assigGuiaString));
+            AssignaturaGuia.fromJson(jsonDecode(assigGuiaString));
         dme.assigGuia[a.id] = assigGuia;
       }
     }
@@ -163,6 +164,10 @@ class AuthenticationBloc
     String a5Path = directory.path + '/' + FileNames.A5;
     String b5Path = directory.path + '/' + FileNames.B5;
     String c6Path = directory.path + '/' + FileNames.C6;
+
+    //Load custom events
+    Dme().customEvents = CustomEvents.fromJson(jsonDecode(
+        await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_EVENTS)));
   }
 
   Future<void> _downloadData() async {
@@ -267,6 +272,12 @@ class AuthenticationBloc
     await rr.getImageA5();
     await rr.getImageB5();
     await rr.getImageC6();
+
+    //Custom events
+    List<CustomEvent> customEventList = new List<CustomEvent>();
+    Dme().customEvents = CustomEvents(0, customEventList);
+    await ReadWriteFile().writeStringToFile(
+        FileNames.CUSTOM_EVENTS, jsonEncode(Dme().customEvents));
   }
 
   void _fillSchedule(Classes classes) {

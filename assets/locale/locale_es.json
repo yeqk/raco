@@ -49,5 +49,10 @@
   "midterm exam" : "Midterm exam",
 
   "save" : "Guardar",
-  "cancel" : "Cancelar"
+  "cancel" : "Cancelar",
+
+  "start_date" : "Fecha de inicio",
+  "end_date" : "Fecha de finalización",
+
+  "empty_field_error": "This field can't be empty"
 }

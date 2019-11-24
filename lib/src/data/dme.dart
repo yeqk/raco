@@ -1,6 +1,7 @@
 import 'package:raco/src/models/assignatura_guia.dart';
 import 'package:raco/src/models/assignatures.dart';
 import 'package:raco/src/models/classes.dart';
+import 'package:raco/src/models/custom_events.dart';
 import 'package:raco/src/models/models.dart';
 
 class Dme {
@@ -29,5 +30,8 @@ class Dme {
   Noticies noticies;
   Examens examens;
   ExamensLaboratori labExams;
+
+
+  CustomEvents customEvents;
 
 }
