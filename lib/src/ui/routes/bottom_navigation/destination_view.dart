@@ -242,6 +242,9 @@ class _DestinationViewState extends State<DestinationView> {
                                       customFormat.format(fiT)));
                                   await ReadWriteFile().writeStringToFile(
                                       FileNames.CUSTOM_EVENTS, jsonEncode(Dme().customEvents));
+                                  setState(() {
+
+                                  });
                                   Navigator.of(context).pop();
 
                                 }
