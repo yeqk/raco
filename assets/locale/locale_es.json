@@ -59,5 +59,7 @@
   "empty_field_error": "This field can't be empty",
 
   "edit" : "Editar",
-  "delete" : "Borrar"
+  "delete" : "Borrar",
+
+  "today" : "Hoy"
 }

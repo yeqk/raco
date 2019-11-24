@@ -155,47 +155,31 @@ class EventsViewState extends State<EventsView>
     List<Widget> resultList = new List();
     for(EventItem i in itemsList) {
       if (i.isCustom) {
-        resultList.add(Column(
-          children: <Widget>[
-            FittedBox(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(i.title + '11111111asdfsdghsdfgfsad11', style: TextStyle(
-                      fontWeight: FontWeight.bold
-                  ),),
-                  _simplePopup(i, setState ,itemsList)
-                ],
-              ),
-            )
-          ],
-        ));
+        resultList.add(Row(children: <Widget>[
+          Expanded(child: Text(i.title,style: TextStyle(
+              fontWeight: FontWeight.bold
+          ),overflow: TextOverflow.visible,)),
+          _simplePopup(i, setState ,itemsList)
+        ],));
       } else if (i.examId != null) {
         Examen examen =
         Dme().examens.results.firstWhere((e) => e.id == i.examId);
         resultList.add(
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              FittedBox(child:
-              Text(_examString(examen), style: TextStyle(
-                  fontWeight: FontWeight.bold
-              ),)),
-            ],
-          )
+          Row(children: <Widget>[
+            Expanded(child: Text(_examString(examen), style: TextStyle(
+                fontWeight: FontWeight.bold
+            ),),)
+          ],)
         );
       } else if (i.title != null) {
         resultList.add(
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              FittedBox(
-                child: Text(i.title,style: TextStyle(
-                    fontWeight: FontWeight.bold
-                ),)
-              )
-            ],
-          )
+          Row(children: <Widget>[
+            Expanded(
+              child: Text(i.title,overflow: TextOverflow.visible,style: TextStyle(
+                  fontWeight: FontWeight.bold
+              ),),
+            )
+          ],)
         );
       } else {
         resultList.add(Text('ERROR'));
@@ -276,7 +260,14 @@ class EventsViewState extends State<EventsView>
 
   List<Widget> _textItems(String kDate, List<EventItem> items) {
     List<Widget> resultList = new List();
-    resultList.add(Text(eventTimeFormatter.format(dateFormat.parse(kDate))));
+    if (eventTimeFormatter.format(DateTime.now()) == eventTimeFormatter.format(dateFormat.parse(kDate))) {
+      resultList.add(Text(allTranslations.text('today') + ' ' +eventTimeFormatter.format(dateFormat.parse(kDate)), style: TextStyle(
+        fontWeight: FontWeight.bold
+      ),));
+    } else {
+      resultList.add(Text(eventTimeFormatter.format(dateFormat.parse(kDate))));
+    }
+
     resultList.add(Divider(
       thickness: ScreenUtil().setSp(3),
     ));

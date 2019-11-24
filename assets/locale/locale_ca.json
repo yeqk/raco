@@ -59,5 +59,7 @@
   "empty_field_error": "Aquest camp no pot estar buit",
 
   "edit" : "Editar",
-  "delete" : "Esborrar"
+  "delete" : "Esborrar",
+
+  "today" : "Avui"
 }

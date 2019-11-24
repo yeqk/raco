@@ -59,6 +59,8 @@
   "empty_field_error": "Este campo no puede estar vacio",
 
   "edit" : "Edit",
-  "delete" : "Delete"
+  "delete" : "Delete",
+
+  "today" : "Today"
 
 }
