@@ -33,18 +33,18 @@ class _DestinationViewState extends State<DestinationView> {
   TextEditingController _descriptionController;
   TextEditingController _startDateController;
   TextEditingController _endDateController;
-  DateFormat formatter;
+  DateFormat _formatter;
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
-    formatter = DateFormat.yMd(allTranslations.currentLanguage).add_Hm();
+    _formatter = DateFormat.yMd(allTranslations.currentLanguage).add_Hm();
     _titleController = TextEditingController();
     _descriptionController = TextEditingController();
     _startDateController = TextEditingController();
-    _startDateController.text = formatter.format(DateTime.now());
+    _startDateController.text = _formatter.format(DateTime.now());
     _endDateController = TextEditingController();
-    _endDateController.text = formatter.format(DateTime.now());
+    _endDateController.text = _formatter.format(DateTime.now());
 
     super.initState();
   }
@@ -228,13 +228,13 @@ class _DestinationViewState extends State<DestinationView> {
                                       new BorderRadius.circular(30.0)),
                               onPressed: () async {
                                 if (_formKey.currentState.validate()) {
-                                  Dme().customEvents.count *= 1;
-                                  DateTime ini = formatter
+                                  Dme().customEvents.count += 1;
+                                  DateTime ini = _formatter
                                       .parse(_startDateController.text);
                                   DateTime fiT =
-                                      formatter.parse(_endDateController.text);
+                                  _formatter.parse(_endDateController.text);
                                   DateFormat customFormat =
-                                      DateFormat('yyyy-M-dTH:m:s');
+                                      DateFormat('yyyy-MM-ddTHH:mm:ss');
                                   Dme().customEvents.results.add(CustomEvent(DateTime.now().toIso8601String(),
                                       _titleController.text,
                                       _descriptionController.text,
@@ -261,17 +261,17 @@ class _DestinationViewState extends State<DestinationView> {
         showTitleActions: true,
         minTime: DateTime.now(),
         maxTime: DateTime.now().add(Duration(days: 730)), onChanged: (date) {
-      if (date.isAfter(formatter.parse(_endDateController.text))) {
-        _endDateController.text = formatter.format(date);
+      if (date.isAfter(_formatter.parse(_endDateController.text))) {
+        _endDateController.text = _formatter.format(date);
       }
-      _startDateController.text = formatter.format(date);
+      _startDateController.text = _formatter.format(date);
     }, onConfirm: (date) {
-      if (date.isAfter(formatter.parse(_endDateController.text))) {
-        _endDateController.text = formatter.format(date);
+      if (date.isAfter(_formatter.parse(_endDateController.text))) {
+        _endDateController.text = _formatter.format(date);
       }
-      _startDateController.text = formatter.format(date);
+      _startDateController.text = _formatter.format(date);
     },
-        currentTime: formatter
+        currentTime: _formatter
             .parse(_startDateController.text)
             .add(Duration(minutes: 1)),
         locale: LocaleType.ca);
@@ -282,18 +282,18 @@ class _DestinationViewState extends State<DestinationView> {
         showTitleActions: true,
         minTime: DateTime.now(),
         maxTime: DateTime.now().add(Duration(days: 730)), onChanged: (date) {
-      if (date.isBefore(formatter.parse(_startDateController.text))) {
-        _startDateController.text = formatter.format(date);
+      if (date.isBefore(_formatter.parse(_startDateController.text))) {
+        _startDateController.text = _formatter.format(date);
       }
-      _endDateController.text = formatter.format(date);
+      _endDateController.text = _formatter.format(date);
     }, onConfirm: (date) {
-      if (date.isBefore(formatter.parse(_startDateController.text))) {
-        _startDateController.text = formatter.format(date);
+      if (date.isBefore(_formatter.parse(_startDateController.text))) {
+        _startDateController.text = _formatter.format(date);
       }
-      _endDateController.text = formatter.format(date);
+      _endDateController.text = _formatter.format(date);
     },
         currentTime:
-            formatter.parse(_endDateController.text).add(Duration(minutes: 1)),
+        _formatter.parse(_endDateController.text).add(Duration(minutes: 1)),
         locale: LocaleType.ca);
   }
 

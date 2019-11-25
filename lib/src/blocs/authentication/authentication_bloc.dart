@@ -19,11 +19,11 @@ import 'package:flutter/painting.dart';
 import 'package:raco/src/utils/file_names.dart';
 import 'package:raco/src/utils/read_write_file.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final LoadingTextBloc loadingTextBloc;
-
   AuthenticationBloc({
     @required this.loadingTextBloc,
   }) : assert(loadingTextBloc != null);
@@ -168,6 +168,17 @@ class AuthenticationBloc
     //Load custom events
     Dme().customEvents = CustomEvents.fromJson(jsonDecode(
         await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_EVENTS)));
+    for (CustomEvent e in Dme().customEvents.results) {
+      DateTime fie = DateTime.parse(e.fi);
+      if (fie.isBefore(DateTime.now())) {
+        Dme().customEvents.results.removeWhere((i) {
+          return i.id == e.id;
+        });
+        Dme().customEvents.count -=1;
+      }
+    }
+    await ReadWriteFile().writeStringToFile(
+        FileNames.CUSTOM_EVENTS, jsonEncode(Dme().customEvents));
   }
 
   Future<void> _downloadData() async {

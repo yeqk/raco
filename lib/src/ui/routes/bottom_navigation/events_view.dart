@@ -32,22 +32,34 @@ class EventsView extends StatefulWidget {
 class EventsViewState extends State<EventsView>
     with SingleTickerProviderStateMixin {
   RefreshController _refreshController;
-  DateTime now;
-  DateTime later;
   DateFormat parser;
   DateFormat eventTimeFormatter;
   DateFormat dateFormat;
   DateFormat dateFormatWithHour;
 
+  TextEditingController _titleController;
+  TextEditingController _descriptionController;
+  TextEditingController _startDateController;
+  TextEditingController _endDateController;
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     dateFormat = DateFormat.yMd(allTranslations.currentLanguage);
-    dateFormatWithHour = DateFormat.yMd(allTranslations.currentLanguage).add_Hm();
+    dateFormatWithHour =
+        DateFormat.yMd(allTranslations.currentLanguage).add_Hm();
     eventTimeFormatter = DateFormat.yMMMMd(allTranslations.currentLanguage);
-    parser = DateFormat('yyyy-M-dTH:m:s');
-    now = DateTime.now();
-    later = now.add(Duration(days: 90));
+    parser = DateFormat('yyyy-MM-ddTHH:mm:ss');
+
     _refreshController = RefreshController(initialRefresh: false);
+
+    _titleController = TextEditingController();
+    _descriptionController = TextEditingController();
+    _startDateController = TextEditingController();
+    _startDateController.text = dateFormatWithHour.format(DateTime.now());
+    _endDateController = TextEditingController();
+    _endDateController.text = dateFormatWithHour.format(DateTime.now());
+
     super.initState();
   }
 
@@ -105,14 +117,14 @@ class EventsViewState extends State<EventsView>
       DateFormat.yMMMMd(allTranslations.currentLanguage);
       lista.add(Card(
         child: InkWell(
-          onTap: () => _onTap(kDate, itemMap[kDate]),
+            onTap: () => _onTap(kDate, itemMap[kDate]),
             child: Container(
-          padding: EdgeInsets.all(ScreenUtil().setWidth(5)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: _textItems(kDate, itemMap[kDate]),
-          ),
-        )),
+              padding: EdgeInsets.all(ScreenUtil().setWidth(5)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: _textItems(kDate, itemMap[kDate]),
+              ),
+            )),
       ));
     }
     return lista;
@@ -135,12 +147,18 @@ class EventsViewState extends State<EventsView>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         FittedBox(
-                          child: Text(eventTimeFormatter.format(dateFormat.parse(kDate)), style: TextStyle(fontWeight: FontWeight.bold),),
+                          child: Text(
+                            eventTimeFormatter.format(dateFormat.parse(kDate)),
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ),
-                        Divider(thickness: ScreenUtil().setSp(5),),
+                        Divider(
+                          thickness: ScreenUtil().setSp(5),
+                        ),
                         Expanded(
                           child: ListView(
-                            children: _itemsExpanded(itemsList, setState),
+                            children:
+                                _itemsExpanded(itemsList, setState, kDate),
                           ),
                         ),
                       ],
@@ -151,36 +169,47 @@ class EventsViewState extends State<EventsView>
         });
   }
 
-  List<Widget> _itemsExpanded(List<EventItem> itemsList, StateSetter setState) {
+  List<Widget> _itemsExpanded(
+      List<EventItem> itemsList, StateSetter setState, String kDate) {
     List<Widget> resultList = new List();
-    for(EventItem i in itemsList) {
+    for (EventItem i in itemsList) {
       if (i.isCustom) {
-        resultList.add(Row(children: <Widget>[
-          Expanded(child: Text(i.title,style: TextStyle(
-              fontWeight: FontWeight.bold
-          ),overflow: TextOverflow.visible,)),
-          _simplePopup(i, setState ,itemsList)
-        ],));
+        resultList.add(Row(
+          children: <Widget>[
+            Expanded(
+                child: Text(
+              i.title,
+              style: TextStyle(fontWeight: FontWeight.bold),
+              overflow: TextOverflow.visible,
+            )),
+            _simplePopup(i, setState, itemsList, kDate)
+          ],
+        ));
       } else if (i.examId != null) {
         Examen examen =
-        Dme().examens.results.firstWhere((e) => e.id == i.examId);
-        resultList.add(
-          Row(children: <Widget>[
-            Expanded(child: Text(_examString(examen), style: TextStyle(
-                fontWeight: FontWeight.bold
-            ),),)
-          ],)
-        );
-      } else if (i.title != null) {
-        resultList.add(
-          Row(children: <Widget>[
+            Dme().examens.results.firstWhere((e) => e.id == i.examId);
+        resultList.add(Row(
+          children: <Widget>[
             Expanded(
-              child: Text(i.title,overflow: TextOverflow.visible,style: TextStyle(
-                  fontWeight: FontWeight.bold
-              ),),
+              child: Text(
+                _examString(examen),
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             )
-          ],)
-        );
+          ],
+        ));
+      } else if (i.title != null) {
+        resultList.add(Row(
+          children: <Widget>[
+            Expanded(
+              child: Text(
+                i.title,
+                overflow: TextOverflow.visible,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            )
+          ],
+        ));
       } else {
         resultList.add(Text('ERROR'));
       }
@@ -188,9 +217,14 @@ class EventsViewState extends State<EventsView>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           FittedBox(
-            child: Text(allTranslations.text('start') + ': ' + dateFormatWithHour.format(parser.parse(i.inici)),style: TextStyle(
-              fontStyle: FontStyle.italic,
-            ),),
+            child: Text(
+              allTranslations.text('start') +
+                  ': ' +
+                  dateFormatWithHour.format(parser.parse(i.inici)),
+              style: TextStyle(
+                fontStyle: FontStyle.italic,
+              ),
+            ),
           ),
         ],
       ));
@@ -198,9 +232,14 @@ class EventsViewState extends State<EventsView>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           FittedBox(
-            child: Text(allTranslations.text('end') + ': ' + dateFormatWithHour.format(parser.parse(i.fi)), style: TextStyle(
-              fontStyle: FontStyle.italic,
-            ),),
+            child: Text(
+              allTranslations.text('end') +
+                  ': ' +
+                  dateFormatWithHour.format(parser.parse(i.fi)),
+              style: TextStyle(
+                fontStyle: FontStyle.italic,
+              ),
+            ),
           )
         ],
       ));
@@ -219,51 +258,302 @@ class EventsViewState extends State<EventsView>
     return resultList;
   }
 
-  Widget _simplePopup(EventItem item, StateSetter po,List<EventItem> li) => PopupMenuButton<int>(
-    itemBuilder: (context) => [
-      PopupMenuItem(
-        value: 1,
-        child: Row(children: <Widget>[
-          Icon(Icons.edit),
-          SizedBox(width: ScreenUtil().setWidth(10),),
-          Text(allTranslations.text('edit'))
+  Widget _simplePopup(
+          EventItem item, StateSetter po, List<EventItem> li, String kDate) =>
+      PopupMenuButton<int>(
+        itemBuilder: (context) => [
+          PopupMenuItem(
+            value: 1,
+            child: Row(
+              children: <Widget>[
+                Icon(Icons.edit),
+                SizedBox(
+                  width: ScreenUtil().setWidth(10),
+                ),
+                Text(allTranslations.text('edit'))
+              ],
+            ),
+          ),
+          PopupMenuItem(
+            value: 2,
+            child: Row(
+              children: <Widget>[
+                Icon(Icons.delete),
+                SizedBox(
+                  width: ScreenUtil().setWidth(10),
+                ),
+                Text(allTranslations.text('delete'))
+              ],
+            ),
+          ),
+        ],
+        onSelected: (value) async {
+          if (value == 2) {
+            Dme().customEvents.results.removeWhere((i) {
+              return i.id == item.customId;
+            });
+            Dme().customEvents.count -= 1;
+            await ReadWriteFile().writeStringToFile(
+                FileNames.CUSTOM_EVENTS, jsonEncode(Dme().customEvents));
+            li.removeWhere((i) {
+              return i.customId == item.customId;
+            });
+            po(() {});
+            setState(() {});
+          } else if (value == 1) {
+            _buttonPressed(item, li, kDate, po);
+          }
+        },
+      );
 
-        ],),
-      ),
-      PopupMenuItem(
-        value: 2,
-        child: Row(children: <Widget>[
-          Icon(Icons.delete),
-          SizedBox(width: ScreenUtil().setWidth(10),),
-          Text(allTranslations.text('delete'))
+  void _buttonPressed(
+      EventItem item, List<EventItem> li, String kDate, StateSetter po) {
+    _titleController.text = item.title;
+    _descriptionController.text = item.description;
+    _startDateController.text =
+        dateFormatWithHour.format(parser.parse(item.inici));
+    _endDateController.text = dateFormatWithHour.format(parser.parse(item.fi));
 
-        ],),
-      ),
-    ],
-    onSelected: (value) async{
-      if(value == 2) {
-        Dme().customEvents.results.removeWhere((i) {
-          return i.id == item.customId;
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            content: Container(
+                height: MediaQuery.of(context).size.height / 1.5,
+                width: MediaQuery.of(context).size.width / 1.5,
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      child: ListView(
+                        children: <Widget>[
+                          Form(
+                            key: _formKey,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                new TextFormField(
+                                  controller: _titleController,
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return allTranslations
+                                          .text('empty_field_error');
+                                    }
+                                    return null;
+                                  },
+                                  decoration: new InputDecoration(
+                                    labelText: "Title",
+                                    fillColor: Colors.white,
+                                    border: new OutlineInputBorder(
+                                      borderRadius:
+                                          new BorderRadius.circular(20.0),
+                                      borderSide: new BorderSide(),
+                                    ),
+                                    //fillColor: Colors.green
+                                  ),
+                                  keyboardType: TextInputType.text,
+                                ),
+                                SizedBox(
+                                  height: ScreenUtil().setHeight(10),
+                                ),
+                                new TextFormField(
+                                  controller: _descriptionController,
+                                  maxLines: 3,
+                                  maxLength: 320,
+                                  decoration: new InputDecoration(
+                                    labelText: "Description",
+                                    fillColor: Colors.white,
+                                    border: new OutlineInputBorder(
+                                      borderRadius:
+                                          new BorderRadius.circular(20.0),
+                                      borderSide: new BorderSide(),
+                                    ),
+                                    //fillColor: Colors.green
+                                  ),
+                                  keyboardType: TextInputType.multiline,
+                                ),
+                                SizedBox(
+                                  height: ScreenUtil().setHeight(10),
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    _selectStartDate(); // Call Function that has showDatePicker()
+                                  },
+                                  child: IgnorePointer(
+                                    child: new TextFormField(
+                                      controller: _startDateController,
+                                      decoration: new InputDecoration(
+                                        labelText:
+                                            allTranslations.text('start_date'),
+                                        fillColor: Colors.white,
+                                        border: new OutlineInputBorder(
+                                          borderRadius:
+                                              new BorderRadius.circular(20.0),
+                                          borderSide: new BorderSide(),
+                                        ),
+                                      ),
+                                      // validator: validateDob,
+                                      onSaved: (String val) {},
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: ScreenUtil().setHeight(10),
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    _selectEndDate(); // Call Function that has showDatePicker()
+                                  },
+                                  child: IgnorePointer(
+                                    child: new TextFormField(
+                                      controller: _endDateController,
+                                      decoration: new InputDecoration(
+                                        labelText:
+                                            allTranslations.text('end_date'),
+                                        fillColor: Colors.white,
+                                        border: new OutlineInputBorder(
+                                          borderRadius:
+                                              new BorderRadius.circular(20.0),
+                                          borderSide: new BorderSide(),
+                                        ),
+                                      ),
+                                      // validator: validateDob,
+                                      onSaved: (String val) {},
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: ScreenUtil().setHeight(10),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          OutlineButton(
+                              child: Text(allTranslations.text('cancel')),
+                              shape: new RoundedRectangleBorder(
+                                  borderRadius:
+                                      new BorderRadius.circular(30.0)),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              }),
+                          OutlineButton(
+                              child: Text(allTranslations.text('save')),
+                              shape: new RoundedRectangleBorder(
+                                  borderRadius:
+                                      new BorderRadius.circular(30.0)),
+                              onPressed: () async {
+                                if (_formKey.currentState.validate()) {
+                                  DateTime ini = dateFormatWithHour
+                                      .parse(_startDateController.text);
+                                  DateTime fiT = dateFormatWithHour
+                                      .parse(_endDateController.text);
+                                  Dme().customEvents.results.removeWhere((i) {
+                                    return i.id == item.customId;
+                                  });
+                                  li.removeWhere((i) {
+                                    return i.customId == item.customId;
+                                  });
+                                  String customId =
+                                      DateTime.now().toIso8601String();
+
+                                  Dme().customEvents.results.add(CustomEvent(
+                                      customId,
+                                      _titleController.text,
+                                      _descriptionController.text,
+                                      parser.format(ini),
+                                      parser.format(fiT)));
+                                  await ReadWriteFile().writeStringToFile(
+                                      FileNames.CUSTOM_EVENTS,
+                                      jsonEncode(Dme().customEvents));
+                                  DateTime groupTime = dateFormat.parse(kDate);
+
+                                  if (groupTime.year >= ini.year &&
+                                      groupTime.year <= fiT.year &&
+                                      groupTime.month >= ini.month &&
+                                      groupTime.month <= fiT.month &&
+                                      groupTime.day >= ini.day &&
+                                      groupTime.day <= fiT.day) {
+                                    li.add(EventItem.custom(
+                                        _titleController.text,
+                                        _descriptionController.text,
+                                        parser.format(ini),
+                                        parser.format(fiT),
+                                        kDate,
+                                        customId));
+                                  }
+
+                                  po(() {});
+                                  setState(() {});
+                                  Navigator.of(context).pop();
+                                }
+                              })
+                        ])
+                  ],
+                )),
+          );
         });
-        await ReadWriteFile().writeStringToFile(
-            FileNames.CUSTOM_EVENTS, jsonEncode(Dme().customEvents));
-        li.removeWhere((i) {
-          return i.customId == item.customId;
-        });
-        po(() {
-        });
-        setState(() {
-        });
+  }
+
+  void _selectStartDate() async {
+    DatePicker.showDateTimePicker(context,
+        showTitleActions: true,
+        minTime: DateTime.now(),
+        maxTime: DateTime.now().add(Duration(days: 730)), onChanged: (date) {
+      if (date.isAfter(dateFormatWithHour.parse(_endDateController.text))) {
+        _endDateController.text = dateFormatWithHour.format(date);
       }
+      _startDateController.text = dateFormatWithHour.format(date);
+    }, onConfirm: (date) {
+      if (date.isAfter(dateFormatWithHour.parse(_endDateController.text))) {
+        _endDateController.text = dateFormatWithHour.format(date);
+      }
+      _startDateController.text = dateFormatWithHour.format(date);
     },
-  );
+        currentTime: dateFormatWithHour
+            .parse(_startDateController.text)
+            .add(Duration(minutes: 1)),
+        locale: LocaleType.ca);
+  }
+
+  void _selectEndDate() async {
+    DatePicker.showDateTimePicker(context,
+        showTitleActions: true,
+        minTime: DateTime.now(),
+        maxTime: DateTime.now().add(Duration(days: 730)), onChanged: (date) {
+      if (date.isBefore(dateFormatWithHour.parse(_startDateController.text))) {
+        _startDateController.text = dateFormatWithHour.format(date);
+      }
+      _endDateController.text = dateFormatWithHour.format(date);
+    }, onConfirm: (date) {
+      if (date.isBefore(dateFormatWithHour.parse(_startDateController.text))) {
+        _startDateController.text = dateFormatWithHour.format(date);
+      }
+      _endDateController.text = dateFormatWithHour.format(date);
+    },
+        currentTime: dateFormatWithHour
+            .parse(_endDateController.text)
+            .add(Duration(minutes: 1)),
+        locale: LocaleType.ca);
+  }
 
   List<Widget> _textItems(String kDate, List<EventItem> items) {
     List<Widget> resultList = new List();
-    if (eventTimeFormatter.format(DateTime.now()) == eventTimeFormatter.format(dateFormat.parse(kDate))) {
-      resultList.add(Text(allTranslations.text('today') + ' ' +eventTimeFormatter.format(dateFormat.parse(kDate)), style: TextStyle(
-        fontWeight: FontWeight.bold
-      ),));
+    if (eventTimeFormatter.format(DateTime.now()) ==
+        eventTimeFormatter.format(dateFormat.parse(kDate))) {
+      resultList.add(Text(
+        allTranslations.text('today') +
+            ' ' +
+            eventTimeFormatter.format(dateFormat.parse(kDate)),
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ));
     } else {
       resultList.add(Text(eventTimeFormatter.format(dateFormat.parse(kDate))));
     }
@@ -368,10 +658,14 @@ class EventsViewState extends State<EventsView>
   }
 
   List<EventItem> _createEventItemList() {
+    DateTime now = DateTime.now();
+    String exactDayNow = dateFormat.format(now);
+    DateTime exactTimeInDayNow = dateFormat.parse(exactDayNow);
+
     List<EventItem> resultList = new List();
     for (Event e in Dme().events.results) {
       DateTime fiTime = parser.parse(e.fi);
-      if (fiTime.isAfter(now) &&
+      if (fiTime.isAfter(DateTime.now()) &&
           (e.nom == 'FESTIU' ||
               e.nom == 'VACANCES' ||
               e.nom == 'FESTA FIB' ||
@@ -380,8 +674,14 @@ class EventsViewState extends State<EventsView>
         int difference = fiTime.difference(iniTime).inDays;
         for (int i = 0; i <= difference; i++) {
           DateTime iniciTime = iniTime.add(Duration(days: i));
-          resultList.add(
-              EventItem(e.nom, e.inici, e.fi, dateFormat.format(iniciTime)));
+          String exactDay = dateFormat.format(iniciTime);
+          DateTime exactTimeInDay = dateFormat.parse(exactDay);
+          if (exactTimeInDay
+              .add(Duration(days: 1))
+              .isAfter(exactTimeInDayNow)) {
+            resultList.add(
+                EventItem(e.nom, e.inici, e.fi, dateFormat.format(iniciTime)));
+          }
         }
       }
     }
@@ -391,11 +691,20 @@ class EventsViewState extends State<EventsView>
         if (exam.assig == a.sigles) {
           DateTime eTime = parser.parse(exam.inici);
           DateTime fiTime = parser.parse(exam.fi);
-          int difference = fiTime.difference(eTime).inDays;
-          for (int i = 0; i <= difference; i++) {
-            DateTime iniciTime = eTime.add(Duration(days: i));
-            resultList.add(EventItem.exam(
-                exam.id, exam.inici, exam.fi, dateFormat.format(iniciTime)));
+          if (fiTime.isAfter(DateTime.now())) {
+            int difference = fiTime.difference(eTime).inDays;
+            for (int i = 0; i <= difference; i++) {
+              DateTime iniciTime = eTime.add(Duration(days: i));
+              String exactDay = dateFormat.format(iniciTime);
+              DateTime exactTimeInDay = dateFormat.parse(exactDay);
+
+              if (exactTimeInDay
+                  .add(Duration(days: 1))
+                  .isAfter(exactTimeInDayNow)) {
+                resultList.add(EventItem.exam(exam.id, exam.inici, exam.fi,
+                    dateFormat.format(iniciTime)));
+              }
+            }
           }
         }
       }
@@ -404,20 +713,26 @@ class EventsViewState extends State<EventsView>
     for (CustomEvent ce in Dme().customEvents.results) {
       DateTime eTime = parser.parse(ce.inici);
       DateTime fiTime = parser.parse(ce.fi);
-
-      int difference = fiTime.difference(eTime).inDays;
-      if (fiTime.hour < eTime.hour) {
-        difference++;
-      } else if (fiTime.hour == eTime.hour && fiTime.minute < eTime.minute) {
-        difference++;
+      if (fiTime.isAfter(DateTime.now())) {
+        int difference = fiTime.difference(eTime).inDays;
+        if (fiTime.hour < eTime.hour) {
+          difference++;
+        } else if (fiTime.hour == eTime.hour && fiTime.minute < eTime.minute) {
+          difference++;
+        }
+        for (int i = 0; i <= difference; i++) {
+          DateTime iniciTime = eTime.add(Duration(days: i));
+          String exactDay = dateFormat.format(iniciTime);
+          DateTime exactTimeInDay = dateFormat.parse(exactDay);
+          if (exactTimeInDay
+              .add(Duration(days: 1))
+              .isAfter(exactTimeInDayNow)) {
+            resultList.add(EventItem.custom(ce.title, ce.description, ce.inici,
+                ce.fi, dateFormat.format(iniciTime), ce.id));
+          }
+        }
       }
-      for (int i = 0; i <= difference; i++) {
-        DateTime iniciTime = eTime.add(Duration(days: i));
-        resultList.add(EventItem.custom(ce.title, ce.description, ce.inici,
-            ce.fi, dateFormat.format(iniciTime), ce.id));
-        print('Eventaddesd: ' + ce.id);
-      }
-  }
+    }
 
     resultList.sort((a, b) {
       DateTime ta = dateFormat.parse(a.data);
@@ -429,7 +744,7 @@ class EventsViewState extends State<EventsView>
   }
 
   String _examString(Examen examen) {
-    String examString =  '[' + examen.pla + '-' + examen.assig + '] ';
+    String examString = '[' + examen.pla + '-' + examen.assig + '] ';
     if (examen.tipus == 'F') {
       examString += allTranslations.text('final_exam');
     } else {
@@ -454,10 +769,10 @@ class EventItem {
 
   EventItem(this.title, this.inici, this.fi, this.data);
   EventItem.exam(this.examId, this.inici, this.fi, this.data);
-  EventItem.custom(this.title, this.description, this.inici, this.fi, this.data, this.customId)
+  EventItem.custom(this.title, this.description, this.inici, this.fi, this.data,
+      this.customId)
       : this.isCustom = true;
 }
-
 
 class CustomDialog extends StatefulWidget {
   @override
@@ -472,5 +787,4 @@ class CustomDialogState extends State<CustomDialog> {
     // TODO: implement build
     return null;
   }
-
 }
