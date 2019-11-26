@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
@@ -23,7 +24,53 @@ class DrawerMenu extends Drawer {
 
     _onSignOutPressed() {
       Navigator.of(context).pop();
-      authenticationBloc.dispatch(LoggedOutEvent());
+      if (Platform.isAndroid) {
+        showCupertinoDialog(context: context, builder: (BuildContext context) {
+          return new CupertinoAlertDialog(
+            title: new Text(allTranslations.text('signout')),
+            content: new Text(allTranslations.text('signout_message')),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                child: Text(allTranslations.text('cancel')),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              CupertinoDialogAction(
+                child: Text(allTranslations.text('accept')),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  authenticationBloc.dispatch(LoggedOutEvent());
+                },
+              )
+            ],
+          );
+        });
+      } else {
+        showDialog(context: context,
+        builder: (BuildContext context) {
+          return new AlertDialog(
+            title: new Text(allTranslations.text('signout')),
+            content: new Text(allTranslations.text('signout_message')),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(allTranslations.text('cancel')),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text(allTranslations.text('accept')),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  authenticationBloc.dispatch(LoggedOutEvent());
+                },
+              ),
+            ],
+          );
+        });
+      }
     }
 
     _onSubjectsPressed() {

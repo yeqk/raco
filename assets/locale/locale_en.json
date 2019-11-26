@@ -18,6 +18,7 @@
   "feedback" : "Feedback",
   "configuration" : "Configuration",
   "signout"  : "Sign out",
+  "signout_message" : "Are you sure you want to logout? This will clear all your data on this device.",
 
   "mon" : "Mon.",
   "tue" : "Tue",
@@ -49,6 +50,7 @@
   "midterm exam" : "Examen parcial",
 
   "save" : "Save",
+  "accept" : "Accept",
   "cancel" : "Cancel",
 
   "start_date" : "Start date",

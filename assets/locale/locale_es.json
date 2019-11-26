@@ -18,6 +18,7 @@
   "feedback" : "Feedback",
   "configuration" : "Configuración",
   "signout"  : "Cerrar sesión",
+  "signout_message" : "¿Seguro que quieres cerrar sesión? Esto borrará todos sus datos en este dispositivo.",
 
   "mon" : "Lu.",
   "tue" : "Ma.",
@@ -49,6 +50,7 @@
   "midterm exam" : "Midterm exam",
 
   "save" : "Guardar",
+  "accept" : "Aceptar",
   "cancel" : "Cancelar",
 
   "start_date" : "Fecha de inicio",

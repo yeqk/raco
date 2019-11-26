@@ -18,6 +18,7 @@
   "feedback" : "Feedback",
   "configuration" : "Configuració",
   "signout"  : "Tancar sessió",
+  "signout_message" : "Estàs segur que vols tancar la sessió? S'esborraran totes les dades guardades en aquest dispositiu.",
 
   "mon" : "Dl.",
   "tue" : "Dt.",
@@ -49,6 +50,7 @@
   "midterm exam" : "Examen parcial",
 
   "save" : "Guardar",
+  "accept" : "Acceptar",
   "cancel" : "Cancel·lar",
 
   "start_date" : "Data d'inici",

@@ -53,6 +53,7 @@ class App extends StatelessWidget {
             locale: newLocale ?? allTranslations.locale,
             localizationsDelegates: [
               GlobalMaterialLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
             ],
             supportedLocales: allTranslations.supportedLocales(),
