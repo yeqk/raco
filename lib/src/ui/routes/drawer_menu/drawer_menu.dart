@@ -6,6 +6,12 @@ import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:flutter/services.dart';
+import 'package:raco/src/ui/routes/drawer_menu/subjects.dart';
+
+import 'configuration.dart';
+import 'exams.dart';
+import 'grades.dart';
+import 'labs.dart';
 
 class DrawerMenu extends Drawer {
   @override
@@ -18,6 +24,45 @@ class DrawerMenu extends Drawer {
     _onSignOutPressed() {
       Navigator.of(context).pop();
       authenticationBloc.dispatch(LoggedOutEvent());
+    }
+
+    _onSubjectsPressed() {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Subjects()),
+      );
+    }
+
+    _onExamsPressed() {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Exams()),
+      );
+    }
+
+    _onGradesPressed() {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Grades()),
+      );
+    }
+
+    _onLabsPressed() {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Labs()),
+      );
+    }
+
+    _onFeedBackPressed() {
+      print('feedback pressed');
+    }
+
+    _onConfigurationPressed() {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Configuration()),
+      );
     }
 
     String nom = Dme().nom + ' ' + Dme().cognoms;
@@ -36,12 +81,12 @@ class DrawerMenu extends Drawer {
                   backgroundImage: FileImage(File(Dme().imgPath)),
                 ),
               ),
-              _listTile(allTranslations.text('subjects'), new Icon(Icons.collections_bookmark), () => _onSignOutPressed()),
-              _listTile(allTranslations.text('exams'), new Icon(Icons.event_busy), () => _onSignOutPressed()),
-              _listTile(allTranslations.text('grades'), new Icon(Icons.grade), () => _onSignOutPressed()),
-              _listTile(allTranslations.text('labs'), new Icon(Icons.laptop), () => _onSignOutPressed()),
-              _listTile(allTranslations.text('feedback'), new Icon(Icons.feedback), () => _onSignOutPressed()),
-              _listTile(allTranslations.text('configuration'), new Icon(Icons.build), () => _onSignOutPressed()),
+              _listTile(allTranslations.text('subjects'), new Icon(Icons.collections_bookmark), () => _onSubjectsPressed()),
+              _listTile(allTranslations.text('exams'), new Icon(Icons.event_busy), () => _onExamsPressed()),
+              _listTile(allTranslations.text('grades'), new Icon(Icons.grade), () => _onGradesPressed()),
+              _listTile(allTranslations.text('labs'), new Icon(Icons.laptop), () => _onLabsPressed()),
+              _listTile(allTranslations.text('feedback'), new Icon(Icons.feedback), () => _onFeedBackPressed()),
+              _listTile(allTranslations.text('configuration'), new Icon(Icons.build), () => _onConfigurationPressed()),
               _listTile(allTranslations.text('signout'), new Icon(Icons.close), () => _onSignOutPressed()),
             ],
           ),

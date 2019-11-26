@@ -68,7 +68,6 @@ class NoticiesState extends State<Notices> with SingleTickerProviderStateMixin {
       )
     ];
     tabs.addAll(assignatures.results.map((Assignatura a) {
-      print('HHHH:' + a.nom + ':hhh');
       return Tab(
         text: a.id,
       );
