@@ -8,6 +8,7 @@ import 'package:flutter/gestures.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:raco/src/blocs/loading_text/loading_text.dart';
 import 'package:raco/src/data/dme.dart';
+import 'package:raco/src/data/dme.dart' as prefix0;
 import 'package:raco/src/models/custom_events.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/resources/user_repository.dart';
@@ -85,6 +86,7 @@ class AuthenticationBloc
     //load personal information
     loadingTextBloc.dispatch(
         LoadTextEvent(text: allTranslations.text('personal_info_loading')));
+
     //singleton data object
     Dme dme = Dme();
     //read data from local files
@@ -164,6 +166,9 @@ class AuthenticationBloc
     String a5Path = directory.path + '/' + FileNames.A5;
     String b5Path = directory.path + '/' + FileNames.B5;
     String c6Path = directory.path + '/' + FileNames.C6;
+    Dme().A5 = a5Path;
+    Dme().B5 = b5Path;
+    Dme().C6 = c6Path;
 
     //Load custom events
     Dme().customEvents = CustomEvents.fromJson(jsonDecode(
@@ -277,12 +282,14 @@ class AuthenticationBloc
     await ReadWriteFile()
         .writeStringToFile(FileNames.EXAMENS, jsonEncode(examens));
     dme.examens = examens;
+
     //Labs ocupation
     loadingTextBloc
         .dispatch(LoadTextEvent(text: allTranslations.text('labs_loading')));
-    await rr.getImageA5();
-    await rr.getImageB5();
-    await rr.getImageC6();
+    Dme().A5 =  await rr.getImageA5();
+    Dme().B5 =  await rr.getImageB5();
+    Dme().C6 =  await rr.getImageC6();
+
 
     //Custom events
     List<CustomEvent> customEventList = new List<CustomEvent>();

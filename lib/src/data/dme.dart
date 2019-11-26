@@ -31,6 +31,9 @@ class Dme {
   Examens examens;
   ExamensLaboratori labExams;
 
+  String A5;
+  String B5;
+  String C6;
 
   CustomEvents customEvents;
 

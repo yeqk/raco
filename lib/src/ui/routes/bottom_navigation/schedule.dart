@@ -244,19 +244,20 @@ class Schedule extends StatelessWidget {
       String cont =
           sched[key].codiAssig + ' ' + sched[key].grup + ' ' + sched[key].tipus;
       return Container(
+        padding: EdgeInsets.all(ScreenUtil().setWidth(2)),
         width: MediaQuery.of(context).size.width / 6,
         color: Color(codi),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            FittedBox(
-              child: Text(cont),
-            ),
-            FittedBox(
-              child: Text(sched[key].aules),
-            )
-          ],
-        ),
+        child: FittedBox(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(cont),
+
+             Text(sched[key].aules),
+
+            ],
+          ),
+        )
       );
     }
     return Text('');
