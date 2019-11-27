@@ -25,7 +25,7 @@ class DrawerMenu extends Drawer {
 
     _onSignOutPressed() {
       Navigator.of(context).pop();
-      if (Platform.isAndroid) {
+      if (Platform.isIOS) {
         showCupertinoDialog(context: context, builder: (BuildContext context) {
           return new CupertinoAlertDialog(
             title: new Text(allTranslations.text('signout')),

@@ -2,6 +2,7 @@
   "en"       : "Anglès",
   "es"       : "Espanyol",
   "ca"       : "Català",
+  "language" : "Idioma",
   "signin"   : "Iniciar sessió",
   "guest_signin" : "Iniciar sessió com a convidat",
   "home"     : "El Racó de la FIB",

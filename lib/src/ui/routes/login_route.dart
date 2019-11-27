@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as prefix0;
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/utils/app_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,13 +8,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:raco/src/blocs/login/login.dart';
 import 'package:raco/src/blocs/translations/translations.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
+import 'package:flutter/services.dart';
 
 typedef OnChangeLanguagePressedCallback = Function(String code);
 
-class LoginRoute extends StatelessWidget {
+class LoginRoute extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return LoginRouteState();
+  }
+}
+
+
+class LoginRouteState extends State<LoginRoute> {
+
+
   @override
   Widget build(BuildContext context) {
-
     return BlocProvider(
       builder: (context) {
         return LoginBloc(
@@ -21,7 +33,6 @@ class LoginRoute extends StatelessWidget {
       },
       child: BlocBuilder<LoginBloc, LoginState>(
         builder: (context, state) {
-
           final _loginBloc = BlocProvider.of<LoginBloc>(context);
           final _translationBloc = BlocProvider.of<TranslationsBloc>(context);
 
@@ -29,32 +40,78 @@ class LoginRoute extends StatelessWidget {
             _loginBloc.dispatch(LoginButtonPressedEvent(context: context));
           }
 
-          _onVisitButtonPressed() {
-            _loginBloc.dispatch(VisitButtonPressedEvent());
+          _onLanguageButtonPressed() async{
+            await showDialog(context: context, builder: (BuildContext context) {
+              return StatefulBuilder(
+                builder: (context, setState) {
+                  return new SimpleDialog(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                    children: <Widget>[
+                      new SimpleDialogOption(
+                        child: new Text(allTranslations.text('ca')),
+                        onPressed: (){
+                          _translationBloc
+                              .dispatch(TranslationsChangedEvent(newLangCode: 'ca'));
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      Divider(),
+                      new SimpleDialogOption(
+                        child: new Text(allTranslations.text('es')),
+                        onPressed: (){
+                          _translationBloc
+                              .dispatch(TranslationsChangedEvent(newLangCode: 'es'));
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      Divider(),
+                      new SimpleDialogOption(
+                        child: new Text(allTranslations.text('en')),
+                        onPressed: (){
+                          _translationBloc
+                              .dispatch(TranslationsChangedEvent(newLangCode: 'en'));
+                          Navigator.of(context).pop();
+                        },
+                      )
+                    ],
+                  );
+                },
+              );
+            });
           }
 
-          _onChangeLanguagePressed(String code) {
-            _translationBloc.dispatch(TranslationsChangedEvent(newLangCode: code));
-          }
 
-          
-          return Container(
-            height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-            ),
-            child: Column(
-              children: <Widget>[logoSection(), titleSection(), loginButtonsSection(() => _onLoginButtonPressed(), () => _onVisitButtonPressed()), languageSection(_onChangeLanguagePressed)],
-            ),
-          );
+          if (MediaQuery.of(context).orientation == Orientation.portrait) {
+            return FittedBox(
+              fit: BoxFit.fill,
+              child: Container(
+                height: MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                ),
+                child: Column(
+                  children: <Widget>[
+                    logoSection(context),
+                    titleSection(context),
+                    loginButtonsSection(() => _onLoginButtonPressed(),
+                            () => _onLanguageButtonPressed(), context),
+
+                  ],
+                ),
+              ),
+            );
+          } else {
+            return Text('cacaa');
+          }
         },
       ),
     );
-
   }
 
-  Widget logoSection() {
+  Widget logoSection(BuildContext context) {
     return Container(
+      width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.only(
           top: ScreenUtil().setHeight(50), left: ScreenUtil().setWidth(50)),
       child: Row(
@@ -77,10 +134,11 @@ class LoginRoute extends StatelessWidget {
     );
   }
 
-  Widget titleSection() {
+  Widget titleSection(BuildContext context) {
     return Container(
+      width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.only(top: ScreenUtil().setHeight(10)),
-      child: RichText(
+      child: Center(child: RichText(
         text: TextSpan(
           style: TextStyle(
             fontSize: ScreenUtil().setSp(50),
@@ -93,27 +151,33 @@ class LoginRoute extends StatelessWidget {
                 style: new TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
-      ),
+      ),)
     );
   }
 
-  Widget loginButtonsSection(VoidCallback onLoginTap, VoidCallback onVisitTap) {
-
+  Widget loginButtonsSection(
+      VoidCallback onLoginTap, VoidCallback onLanguageTap, BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: ScreenUtil().setHeight(160)),
+      width: MediaQuery.of(context).size.width,
+      padding: EdgeInsets.all(ScreenUtil().setWidth(30)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
+          SizedBox(
+            height: ScreenUtil().setHeight(100),
+          ),
           ButtonTheme(
-            minWidth: ScreenUtil().setWidth(260),
-            height: ScreenUtil().setWidth(45),
+            minWidth: MediaQuery.of(context).size.width / 2,
+            height: MediaQuery.of(context).size.height / 15,
             buttonColor: Colors.white,
             child: RaisedButton(
-                child: Text(
-                  allTranslations.text('signin'),
-                  style: TextStyle(
-                    fontSize: ScreenUtil().setSp(18),
-                    color: AppColors.primary,
+                child: FittedBox(
+                  child: Text(
+                    allTranslations.text('signin'),
+                    style: TextStyle(
+                      fontSize: ScreenUtil().setSp(18),
+                      color: AppColors.primary,
+                    ),
                   ),
                 ),
                 color: Colors.white,
@@ -121,57 +185,56 @@ class LoginRoute extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(30))),
           ),
-          /*
+          SizedBox(
+            height: ScreenUtil().setHeight(30),
+          ),
           ButtonTheme(
-            minWidth: ScreenUtil().setWidth(260),
-            height: ScreenUtil().setWidth(45),
+            minWidth: MediaQuery.of(context).size.width / 2,
+            height: MediaQuery.of(context).size.height / 15,
             buttonColor: Colors.white,
-            child: RaisedButton(
-                child: Text(
-                  allTranslations.text('guest_signin'),
-                  style: TextStyle(
-                    fontSize: ScreenUtil().setSp(18),
-                    color: AppColors.primary,
+            child: RaisedButton.icon(
+                icon: Icon(
+                  Icons.language,
+                  color: AppColors.primary,
+                ),
+                label: FittedBox(
+                  child: Text(
+                    allTranslations.text(allTranslations.currentLanguage),
+                    style: TextStyle(
+                      fontSize: ScreenUtil().setSp(18),
+                      color: AppColors.primary,
+                    ),
                   ),
                 ),
                 color: Colors.white,
-                onPressed: () => onVisitTap(),
+                onPressed: () => onLanguageTap(),
                 shape: RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(30))),
           ),
-          */
-
         ],
       ),
     );
   }
 
-  Widget languageSection(OnChangeLanguagePressedCallback _onPressed) {
-    return Container(
-      padding: EdgeInsets.only(top: ScreenUtil().setHeight(90)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          RaisedButton(
-            child: Text(
-              allTranslations.text('en'),
-            ),
-            onPressed: () => _onPressed('en'),
-          ),
-          RaisedButton(
-            child: Text(
-              allTranslations.text('es'),
-            ),
-            onPressed: () => _onPressed('es'),
-          ),
-          RaisedButton(
-            child: Text(
-              allTranslations.text('ca'),
-            ),
-            onPressed: () => _onPressed('ca'),
-          ),
-        ],
-      ),
-    );
+  @override
+  void initState() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    super.initState();
   }
+
+  @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    super.dispose();
+  }
+
+
 }
