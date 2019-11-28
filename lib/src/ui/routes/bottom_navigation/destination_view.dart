@@ -109,6 +109,8 @@ class _DestinationViewState extends State<DestinationView> {
                               children: <Widget>[
                                 new TextFormField(
                                   controller: _titleController,
+                                  maxLines: 1,
+                                  maxLength: 32,
                                   validator: (value) {
                                     if (value.isEmpty) {
                                       return allTranslations

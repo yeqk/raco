@@ -18,7 +18,6 @@ import 'package:raco/src/utils/read_write_file.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
-
 class Subjects extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -26,64 +25,129 @@ class Subjects extends StatefulWidget {
   }
 }
 
-class SubjectsState extends State<Subjects> with SingleTickerProviderStateMixin {
-  Assignatures assignatures = Dme().assignatures;
-  TabController _tabController;
-
+class SubjectsState extends State<Subjects>
+    with SingleTickerProviderStateMixin {
+  RefreshController _refreshController;
 
   @override
   void initState() {
-    int size = assignatures.count + 1;
-    _tabController = new TabController(length: size, vsync: this);
+    _refreshController = RefreshController(initialRefresh: false);
     super.initState();
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _refreshController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    List<Assignatura> subjects = Dme().assignatures.results;
     return new Scaffold(
-      appBar: AppBar(
-        title: Text(allTranslations.text('subjects')),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: _tabs(),
+        appBar: AppBar(
+          title: Text(allTranslations.text('subjects')),
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: _tabViews(),
-      ),
-    );
+        body: Container(
+          child: SmartRefresher(
+            enablePullDown: true,
+            enablePullUp: false,
+            header: BezierCircleHeader(),
+            controller: _refreshController,
+            onRefresh: _onRefresh,
+            child: _subjectList(),
+          ),
+        ));
   }
 
-  List<Widget> _tabs() {
-    List<Tab> tabs = [
-      Tab(
-        text: allTranslations.text('all'),
-      )
-    ];
-    tabs.addAll(assignatures.results.map((Assignatura a) {
-      return Tab(
-        text: a.id,
+  Widget _subjectList() {
+    List<Assignatura> subjects = Dme().assignatures.results;
+    if (subjects.length == 0) {
+      return ListView(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(top: ScreenUtil().setHeight(20)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  allTranslations.text('no_subjects'),
+                  style: TextStyle(color: Colors.grey),
+                )
+              ],
+            ),
+          )
+        ],
       );
-    }).toList());
-    return tabs;
+    } else {
+      return ListView(
+        children: subjects.map((Assignatura n) {
+          int codi = int.parse(Dme().assigColors[n.sigles]);
+          return Card(
+              color: Color(codi),
+              child: InkWell(
+                onTap: () => _subjectTapped(),
+                child: Container(
+                  padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        _subjectString(n),
+                        textAlign: TextAlign.left,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.visible,
+                      ),
+                      Divider(),
+                      Text(
+                        n.sigles +
+                            ' - ' +
+                            allTranslations.text('group') +
+                            ': ' +
+                            _group(n) +
+                            ' - ' +
+                            allTranslations.text('credits') +
+                            ': ' +
+                            _credits(n),
+                        overflow: TextOverflow.visible,
+                      )
+                    ],
+                  ),
+                ),
+              ));
+        }).toList(),
+      );
+    }
   }
 
-
-  List<Widget> _tabViews() {
-    List<Widget> tabViews = List();
-    tabViews.add(Text('all'));
-    tabViews.addAll(assignatures.results.map((Assignatura a) {
-      return Text(a.id);
-    }).toList());
-    return tabViews;
+  String _subjectString(Assignatura a) {
+    if (a.nom == ' ' || a.nom == null) {
+      return a.sigles;
+    }
+    return a.nom;
   }
 
+  String _group(Assignatura a) {
+    if (a.grup == null) {
+      return allTranslations.text('na');
+    }
+    return a.grup;
+  }
 
+  String _credits(Assignatura a) {
+    if (a.credits == null) {
+      return allTranslations.text('na');
+    }
+    return a.credits.toString();
+  }
+
+  void _subjectTapped() async {
+    print('tapped');
+  }
+
+  void _onRefresh() async {
+    //update subjects info
+    print('updated');
+    _refreshController.refreshCompleted();
+  }
 }

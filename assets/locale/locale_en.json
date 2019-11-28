@@ -58,12 +58,14 @@
   "end_date" : "End date",
   "start" : "Start",
   "end"   : "End",
-
   "empty_field_error": "Este campo no puede estar vacio",
-
   "edit" : "Edit",
   "delete" : "Delete",
+  "today" : "Today",
+  "na" : "n/a",
+  "group" : "Group",
+  "credits" : "Credits",
+  "no_subjects" : "You don't have any subject",
 
-  "today" : "Today"
 
 }

@@ -114,7 +114,6 @@ class LabsState extends State<Labs> with SingleTickerProviderStateMixin {
         Card(
             child: InkWell(
                 onTap: () {
-                  print('\nentorn segur: S\nusb disponible: S\nimatge: Linux Examen\ntipus usuari: Propi\nacces url: exam.jutge.org, examens.fib.upc.edu\nacces home dades: N\nobservacions necessitats: ');
                   Navigator.push(context, MaterialPageRoute(builder: (_) {
                     return DetailScreen(Dme().C6, 'imageHero2');
                   }));

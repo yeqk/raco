@@ -58,11 +58,12 @@
   "end_date" : "Data de finalització",
   "start" : "Inici",
   "end"   : "Fi",
-
   "empty_field_error": "Aquest camp no pot estar buit",
-
   "edit" : "Editar",
   "delete" : "Esborrar",
-
-  "today" : "Avui"
+  "today" : "Avui",
+  "na" : "n/d",
+  "group" : "Grup",
+  "credits" : "Crèdits",
+  "no_subjects" : "No tens cap assignatura"
 }

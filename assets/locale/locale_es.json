@@ -58,11 +58,12 @@
   "end_date" : "Fecha de finalización",
   "start" : "Inicio",
   "end"   : "Fin",
-
   "empty_field_error": "This field can't be empty",
-
   "edit" : "Editar",
   "delete" : "Borrar",
-
-  "today" : "Hoy"
+  "today" : "Hoy",
+  "na" : "n/a",
+  "group" : "Grupo",
+  "credits" : "Créditos",
+  "no_subjects" : "No tienes ninguna asignatura"
 }
