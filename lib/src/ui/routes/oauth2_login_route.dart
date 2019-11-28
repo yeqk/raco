@@ -8,7 +8,11 @@ class Oauth2LoginRoute extends StatelessWidget {
   Oauth2LoginRoute(this.url);
   @override
   Widget build(BuildContext context) {
+    Map<String, String> headers = {
+      'Accept-Language': allTranslations.currentLanguage,
+    };
     return new WebviewScaffold(
+        headers: headers,
         url: url,
         appBar: new AppBar(
           title: new Text(allTranslations.text('signin')),

@@ -65,5 +65,6 @@
   "na" : "n/a",
   "group" : "Grupo",
   "credits" : "Créditos",
-  "no_subjects" : "No tienes ninguna asignatura"
+  "no_subjects" : "No tienes ninguna asignatura",
+  "no_info" : "No hay información disponible"
 }

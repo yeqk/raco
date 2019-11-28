@@ -1,4 +1,6 @@
+import 'dart:collection';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ import 'package:raco/src/repositories/repositories.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:intl/intl.dart';
 import 'package:raco/src/resources/user_repository.dart';
+import 'package:raco/src/ui/routes/drawer_menu/subject_view.dart';
 import 'package:raco/src/utils/file_names.dart';
 import 'package:raco/src/utils/read_write_file.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -86,7 +89,7 @@ class SubjectsState extends State<Subjects>
           return Card(
               color: Color(codi),
               child: InkWell(
-                onTap: () => _subjectTapped(),
+                onTap: () => _subjectTapped(n),
                 child: Container(
                   padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
                   child: Column(
@@ -141,13 +144,70 @@ class SubjectsState extends State<Subjects>
     return a.credits.toString();
   }
 
-  void _subjectTapped() async {
-    print('tapped');
+  void _subjectTapped(Assignatura a) async {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => SubjectView(assignatura: a,)));
   }
 
   void _onRefresh() async {
     //update subjects info
-    print('updated');
+    String accessToken = await user.getAccessToken();
+    String lang = await user.getPreferredLanguage();
+    RacoRepository rr = new RacoRepository(
+        racoApiClient: RacoApiClient(
+            httpClient: http.Client(), accessToken: accessToken, lang: lang));
+    Assignatures assignatures = await rr.getAssignatures();
+    Dme dme = Dme();
+    dme.assignatures = assignatures;
+    _assignColor(assignatures);
+    await ReadWriteFile()
+        .writeStringToFile(FileNames.ASSIGNATURES, jsonEncode(assignatures));
+    dme.assigURL = new HashMap();
+    dme.assigGuia = new HashMap();
+    for (Assignatura a in assignatures.results) {
+      AssignaturaURL assigURL = await rr.getAssignaturaURL(a);
+      await ReadWriteFile()
+          .writeStringToFile(FileNames.ASSIGNATURA_URL, jsonEncode(assigURL));
+      dme.assigURL[a.id] = assigURL;
+      AssignaturaGuia assigGuia = await rr.getAssignaturaGuia(a);
+      await ReadWriteFile()
+          .writeStringToFile(FileNames.ASSIGNATURA_GUIA, jsonEncode(assigGuia));
+      dme.assigGuia[a.id] = assigGuia;
+    }
+    setState(() {});
     _refreshController.refreshCompleted();
+  }
+
+  void _assignColor(Assignatures assignatures) async {
+    List<int> generatedHues = List();
+    Random rand = Random();
+    Dme().assigColors = new HashMap();
+    int minimumSeparation = (360/(assignatures.count*4)).round();
+    for (Assignatura a in assignatures.results) {
+
+      int genHue = rand.nextInt(361);
+      while(!_isValidColor(genHue, minimumSeparation,generatedHues)) {
+        genHue = rand.nextInt(361);
+      }
+      generatedHues.add(genHue);
+
+      HSVColor hsvcolor =
+      HSVColor.fromAHSV(1, genHue.toDouble(), 0.5, 0.75);
+      Color c = hsvcolor.toColor();
+      Dme().assigColors[a.id] = c.value.toString();
+      await user.writeToPreferences(a.id, c.value.toString());
+    }
+  }
+
+  bool _isValidColor(int v, int separation,List<int> generatedHues) {
+    for (int i in generatedHues) {
+      int diff = v - i;
+      if (diff < 0) {
+        diff = diff * -1;
+      }
+      if (diff < separation) {
+        return false;
+      }
+    }
+    return true;
   }
 }

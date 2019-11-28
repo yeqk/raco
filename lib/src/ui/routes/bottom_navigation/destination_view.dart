@@ -171,7 +171,6 @@ class _DestinationViewState extends State<DestinationView> {
                                       ),
                                       // validator: validateDob,
                                       onSaved: (String val) {
-                                        print('SSSSSSAAAAAAAAAAve:' + val);
                                       },
                                     ),
                                   ),
@@ -198,7 +197,6 @@ class _DestinationViewState extends State<DestinationView> {
                                       ),
                                       // validator: validateDob,
                                       onSaved: (String val) {
-                                        print('SSSSSSAAAAAAAAAAve:' + val);
                                       },
                                     ),
                                   ),

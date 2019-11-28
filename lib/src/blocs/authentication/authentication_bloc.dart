@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
@@ -72,6 +73,8 @@ class AuthenticationBloc
       }
       SharedPreferences preferences = await SharedPreferences.getInstance();
       preferences.clear();
+      var dir = await getApplicationDocumentsDirectory();
+      await dir.delete(recursive: true);
       yield AuthenticationUnauthenticatedState();
     }
 
@@ -192,6 +195,10 @@ class AuthenticationBloc
         LoadTextEvent(text: allTranslations.text('personal_info_loading')));
     String accessToken = await user.getAccessToken();
     String lang = await user.getPreferredLanguage();
+    if (lang == '') {
+      await user.setPreferredLanguage(allTranslations.currentLanguage);
+      lang = allTranslations.currentLanguage;
+    }
     RacoRepository rr = new RacoRepository(
         racoApiClient: RacoApiClient(
             httpClient: http.Client(), accessToken: accessToken, lang: lang));
@@ -315,15 +322,37 @@ class AuthenticationBloc
   }
 
   void _assignColor(Assignatures assignatures) async {
+    List<int> generatedHues = List();
     Random rand = Random();
     Dme().assigColors = new HashMap();
+     int minimumSeparation = (360/(assignatures.count*4)).round();
     for (Assignatura a in assignatures.results) {
+
+      int genHue = rand.nextInt(361);
+      while(!_isValidColor(genHue, minimumSeparation,generatedHues)) {
+        genHue = rand.nextInt(361);
+      }
+      generatedHues.add(genHue);
+
       HSVColor hsvcolor =
-          HSVColor.fromAHSV(1, rand.nextInt(361).toDouble(), 0.5, 0.75);
+          HSVColor.fromAHSV(1, genHue.toDouble(), 0.5, 0.75);
       Color c = hsvcolor.toColor();
       Dme().assigColors[a.id] = c.value.toString();
       await user.writeToPreferences(a.id, c.value.toString());
     }
+  }
+
+  bool _isValidColor(int v, int separation,List<int> generatedHues) {
+    for (int i in generatedHues) {
+      int diff = v - i;
+      if (diff < 0) {
+        diff = diff * -1;
+      }
+      if (diff < separation) {
+        return false;
+      }
+    }
+    return true;
   }
 
   void _loadSubjectColor(Assignatures assignatures) async {

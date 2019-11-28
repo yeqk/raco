@@ -65,5 +65,6 @@
   "na" : "n/d",
   "group" : "Grup",
   "credits" : "Crèdits",
-  "no_subjects" : "No tens cap assignatura"
+  "no_subjects" : "No tens cap assignatura",
+  "no_info" : "No hi ha informació disponible"
 }
