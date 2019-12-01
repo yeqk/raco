@@ -83,8 +83,27 @@ class SubjectViewState extends State<SubjectView> {
         header: allTranslations.text('teachers'), body: _teachersItem()));
     _items.add(MyItem(
         header: allTranslations.text('weekly_hours'), body: _weekHoursItem()));
+    /*
     _items
         .add(MyItem(header: allTranslations.text('competences'), body: _competencesItem()));
+
+     */
+    _items.add(MyItem(
+        header: allTranslations.text('contents'), body: _contentsItem()));
+    _items.add(MyItem(
+        header: allTranslations.text('activities'), body: _activitiesItem()));
+    _items.add(MyItem(
+        header: allTranslations.text('teaching_methodology'),
+        body: _teachingMethodologyItem()));
+    _items.add(MyItem(
+        header: allTranslations.text('evaluation_methodology'),
+        body: _evaluationMethodologyItem()));
+    _items.add(MyItem(
+        header: allTranslations.text('bibliography'),
+        body: _bibliographyItem()));
+    _items.add(MyItem(
+        header: allTranslations.text('previous_capacities'),
+        body: _previousCapacitiesItem()));
   }
 
   Widget _basicItem() {
@@ -329,7 +348,9 @@ class SubjectViewState extends State<SubjectView> {
                         overflow: TextOverflow.visible)
                   ],
                 ),
-                Divider(),
+                SizedBox(
+                  height: ScreenUtil().setHeight(3),
+                ),
                 Row(
                   children: <Widget>[
                     Container(
@@ -344,7 +365,9 @@ class SubjectViewState extends State<SubjectView> {
                     )
                   ],
                 ),
-                Divider(),
+                SizedBox(
+                  height: ScreenUtil().setHeight(3),
+                ),
                 Row(
                   children: <Widget>[
                     Container(
@@ -360,7 +383,9 @@ class SubjectViewState extends State<SubjectView> {
                     )
                   ],
                 ),
-                Divider(),
+                SizedBox(
+                  height: ScreenUtil().setHeight(3),
+                ),
                 Row(
                   children: <Widget>[
                     Container(
@@ -374,7 +399,9 @@ class SubjectViewState extends State<SubjectView> {
                         overflow: TextOverflow.visible)
                   ],
                 ),
-                Divider(),
+                SizedBox(
+                  height: ScreenUtil().setHeight(3),
+                ),
                 Row(
                   children: <Widget>[
                     Container(
@@ -394,91 +421,441 @@ class SubjectViewState extends State<SubjectView> {
     );
   }
 
-  Widget _competencesItem() {
-    return Container(
-      margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
-      child: Card(
-          color: Color(0xffeff6f9),
-          child: Container(
-            margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
-            child: Column(
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Container(
-                      width: ScreenUtil().setWidth(200),
-                      child: Text(
-                        allTranslations.text('theory'),
-                        overflow: TextOverflow.visible,
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Text(widget.assignaturaGuia.hores.teoria.toString(),
-                        overflow: TextOverflow.visible)
-                  ],
-                ),
-                Divider(),
-                Row(
-                  children: <Widget>[
-                    Container(
-                      width: ScreenUtil().setWidth(200),
-                      child: Text(allTranslations.text('problems'),
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                    Expanded(
-                      child: Text(
-                          widget.assignaturaGuia.hores.problemes.toString(),
-                          overflow: TextOverflow.visible),
-                    )
-                  ],
-                ),
-                Divider(),
-                Row(
-                  children: <Widget>[
-                    Container(
-                      width: ScreenUtil().setWidth(200),
-                      child: Text(allTranslations.text('laboratory'),
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                    Expanded(
-                      child: Text(
-                        widget.assignaturaGuia.hores.teoria.toString(),
-                        overflow: TextOverflow.visible,
-                      ),
-                    )
-                  ],
-                ),
-                Divider(),
-                Row(
-                  children: <Widget>[
-                    Container(
-                      width: ScreenUtil().setWidth(200),
-                      child: Text(allTranslations.text('guided_learning'),
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                    Text(
-                        widget.assignaturaGuia.hores.aprenentatgeDirigit
-                            .toString(),
-                        overflow: TextOverflow.visible)
-                  ],
-                ),
-                Divider(),
-                Row(
-                  children: <Widget>[
-                    Container(
-                      width: ScreenUtil().setWidth(200),
-                      child: Text(allTranslations.text('autonomous_learning'),
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                    Text(
-                        widget.assignaturaGuia.hores.aprenentatgeAutonom
-                            .toString(),
-                        overflow: TextOverflow.visible)
-                  ],
-                ),
-              ],
+  Widget _contentsItem() {
+    List<Contingut> contingut = widget.assignaturaGuia.continguts;
+    if (contingut.length > 0) {
+      List<Widget> lines = List();
+      contingut.forEach((c) {
+        lines.add(Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              c.nom,
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
-          )),
+            Text(c.descripcio)
+          ],
+        ));
+        lines.add(SizedBox(
+          height: ScreenUtil().setHeight(10),
+        ));
+      });
+      return Container(
+        margin: EdgeInsets.all(ScreenUtil().setWidth(10)),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start, children: lines),
+      );
+    }
+    return SizedBox();
+  }
+
+  Widget _activitiesItem() {
+    List<int> ordre = widget.assignaturaGuia.ordreActivitats;
+    List<Activitat> act = widget.assignaturaGuia.activitats;
+    List<ActeAvaluatiu> actAv = widget.assignaturaGuia.actesAvaluatius;
+    List<Widget> lines = List();
+    lines.add(Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.all(ScreenUtil().setWidth(5)),
+          decoration:
+              BoxDecoration(border: Border.all(color: Color(0xff21c2f8))),
+          child: Text(allTranslations.text('activity')),
+        ),
+        SizedBox(
+          width: ScreenUtil().setWidth(10),
+        ),
+        Container(
+          padding: EdgeInsets.all(ScreenUtil().setWidth(5)),
+          decoration:
+              BoxDecoration(border: Border.all(color: Color(0xfff36e44))),
+          child: Text(allTranslations.text('evaluation_act')),
+        )
+      ],
+    ));
+    ordre.forEach((o) {
+      lines.add(SizedBox(
+        height: ScreenUtil().setHeight(10),
+      ));
+      if (_isActivitat(o)) {
+        Activitat activitat = act.where((a) {
+          return a.id == o;
+        }).first;
+        lines.add(Container(
+          padding: EdgeInsets.all(ScreenUtil().setWidth(5)),
+          decoration:
+              BoxDecoration(border: Border.all(color: Color(0xff21c2f8))),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Text(
+                    activitat.nom,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Expanded(
+                    child: SizedBox(),
+                  )
+                ],
+              ),
+              Text(activitat.descripcio),
+              Text(
+                allTranslations.text('contents') + ':',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Html(
+                data: _activityContentString(activitat.continguts),
+              ),
+              _horari(
+                  activitat.teoria.hores,
+                  activitat.problemes.hores,
+                  activitat.laboratori.hores,
+                  activitat.aprenentatgeDirigit.hores,
+                  activitat.aprenentatgeAutonom.hores)
+            ],
+          ),
+        ));
+      } else {
+        ActeAvaluatiu acteAvaluatiu = actAv.where((a) {
+          return a.id == o;
+        }).first;
+        lines.add(Container(
+          padding: EdgeInsets.all(ScreenUtil().setWidth(5)),
+          decoration:
+              BoxDecoration(border: Border.all(color: Color(0xfff36e44))),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Text(
+                    acteAvaluatiu.nom,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Expanded(
+                    child: SizedBox(),
+                  )
+                ],
+              ),
+              Text(acteAvaluatiu.descripcio),
+              Row(
+                children: <Widget>[
+                  Text(
+                    allTranslations.text('week') + ': ',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(acteAvaluatiu.setmana.toString()),
+                  acteAvaluatiu.foraHoraris
+                      ? Text(' (' +
+                          allTranslations.text('outside_class_hours') +
+                          ')')
+                      : SizedBox()
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Text(
+                    allTranslations.text('type') + ': ',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(allTranslations.text(acteAvaluatiu.tipus))
+                ],
+              ),
+              _horariExams(
+                  acteAvaluatiu.horesDuracio, acteAvaluatiu.horesEstudi)
+            ],
+          ),
+        ));
+      }
+    });
+    return Container(
+      margin: EdgeInsets.all(ScreenUtil().setWidth(10)),
+      child:
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: lines),
+    );
+  }
+
+  Widget _horari(double t, double p, double l, double gl, double al) {
+    return Card(
+        color: Color(0xffeff6f9),
+        child: Container(
+          margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
+          child: Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Container(
+                    width: ScreenUtil().setWidth(200),
+                    child: Text(
+                      allTranslations.text('theory'),
+                      overflow: TextOverflow.visible,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Text(t.toString() + 'h', overflow: TextOverflow.visible)
+                ],
+              ),
+              SizedBox(
+                height: ScreenUtil().setHeight(3),
+              ),
+              Row(
+                children: <Widget>[
+                  Container(
+                    width: ScreenUtil().setWidth(200),
+                    child: Text(allTranslations.text('problems'),
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                  Expanded(
+                    child: Text(p.toString() + 'h',
+                        overflow: TextOverflow.visible),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: ScreenUtil().setHeight(3),
+              ),
+              Row(
+                children: <Widget>[
+                  Container(
+                    width: ScreenUtil().setWidth(200),
+                    child: Text(allTranslations.text('laboratory'),
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                  Expanded(
+                    child: Text(
+                      l.toString() + 'h',
+                      overflow: TextOverflow.visible,
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: ScreenUtil().setHeight(3),
+              ),
+              Row(
+                children: <Widget>[
+                  Container(
+                    width: ScreenUtil().setWidth(200),
+                    child: Text(allTranslations.text('guided_learning'),
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                  Text(gl.toString() + 'h', overflow: TextOverflow.visible)
+                ],
+              ),
+              SizedBox(
+                height: ScreenUtil().setHeight(3),
+              ),
+              Row(
+                children: <Widget>[
+                  Container(
+                    width: ScreenUtil().setWidth(200),
+                    child: Text(allTranslations.text('autonomous_learning'),
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                  Text(al.toString() + 'h', overflow: TextOverflow.visible)
+                ],
+              ),
+            ],
+          ),
+        ));
+  }
+
+  Widget _horariExams(int duration, int dedication) {
+    return Card(
+        color: Color(0xffeff6f9),
+        child: Container(
+          margin: EdgeInsets.all(ScreenUtil().setWidth(5)),
+          child: Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Container(
+                    width: ScreenUtil().setWidth(200),
+                    child: Text(
+                      allTranslations.text('duration'),
+                      overflow: TextOverflow.visible,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Text(duration.toDouble().toString() + 'h',
+                      overflow: TextOverflow.visible)
+                ],
+              ),
+              SizedBox(
+                height: ScreenUtil().setHeight(3),
+              ),
+              Row(
+                children: <Widget>[
+                  Container(
+                    width: ScreenUtil().setWidth(200),
+                    child: Text(allTranslations.text('dedication'),
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                  Expanded(
+                    child: Text(dedication.toDouble().toString() + 'h',
+                        overflow: TextOverflow.visible),
+                  )
+                ],
+              ),
+            ],
+          ),
+        ));
+  }
+
+  bool _isActivitat(int id) {
+    bool isActivitat = false;
+    widget.assignaturaGuia.activitats.forEach((a) {
+      if (a.id == id) {
+        isActivitat = true;
+      }
+      ;
+    });
+    return isActivitat;
+  }
+
+  String _activityContentString(List<int> coningut) {
+    String htmlString = '<ul>';
+    List<Contingut> actList = widget.assignaturaGuia.continguts;
+    for (int idAct in coningut) {
+      Contingut a = actList.firstWhere((x) {
+        return x.id == idAct;
+      });
+      htmlString += '<li>' + a.nom + '</li>';
+    }
+    htmlString += '</ul>';
+    return htmlString;
+  }
+
+  Widget _teachingMethodologyItem() {
+    return Container(
+        margin: EdgeInsets.all(ScreenUtil().setWidth(10)),
+        child: Column(
+          children: <Widget>[
+            Text(widget.assignaturaGuia.metodologiaDocent)
+          ],
+        ));
+  }
+
+  Widget _evaluationMethodologyItem() {
+    return Container(
+        margin: EdgeInsets.all(ScreenUtil().setWidth(10)),
+        child: Column(
+          children: <Widget>[
+            Text(widget.assignaturaGuia.metodologiaAvaluacio)
+          ],
+        ));
+  }
+
+  Widget _bibliographyItem() {
+    return Container(
+        margin: EdgeInsets.all(ScreenUtil().setWidth(10)),
+        child: FittedBox(
+          child: Row(
+            children: <Widget>[
+              Column(
+                children: <Widget>[_basicBiblio(), _complementaryBiblio()],
+              ),
+            ],
+          ),
+        ));
+  }
+
+  Widget _basicBiblio() {
+    List<Biblio> biblio = widget.assignaturaGuia.bibliografia.basica;
+    if (biblio.length > 0) {
+      List<Widget> lines = List();
+      lines.add(Text(
+        allTranslations.text('basic'),
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ));
+      biblio.forEach((p) {
+        String htmlListItem = '<ul><li>' +
+            '<b>' +
+            p.titol +
+            '</b>' +
+            ' - ' +
+            p.autor +
+            '.' +
+            p.editorial +
+            '.'+
+            p.anyBib +
+            '. ISBN: ' +
+            p.isbn +
+            ' ' +
+            '<a href=' +
+            p.url +
+            '\">' +
+            p.url +
+            '</a>' +
+            '</li></ul>';
+        lines.add(SizedBox(height: ScreenUtil().setHeight(10),));
+        lines
+            .add(Html(data: htmlListItem, onLinkTap: (url) => _onMailTap(url)));
+      });
+      return FittedBox(
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start, children: lines),
+      );
+    }
+    return SizedBox();
+  }
+
+  Widget _complementaryBiblio() {
+    List<Biblio> biblio = widget.assignaturaGuia.bibliografia.complementaria;
+    if (biblio.length > 0) {
+      List<Widget> lines = List();
+      lines.add(Text(
+        allTranslations.text('complementary'),
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ));
+      biblio.forEach((p) {
+        String htmlListItem = '<ul><li>' +
+            '<b>' +
+            p.titol +
+            '</b>' +
+            ' - ' +
+            p.autor +
+            '.' +
+            p.editorial +
+            '.'+
+            p.anyBib +
+            '. ISBN: ' +
+            p.isbn +
+            ' ' +
+            '<a href=' +
+            p.url +
+            '\">' +
+            p.url +
+            '</a>' +
+            '</li></ul>';
+        lines.add(SizedBox(height: ScreenUtil().setHeight(10),));
+        lines
+            .add(Html(data: htmlListItem, onLinkTap: (url) => _onMailTap(url)));
+      });
+      return FittedBox(
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start, children: lines),
+      );
+    }
+    return SizedBox();
+  }
+
+  Widget _previousCapacitiesItem() {
+    return Container(
+      margin: EdgeInsets.all(ScreenUtil().setWidth(10)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Text(widget.assignaturaGuia.capacitatsPrevies),
+              Expanded(child: SizedBox(),)
+            ],
+          )
+
+        ],),
     );
   }
 
