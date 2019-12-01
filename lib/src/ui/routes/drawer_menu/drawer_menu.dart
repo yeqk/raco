@@ -119,8 +119,8 @@ class DrawerMenu extends Drawer {
           child: new ListView(
             children: <Widget>[
               UserAccountsDrawerHeader(
-                accountName: Text(nom),
-                accountEmail: Text(Dme().email),
+                accountName: Text(nom, overflow: TextOverflow.visible,),
+                accountEmail: Text(Dme().email, overflow: TextOverflow.visible,),
                 currentAccountPicture: CircleAvatar(
                   backgroundColor:
                   Theme.of(context).platform == TargetPlatform.iOS
@@ -130,7 +130,7 @@ class DrawerMenu extends Drawer {
                 ),
               ),
               _listTile(allTranslations.text('subjects'), new Icon(Icons.collections_bookmark), () => _onSubjectsPressed()),
-              _listTile(allTranslations.text('exams'), new Icon(Icons.event_busy), () => _onExamsPressed()),
+             // _listTile(allTranslations.text('exams'), new Icon(Icons.event_busy), () => _onExamsPressed()),
               _listTile(allTranslations.text('grades'), new Icon(Icons.grade), () => _onGradesPressed()),
               _listTile(allTranslations.text('labs'), new Icon(Icons.laptop), () => _onLabsPressed()),
               _listTile(allTranslations.text('feedback'), new Icon(Icons.feedback), () => _onFeedBackPressed()),
@@ -144,7 +144,7 @@ class DrawerMenu extends Drawer {
 
   Widget _listTile(String text, Icon icon, VoidCallback onPressed) {
     return new ListTile(
-      title: new Text(text),
+      title: new Text(text, overflow: TextOverflow.ellipsis,),
       leading: icon,
       onTap: () => onPressed(),
     );

@@ -20,7 +20,7 @@ class AssignaturaGuia {
   double credits;
   String mail;
   String web;
-  String department;
+  String departament;
   String nom;
   String descripcio;
   @JsonKey(name: 'metodologia_docent')
@@ -34,7 +34,7 @@ class AssignaturaGuia {
   AssignaturaGuia(this.id, this.competencies, this.hores, this.objectius,
       this.continguts, this.activitats, this.actesAvaluatius, this.professors,
       this.urls, this.bibliografia, this.ordreActivitats, this.credits,
-      this.mail, this.web, this.department, this.nom, this.descripcio,
+      this.mail, this.web, this.departament, this.nom, this.descripcio,
       this.metodologiaDocent, this.metodologiaAvaluacio,
       this.capacitatsPrevies);
 

@@ -3,6 +3,7 @@ import 'package:raco/src/models/assignatures.dart';
 import 'package:raco/src/models/classes.dart';
 import 'package:raco/src/models/custom_events.dart';
 import 'package:raco/src/models/models.dart';
+import 'package:raco/src/models/requisits.dart';
 
 class Dme {
   static final Dme _dme = Dme._internal();
@@ -23,6 +24,7 @@ class Dme {
   Assignatures assignatures;
   //random color for each subject Map<subject code, color code>
   Map<String, String> assigColors;
+  Requisits requisits;
   Map<String, AssignaturaURL> assigURL;
   Map<String, AssignaturaGuia> assigGuia;
   Avisos avisos;

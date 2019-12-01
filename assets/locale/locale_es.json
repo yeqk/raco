@@ -66,5 +66,36 @@
   "group" : "Grupo",
   "credits" : "Créditos",
   "no_subjects" : "No tienes ninguna asignatura",
-  "no_info" : "No hay información disponible"
+  "no_info" : "No hay información disponible",
+
+  "general" : "General",
+  "types" : "Tipos",
+  "requirements" : "Requisitos",
+  "no_requirements" : "Esta asignatura no tiene requisitos.",
+  "department" : "Departamento",
+  "web" : "Web",
+  "mail" : "Mail",
+  "description" : "Descripción",
+  "teachers" : "Profesores",
+  "person_in_charge" : "Responsable",
+  "others" : "Otros",
+
+  "P" : "Prerequisito",
+  "C" : "Corequisito",
+  "X" : "Precorequisito",
+  "OREQU" : "Orequisito",
+
+  "OBL" : "Obligatoria",
+  "OBL_ESP" : "Obligatoria de especialidad",
+  "CPL_ESP": "Complementaria de especialidad",
+  "OPT" : "Optativa",
+
+  "weekly_hours" : "Horas semanales",
+  "theory" : "Teoría",
+  "problems" : "Problemas",
+  "laboratory" : "Laboratorio",
+  "guided_learning" : "Aprendizaje dirigido",
+  "autonomous_learning" : "Aprendizaje autónomo",
+
+  "competences" : "Competencias"
 }

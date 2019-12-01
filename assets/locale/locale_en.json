@@ -66,7 +66,42 @@
   "group" : "Group",
   "credits" : "Credits",
   "no_subjects" : "You don't have any subject",
-  "no_info" : "No information available"
+  "no_info" : "No information available",
+
+  "general" : "General",
+  "types" : "Types",
+  "requirements" : "Requirements",
+  "no_requirements" : "This subject has not requirements.",
+  "department" : "Department",
+  "web" : "Web",
+  "mail" : "Mail",
+  "description" : "Description",
+  "teachers" : "Teachers",
+  "person_in_charge" : "Person in charge",
+  "others" : "Others",
+
+  "P" : "Prerequisit",
+  "C" : "Corequisit",
+  "X" : "Precorequisit",
+  "OREQU" : "Orequisit",
+
+  "OBL" : "Compulsory",
+  "OBL_ESP" : "Specialization compulsory",
+  "CPL_ESP": "Specialization complementary",
+  "OPT" : "Elective",
+
+  "weekly_hours" : "Weekly hours",
+  "theory" : "Theory",
+  "problems" : "Problems",
+  "laboratory" : "Laboratory",
+  "guided_learning" : "Guided learning",
+  "autonomous_learning" : "Autonomous learning"
+
+  "competences" : "Competences"
+
+
+
+
 
 
 }

@@ -8,6 +8,7 @@ import 'package:image/image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:raco/src/models/models.dart';
+import 'package:raco/src/models/requisits.dart';
 import 'package:raco/src/resources/user_repository.dart';
 import 'package:raco/src/utils/file_names.dart';
 
@@ -107,6 +108,21 @@ class RacoApiClient {
     }
     Map classesMap = jsonDecode(utf8.decode(response.bodyBytes));
     return Classes.fromJson(classesMap);
+  }
+
+  Future<Requisits> getRequisits() async {
+    final locationUrl = '$baseUrl/assignatures/requisits';
+    Map<String, String> headers = {
+      'Accept': 'application/json',
+      'Accept-Language': lang,
+      'Authorization': 'Bearer ' + accessToken
+    };
+    final response = await this.httpClient.get(locationUrl, headers: headers);
+    if (response.statusCode != 200) {
+      throw Exception('Error getting subjects information.');
+    }
+    Map reqMap = jsonDecode(utf8.decode(response.bodyBytes));
+    return Requisits.fromJson(reqMap);
   }
 
   Future<Assignatures> getAssignatures() async {

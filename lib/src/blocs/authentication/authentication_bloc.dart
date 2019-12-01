@@ -11,6 +11,7 @@ import 'package:raco/src/blocs/loading_text/loading_text.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/data/dme.dart' as prefix0;
 import 'package:raco/src/models/custom_events.dart';
+import 'package:raco/src/models/requisits.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/resources/user_repository.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
@@ -141,16 +142,19 @@ class AuthenticationBloc
     dme.assigURL = new HashMap();
     for (Assignatura a in assignatures.results) {
       AssignaturaURL assigURL = AssignaturaURL.fromJson(jsonDecode(
-          await ReadWriteFile().readStringFromFile(FileNames.ASSIGNATURA_URL)));
+          await ReadWriteFile().readStringFromFile(FileNames.ASSIGNATURA_URL + a.id)));
       dme.assigURL[a.id] = assigURL;
       String assigGuiaString =
-          await ReadWriteFile().readStringFromFile(FileNames.ASSIGNATURA_GUIA);
+          await ReadWriteFile().readStringFromFile(FileNames.ASSIGNATURA_GUIA + a.id);
       if (assigGuiaString != 'null') {
         AssignaturaGuia assigGuia =
             AssignaturaGuia.fromJson(jsonDecode(assigGuiaString));
         dme.assigGuia[a.id] = assigGuia;
       }
     }
+    Requisits requisits = Requisits.fromJson(jsonDecode(
+        await ReadWriteFile().readStringFromFile(FileNames.REQUISITS)));
+    dme.requisits = requisits;
 
     //Load exams
     loadingTextBloc
@@ -264,13 +268,17 @@ class AuthenticationBloc
     for (Assignatura a in assignatures.results) {
       AssignaturaURL assigURL = await rr.getAssignaturaURL(a);
       await ReadWriteFile()
-          .writeStringToFile(FileNames.ASSIGNATURA_URL, jsonEncode(assigURL));
+          .writeStringToFile(FileNames.ASSIGNATURA_URL + a.id, jsonEncode(assigURL));
       dme.assigURL[a.id] = assigURL;
       AssignaturaGuia assigGuia = await rr.getAssignaturaGuia(a);
       await ReadWriteFile()
-          .writeStringToFile(FileNames.ASSIGNATURA_GUIA, jsonEncode(assigGuia));
+          .writeStringToFile(FileNames.ASSIGNATURA_GUIA + a.id, jsonEncode(assigGuia));
       dme.assigGuia[a.id] = assigGuia;
     }
+    Requisits requisits = await rr.getRequisists();
+    dme.requisits = requisits;
+    await ReadWriteFile()
+        .writeStringToFile(FileNames.REQUISITS, jsonEncode(requisits));
 
     //Exams information
     loadingTextBloc

@@ -145,7 +145,14 @@ class SubjectsState extends State<Subjects>
   }
 
   void _subjectTapped(Assignatura a) async {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => SubjectView(assignatura: a,)));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SubjectView(
+                  assignatura: a,
+                  assignaturaGuia: Dme().assigGuia[a.id],
+                  assignaturaURL: Dme().assigURL[a.id],
+                )));
   }
 
   void _onRefresh() async {
@@ -181,24 +188,22 @@ class SubjectsState extends State<Subjects>
     List<int> generatedHues = List();
     Random rand = Random();
     Dme().assigColors = new HashMap();
-    int minimumSeparation = (360/(assignatures.count*4)).round();
+    int minimumSeparation = (360 / (assignatures.count * 4)).round();
     for (Assignatura a in assignatures.results) {
-
       int genHue = rand.nextInt(361);
-      while(!_isValidColor(genHue, minimumSeparation,generatedHues)) {
+      while (!_isValidColor(genHue, minimumSeparation, generatedHues)) {
         genHue = rand.nextInt(361);
       }
       generatedHues.add(genHue);
 
-      HSVColor hsvcolor =
-      HSVColor.fromAHSV(1, genHue.toDouble(), 0.5, 0.75);
+      HSVColor hsvcolor = HSVColor.fromAHSV(1, genHue.toDouble(), 0.5, 0.75);
       Color c = hsvcolor.toColor();
       Dme().assigColors[a.id] = c.value.toString();
       await user.writeToPreferences(a.id, c.value.toString());
     }
   }
 
-  bool _isValidColor(int v, int separation,List<int> generatedHues) {
+  bool _isValidColor(int v, int separation, List<int> generatedHues) {
     for (int i in generatedHues) {
       int diff = v - i;
       if (diff < 0) {

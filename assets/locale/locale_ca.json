@@ -66,5 +66,36 @@
   "group" : "Grup",
   "credits" : "Crèdits",
   "no_subjects" : "No tens cap assignatura",
-  "no_info" : "No hi ha informació disponible"
+  "no_info" : "No hi ha informació disponible",
+
+  "general" : "General",
+  "Tipus" : "Types",
+  "requirements" : "Requirements",
+  "no_requirements" : "Aquesta assignatura no té requisits.",
+  "Departament" : "Department",
+  "web" : "Web",
+  "mail" : "Mail",
+  "description" : "Descripció",
+  "teachers" : "Professors",
+  "person_in_charge" : "Responsable",
+  "others" : "Altres",
+
+  "P" : "Prerequisit",
+  "C" : "Corequisit",
+  "X" : "Precorequisit",
+  "OREQU" : "Orequisit",
+
+  "OBL" : "Obligatòria",
+  "OBL_ESP" : "Obligatòria d'especialitat",
+  "CPL_ESP": "Complementària d'especialitat",
+  "OPT" : "Optativa",
+
+  "weekly_hours" : "Hores setmanals",
+  "theory" : "Teoria",
+  "problems" : "Problemes",
+  "laboratory" : "Laboratori",
+  "guided_learning" : "Aprenentatge dirigit",
+  "autonomous_learning" : "Aprenentatge autònom",
+
+  "competences" : "Competències"
 }
