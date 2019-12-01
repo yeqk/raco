@@ -767,7 +767,7 @@ class SubjectViewState extends State<SubjectView> {
     if (biblio.length > 0) {
       List<Widget> lines = List();
       lines.add(Text(
-        allTranslations.text('basic'),
+        allTranslations.text('basic') + ':',
         style: TextStyle(fontWeight: FontWeight.bold),
       ));
       biblio.forEach((p) {
@@ -807,7 +807,7 @@ class SubjectViewState extends State<SubjectView> {
     if (biblio.length > 0) {
       List<Widget> lines = List();
       lines.add(Text(
-        allTranslations.text('complementary'),
+        allTranslations.text('complementary') + ':',
         style: TextStyle(fontWeight: FontWeight.bold),
       ));
       biblio.forEach((p) {
