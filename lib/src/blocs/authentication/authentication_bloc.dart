@@ -11,6 +11,7 @@ import 'package:raco/src/blocs/loading_text/loading_text.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/data/dme.dart' as prefix0;
 import 'package:raco/src/models/custom_events.dart';
+import 'package:raco/src/models/custom_grades.dart';
 import 'package:raco/src/models/requisits.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/resources/user_repository.dart';
@@ -180,6 +181,7 @@ class AuthenticationBloc
     //Load custom events
     Dme().customEvents = CustomEvents.fromJson(jsonDecode(
         await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_EVENTS)));
+    //remove outdated custom events
     for (CustomEvent e in Dme().customEvents.results) {
       DateTime fie = DateTime.parse(e.fi);
       if (fie.isBefore(DateTime.now())) {
@@ -191,6 +193,10 @@ class AuthenticationBloc
     }
     await ReadWriteFile().writeStringToFile(
         FileNames.CUSTOM_EVENTS, jsonEncode(Dme().customEvents));
+
+    //Load custom grades
+    Dme().customGrades = CustomGrades.fromJson(jsonDecode(
+        await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_GRADES)));
   }
 
   Future<void> _downloadData() async {
@@ -311,6 +317,11 @@ class AuthenticationBloc
     Dme().customEvents = CustomEvents(0, customEventList);
     await ReadWriteFile().writeStringToFile(
         FileNames.CUSTOM_EVENTS, jsonEncode(Dme().customEvents));
+    //Custom grades
+    List<CustomGrade> customGradesList = new List<CustomGrade>();
+    Dme().customGrades = CustomGrades(0, customGradesList);
+    await ReadWriteFile().writeStringToFile(
+        FileNames.CUSTOM_GRADES, jsonEncode(Dme().customGrades));
   }
 
   void _fillSchedule(Classes classes) {
