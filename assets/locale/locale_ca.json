@@ -20,6 +20,7 @@
   "configuration" : "Configuració",
   "signout"  : "Tancar sessió",
   "signout_message" : "Estàs segur que vols tancar la sessió? S'esborraran totes les dades guardades en aquest dispositiu.",
+  "feedback_message" : "Si us plau, envieu-me un correu electrònic si teniu suggeriments o heu trobat algun error.",
 
   "mon" : "Dl.",
   "tue" : "Dt.",
@@ -118,6 +119,8 @@
   "basic" : "Bàsica",
   "complementary" : "Complementaria",
   "web_links" : "Web links",
-  "previous_capacities" : "Capacitats prèvies"
+  "previous_capacities" : "Capacitats prèvies",
+
+  "mail" : "Correu"
 
 }

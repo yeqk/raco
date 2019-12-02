@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:raco/src/data/dme.dart';
+import 'package:raco/src/resources/authentication_data.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:flutter/services.dart';
 import 'package:raco/src/ui/routes/drawer_menu/subjects.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 import 'configuration.dart';
@@ -24,7 +26,6 @@ class DrawerMenu extends Drawer {
     BlocProvider.of<AuthenticationBloc>(context);
 
     _onSignOutPressed() {
-      Navigator.of(context).pop();
       if (Platform.isIOS) {
         showCupertinoDialog(context: context, builder: (BuildContext context) {
           return new CupertinoAlertDialog(
@@ -103,7 +104,55 @@ class DrawerMenu extends Drawer {
     }
 
     _onFeedBackPressed() {
-      print('feedback pressed');
+      if (Platform.isIOS) {
+        showCupertinoDialog(context: context, builder: (BuildContext context) {
+          return new CupertinoAlertDialog(
+            content: new Text(allTranslations.text('feedback_message')),
+            title: new Text(allTranslations.text('feedback')),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                child: Text(allTranslations.text('cancel')),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              CupertinoDialogAction(
+                child: Text(allTranslations.text('mail')),
+                onPressed: () {
+                  String mailTO = 'mailto:' + AuthenticationData.feedbackMail + '?subject=Raco App Feedback';
+                  Navigator.of(context).pop();
+                  _launchURL(mailTO);
+                },
+              )
+            ],
+          );
+        });
+      } else {
+        showDialog(context: context,
+            builder: (BuildContext context) {
+              return new AlertDialog(
+                title: new Text(allTranslations.text('feedback')),
+                content: new Text(allTranslations.text('feedback_message')),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text(allTranslations.text('cancel')),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  FlatButton(
+                    child: Text(allTranslations.text('mail')),
+                    onPressed: () {
+                      String mailTO = 'mailto:' + AuthenticationData.feedbackMail + '?subject=Raco App Feedback';
+                      Navigator.of(context).pop();
+                      _launchURL(mailTO);
+                    },
+                  ),
+                ],
+              );
+            });
+      }
     }
 
     _onConfigurationPressed() {
@@ -150,5 +199,12 @@ class DrawerMenu extends Drawer {
     );
   }
 
+  _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
 }

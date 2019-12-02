@@ -20,6 +20,7 @@
   "configuration" : "Configuration",
   "signout"  : "Sign out",
   "signout_message" : "Are you sure you want to logout? This will clear all your data on this device.",
+  "feedback_message" : "Please, send me an email if you have any suggestions or have found any bug.",
 
   "mon" : "Mon.",
   "tue" : "Tue",
@@ -118,6 +119,8 @@
   "basic" : "Basic",
   "complementary" : "Complementary",
   "web_links" : "Web links",
-  "previous_capacities" : "Previous capacities"
+  "previous_capacities" : "Previous capacities",
+
+  "mail" : "Mail"
 
 }

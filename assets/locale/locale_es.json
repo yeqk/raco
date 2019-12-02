@@ -20,6 +20,7 @@
   "configuration" : "Configuración",
   "signout"  : "Cerrar sesión",
   "signout_message" : "¿Seguro que quieres cerrar sesión? Esto borrará todos sus datos en este dispositivo.",
+  "feedback_message" : "Por favor, envíeme un correo electrónico si tiene alguna sugerencia o ha encontrado algún error.",
 
   "mon" : "Lu.",
   "tue" : "Ma.",
@@ -118,6 +119,8 @@
   "basic" : "Básica",
   "complementary" : "Complementaria",
   "web_links" : "Web links",
-  "previous_capacities" : "Capacidades previas"
+  "previous_capacities" : "Capacidades previas",
+
+  "mail" : "Correo"
 
 }
