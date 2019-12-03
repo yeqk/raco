@@ -121,6 +121,13 @@
   "web_links" : "Web links",
   "previous_capacities" : "Previous capacities",
 
-  "mail" : "Mail"
+  "mail2" : "Mail",
+  "registered" : "registered exams",
 
+  "title" : "Title",
+  "grade" : "Grade",
+  "percentage" : "Percentage",
+  "grade_help_text" : "Values between 0 and 10",
+  "percentage_help_text" : "Values between 0% and 100%",
+  "incorrect_value" : "Valor incorrecto"
 }

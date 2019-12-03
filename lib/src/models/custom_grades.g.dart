@@ -26,8 +26,9 @@ CustomGrade _$CustomGradeFromJson(Map<String, dynamic> json) {
   return CustomGrade(
     json['id'] as String,
     json['subjectId'] as String,
-    json['nome'] as String,
+    json['name'] as String,
     json['comments'] as String,
+    (json['grade'] as num)?.toDouble(),
     (json['percentage'] as num)?.toDouble(),
   );
 }
@@ -36,7 +37,8 @@ Map<String, dynamic> _$CustomGradeToJson(CustomGrade instance) =>
     <String, dynamic>{
       'id': instance.id,
       'subjectId': instance.subjectId,
-      'nome': instance.nome,
+      'name': instance.name,
       'comments': instance.comments,
+      'grade': instance.grade,
       'percentage': instance.percentage,
     };

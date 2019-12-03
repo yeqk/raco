@@ -119,7 +119,7 @@ class _DestinationViewState extends State<DestinationView> {
                                     return null;
                                   },
                                   decoration: new InputDecoration(
-                                    labelText: "Title",
+                                    labelText: allTranslations.text('title'),
                                     fillColor: Colors.white,
                                     border: new OutlineInputBorder(
                                       borderRadius:
@@ -138,7 +138,7 @@ class _DestinationViewState extends State<DestinationView> {
                                   maxLines: 3,
                                   maxLength: 320,
                                   decoration: new InputDecoration(
-                                    labelText: "Description",
+                                    labelText: allTranslations.text('description'),
                                     fillColor: Colors.white,
                                     border: new OutlineInputBorder(
                                       borderRadius:
@@ -301,6 +301,8 @@ class _DestinationViewState extends State<DestinationView> {
   void dispose() {
     _startDateController.dispose();
     _endDateController.dispose();
+    _titleController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 

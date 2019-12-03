@@ -142,7 +142,7 @@ class DrawerMenu extends Drawer {
                     },
                   ),
                   FlatButton(
-                    child: Text(allTranslations.text('mail')),
+                    child: Text(allTranslations.text('mail2')),
                     onPressed: () {
                       String mailTO = 'mailto:' + AuthenticationData.feedbackMail + '?subject=Raco App Feedback';
                       Navigator.of(context).pop();

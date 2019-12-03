@@ -20,11 +20,12 @@ class CustomGrades {
 class CustomGrade {
   String id;
   String subjectId;
-  String nome;
+  String name;
   String comments;
+  double grade;
   double percentage;
 
-  CustomGrade(this.id, this.subjectId,this.nome, this.comments, this.percentage);
+  CustomGrade(this.id, this.subjectId,this.name, this.comments, this.grade,this.percentage);
 
   factory CustomGrade.fromJson(Map<String, dynamic> json) =>
       _$CustomGradeFromJson(json);

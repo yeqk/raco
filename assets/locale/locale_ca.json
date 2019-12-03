@@ -121,6 +121,14 @@
   "web_links" : "Web links",
   "previous_capacities" : "Capacitats prèvies",
 
-  "mail" : "Correu"
+  "mail2" : "Correu",
+  "registered" : "exàmens registrats",
+
+  "title" : "Títol",
+  "grade" : "Nota",
+  "percentage" : "Percentatge",
+  "grade_help_text" : "Valors entre 0 i 10",
+  "percentage_help_text" : "Valors entre 0% i 100%",
+  "incorrect_value" : "Valor incorrecte"
 
 }

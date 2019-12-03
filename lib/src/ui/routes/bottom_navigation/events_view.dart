@@ -346,7 +346,7 @@ class EventsViewState extends State<EventsView>
                                     return null;
                                   },
                                   decoration: new InputDecoration(
-                                    labelText: "Title",
+                                    labelText: allTranslations.text('title'),
                                     fillColor: Colors.white,
                                     border: new OutlineInputBorder(
                                       borderRadius:
@@ -365,7 +365,7 @@ class EventsViewState extends State<EventsView>
                                   maxLines: 3,
                                   maxLength: 320,
                                   decoration: new InputDecoration(
-                                    labelText: "Description",
+                                    labelText: allTranslations.text('description'),
                                     fillColor: Colors.white,
                                     border: new OutlineInputBorder(
                                       borderRadius:
