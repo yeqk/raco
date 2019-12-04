@@ -111,7 +111,7 @@ class GradesState extends State<Grades>
                         animation: true,
                         percent: _subjectTotalGrade(n),
                         center: new Text(
-                          (_subjectTotalGrade(n)*10).toString(),
+                          (_subjectTotalGrade(n)*10).toStringAsFixed(2),
                           style:
                           new TextStyle(fontSize: 20.0),
                         ),

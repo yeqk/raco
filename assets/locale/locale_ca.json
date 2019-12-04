@@ -57,6 +57,7 @@
 
   "start_date" : "Data d'inici",
   "end_date" : "Data de finalització",
+  "date" : "Data",
   "start" : "Inici",
   "end"   : "Fi",
   "empty_field_error": "Aquest camp no pot estar buit",
@@ -129,6 +130,9 @@
   "percentage" : "Percentatge",
   "grade_help_text" : "Valors entre 0 i 10",
   "percentage_help_text" : "Valors entre 0% i 100%",
-  "incorrect_value" : "Valor incorrecte"
+  "incorrect_value" : "Valor incorrecte",
+  "deleted" : "suprimit",
+  "UNDO" : "DESFER",
+  "percentage_error" : "El percentatge total no pot excedir 100%"
 
 }

@@ -334,6 +334,7 @@ class EventsViewState extends State<EventsView>
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
+                                SizedBox(height: ScreenUtil().setHeight(5),),
                                 new TextFormField(
                                   controller: _titleController,
                                   maxLines: 1,
@@ -505,6 +506,14 @@ class EventsViewState extends State<EventsView>
   }
 
   void _selectStartDate() async {
+    LocaleType l;
+    if (allTranslations.currentLanguage == 'ca') {
+      l = LocaleType.ca;
+    } else if (allTranslations.currentLanguage == 'es') {
+      l = LocaleType.es;
+    } else {
+      l = LocaleType.en;
+    }
     DatePicker.showDateTimePicker(context,
         showTitleActions: true,
         minTime: DateTime.now(),
@@ -522,10 +531,18 @@ class EventsViewState extends State<EventsView>
         currentTime: dateFormatWithHour
             .parse(_startDateController.text)
             .add(Duration(minutes: 1)),
-        locale: LocaleType.ca);
+        locale: l);
   }
 
   void _selectEndDate() async {
+    LocaleType l;
+    if (allTranslations.currentLanguage == 'ca') {
+      l = LocaleType.ca;
+    } else if (allTranslations.currentLanguage == 'es') {
+      l =LocaleType.es;
+    } else {
+      l = LocaleType.en;
+  }
     DatePicker.showDateTimePicker(context,
         showTitleActions: true,
         minTime: DateTime.now(),
@@ -543,7 +560,7 @@ class EventsViewState extends State<EventsView>
         currentTime: dateFormatWithHour
             .parse(_endDateController.text)
             .add(Duration(minutes: 1)),
-        locale: LocaleType.ca);
+        locale: l);
   }
 
   List<Widget> _textItems(String kDate, List<EventItem> items) {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:raco/flutter_datetime_picker-1.2.8-with-ca/flutter_datetime_picker.dart' as prefix0;
 import 'package:raco/src/blocs/drawer_menu/drawer_bloc.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/models/custom_events.dart';
@@ -107,6 +108,7 @@ class _DestinationViewState extends State<DestinationView> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
+                                SizedBox(height: ScreenUtil().setHeight(5),),
                                 new TextFormField(
                                   controller: _titleController,
                                   maxLines: 1,
@@ -257,6 +259,14 @@ class _DestinationViewState extends State<DestinationView> {
   }
 
   void _selectStartDate() async {
+    LocaleType l;
+    if (allTranslations.currentLanguage == 'ca') {
+      l = prefix0.LocaleType.ca;
+    } else if (allTranslations.currentLanguage == 'es') {
+      l = prefix0.LocaleType.es;
+    } else {
+      l = prefix0.LocaleType.en;
+    }
     DatePicker.showDateTimePicker(context,
         showTitleActions: true,
         minTime: DateTime.now(),
@@ -274,10 +284,18 @@ class _DestinationViewState extends State<DestinationView> {
         currentTime: _formatter
             .parse(_startDateController.text)
             .add(Duration(minutes: 1)),
-        locale: LocaleType.ca);
+        locale: l);
   }
 
   void _selectEndDate() async {
+    LocaleType l;
+    if (allTranslations.currentLanguage == 'ca') {
+      l = prefix0.LocaleType.ca;
+    } else if (allTranslations.currentLanguage == 'es') {
+      l = prefix0.LocaleType.es;
+    } else {
+      l = prefix0.LocaleType.en;
+    }
     DatePicker.showDateTimePicker(context,
         showTitleActions: true,
         minTime: DateTime.now(),
@@ -294,7 +312,7 @@ class _DestinationViewState extends State<DestinationView> {
     },
         currentTime:
         _formatter.parse(_endDateController.text).add(Duration(minutes: 1)),
-        locale: LocaleType.ca);
+        locale: l);
   }
 
   @override

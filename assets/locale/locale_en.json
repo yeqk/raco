@@ -57,6 +57,7 @@
 
   "start_date" : "Start date",
   "end_date" : "End date",
+  "date" : "Date",
   "start" : "Start",
   "end"   : "End",
   "empty_field_error": "Este campo no puede estar vacio",
@@ -129,5 +130,8 @@
   "percentage" : "Percentage",
   "grade_help_text" : "Values between 0 and 10",
   "percentage_help_text" : "Values between 0% and 100%",
-  "incorrect_value" : "Valor incorrecto"
+  "incorrect_value" : "Valor incorrecto",
+  "deleted" : "deleted",
+  "UNDO" : "UNDO",
+  "percentage_error" : "The total percentage cannot exceed 100%"
 }
