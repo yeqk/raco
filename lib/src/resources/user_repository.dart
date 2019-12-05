@@ -34,6 +34,11 @@ class UserRepository {
     return prefs.setString(_storageKey + key, value);
   }
 
+  Future<bool> isPresentInPreferences(String key) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.containsKey(_storageKey + key);
+  }
+
   Future<String> readFromPreferences(String key) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(_storageKey + key) ?? '';

@@ -4,9 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:raco/src/blocs/loading_text/loading_text.dart';
 import 'package:raco/src/blocs/translations/translations.dart';
 import 'package:raco/src/resources/global_translations.dart';
+import 'package:raco/src/resources/user_repository.dart';
 import 'package:raco/src/ui/app.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:raco/src/utils/app_colors.dart';
 
 
 class SimpleBlocDelegate extends BlocDelegate {
@@ -31,6 +33,15 @@ class SimpleBlocDelegate extends BlocDelegate {
 
 void main() async {
   BlocSupervisor.delegate = SimpleBlocDelegate();
+  bool pc = await user.isPresentInPreferences('primary_color');
+  if (pc) {
+    AppColors().primary = Color(int.parse(await user.readFromPreferences('primary_color')));
+  }
+  bool sc = await user.isPresentInPreferences('secondary_color');
+  if (sc) {
+    AppColors().accentColor = Color(int.parse(await user.readFromPreferences('secondary_color')));
+  }
+
   await allTranslations.init();
   runApp(MultiBlocProvider(
     providers: [

@@ -13,6 +13,7 @@ import 'package:raco/src/ui/routes/bottom_navigation/destination.dart';
 import 'package:raco/src/ui/routes/bottom_navigation/events_view.dart';
 import 'package:raco/src/ui/routes/bottom_navigation/schedule.dart';
 import 'package:raco/src/ui/routes/drawer_menu/drawer_menu.dart';
+import 'package:raco/src/utils/app_colors.dart';
 import 'package:raco/src/utils/file_names.dart';
 import 'package:raco/src/utils/read_write_file.dart';
 import 'news.dart';
@@ -61,14 +62,16 @@ class _DestinationViewState extends State<DestinationView> {
     return Scaffold(
       appBar: new AppBar(
         leading: new IconButton(
-          icon: Icon(Icons.home),
+          icon: Icon(Icons.home,color: Colors.white,),
           onPressed: () => _onDrawerIconPressed(),
         ),
-        title: Text(allTranslations.text('home')),
-        backgroundColor: widget.destination.color,
+        title: Text(allTranslations.text('home'),style: TextStyle(
+          color: Colors.white
+        ),),
+        backgroundColor: AppColors().primary,
         centerTitle: true,
       ),
-      backgroundColor: widget.destination.color[100],
+      backgroundColor: Colors.white,
       body: _buildBody(),
       floatingActionButton: _addEventButton(),
     );

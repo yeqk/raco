@@ -8,7 +8,7 @@ class LoadingRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors().primary,
         body: Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

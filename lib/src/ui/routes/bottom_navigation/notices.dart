@@ -64,12 +64,13 @@ class NoticiesState extends State<Notices> with SingleTickerProviderStateMixin {
   List<Widget> _tabs() {
     List<Tab> tabs = [
       Tab(
-        text: allTranslations.text('all'),
+        child: Text(allTranslations.text('all'),style: TextStyle(color: Colors.black54),),
       )
     ];
     tabs.addAll(assignatures.results.map((Assignatura a) {
       return Tab(
-        text: a.id,
+        child: Text(a.id,style: TextStyle(color: Colors.black54),),
+
       );
     }).toList());
     return tabs;

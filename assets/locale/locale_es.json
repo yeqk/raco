@@ -133,5 +133,9 @@
   "incorrect_value" : "Incorrect value",
   "deleted" : "eliminado",
   "UNDO" : "DESHACER",
-  "percentage_error" : "El porcentaje total no puede exceder 100%"
+  "percentage_error" : "El porcentaje total no puede exceder 100%",
+  "primary_color" : "Color primario",
+  "secondary_color" : "Color secundario",
+  "select_color" : "Selecciona un color",
+  "default" : "Default"
 }

@@ -168,6 +168,7 @@ class DrawerMenu extends Drawer {
           child: new ListView(
             children: <Widget>[
               UserAccountsDrawerHeader(
+
                 accountName: Text(nom, overflow: TextOverflow.visible,),
                 accountEmail: Text(Dme().email, overflow: TextOverflow.visible,),
                 currentAccountPicture: CircleAvatar(

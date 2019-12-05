@@ -3,9 +3,11 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:raco/src/blocs/drawer_menu/drawer_bloc.dart';
+import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/ui/routes/bottom_navigation/destination.dart';
 import 'package:raco/src/ui/routes/bottom_navigation/destination_view.dart';
 import 'package:raco/src/ui/routes/drawer_menu/drawer_menu.dart';
+import 'package:raco/src/utils/app_colors.dart';
 
 class HomeRoute extends StatefulWidget {
   @override
@@ -90,8 +92,8 @@ class _HomeRouteState extends State<HomeRoute> with TickerProviderStateMixin<Hom
               items: allDestinations.map((Destination destination) {
                 return BottomNavigationBarItem(
                     icon: Icon(destination.icon),
-                    backgroundColor: destination.color,
-                    title: Text(destination.title)
+                    backgroundColor: AppColors().primary,
+                    title: Text(allTranslations.text(destination.title))
                 );
               }).toList(),
             ),

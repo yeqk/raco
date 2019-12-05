@@ -45,6 +45,7 @@ dependencies:
   share_extend: ^1.1.0
   progress_dialog: ^1.2.0
   percent_indicator: "^2.1.1"
+  flutter_colorpicker: ^0.2.6
 
 
 dev_dependencies:

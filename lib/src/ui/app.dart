@@ -47,8 +47,8 @@ class App extends StatelessWidget {
           child: MaterialApp(
             title: "El Racó",
             theme: ThemeData(
-              primaryColor: AppColors.primary,
-              accentColor: AppColors.accentColor,
+              primaryColor: AppColors().primary,
+              accentColor: AppColors().accentColor,
             ),
             locale: newLocale ?? allTranslations.locale,
             localizationsDelegates: [

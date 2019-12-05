@@ -97,7 +97,7 @@
   "problems" : "Problems",
   "laboratory" : "Laboratory",
   "guided_learning" : "Guided learning",
-  "autonomous_learning" : "Autonomous learning"
+  "autonomous_learning" : "Autonomous learning",
 
   "competences" : "Competences",
 
@@ -133,5 +133,10 @@
   "incorrect_value" : "Valor incorrecto",
   "deleted" : "deleted",
   "UNDO" : "UNDO",
-  "percentage_error" : "The total percentage cannot exceed 100%"
+  "percentage_error" : "The total percentage cannot exceed 100%",
+
+  "primary_color" : "Primary color",
+  "secondary_color" : "Secondary color",
+  "select_color" : "Pick a color",
+  "default" : "Default"
 }

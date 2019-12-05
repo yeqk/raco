@@ -133,6 +133,10 @@
   "incorrect_value" : "Valor incorrecte",
   "deleted" : "suprimit",
   "UNDO" : "DESFER",
-  "percentage_error" : "El percentatge total no pot excedir 100%"
+  "percentage_error" : "El percentatge total no pot excedir 100%",
+  "primary_color" : "Color primari",
+  "secondary_color" : "Color secundari",
+  "select_color" : "Selecciona un color",
+  "default" : "Default"
 
 }

@@ -10,9 +10,9 @@ class LoadingText extends StatelessWidget {
       bloc: BlocProvider.of<LoadingTextBloc>(context),
       builder: (context, state) {
         if (state is LoadTextState) {
-          return Text(state.text);
+          return Text(state.text, style: TextStyle(color: Colors.white), overflow: TextOverflow.visible,);
         }
-        return Text(allTranslations.text('default_loading'));
+        return Text(allTranslations.text('default_loading'), style: TextStyle(color: Colors.white),overflow: TextOverflow.visible,);
       },
     );
   }

@@ -88,7 +88,7 @@ class LoginRouteState extends State<LoginRoute> {
               child: Container(
                 height: MediaQuery.of(context).size.height,
                 decoration: BoxDecoration(
-                  color: AppColors.primary,
+                  color: AppColors().primary,
                 ),
                 child: Column(
                   children: <Widget>[
@@ -176,7 +176,7 @@ class LoginRouteState extends State<LoginRoute> {
                     allTranslations.text('signin'),
                     style: TextStyle(
                       fontSize: ScreenUtil().setSp(18),
-                      color: AppColors.primary,
+                      color: AppColors().primary,
                     ),
                   ),
                 ),
@@ -195,14 +195,14 @@ class LoginRouteState extends State<LoginRoute> {
             child: RaisedButton.icon(
                 icon: Icon(
                   Icons.language,
-                  color: AppColors.primary,
+                  color: AppColors().primary,
                 ),
                 label: FittedBox(
                   child: Text(
                     allTranslations.text(allTranslations.currentLanguage),
                     style: TextStyle(
                       fontSize: ScreenUtil().setSp(18),
-                      color: AppColors.primary,
+                      color: AppColors().primary,
                     ),
                   ),
                 ),
