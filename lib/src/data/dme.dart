@@ -25,6 +25,7 @@ class Dme {
   Assignatures assignatures;
   //random color for each subject Map<subject code, color code>
   Map<String, String> assigColors;
+  Map<String, String> defaultAssigColors;
   Requisits requisits;
   Map<String, AssignaturaURL> assigURL;
   Map<String, AssignaturaGuia> assigGuia;

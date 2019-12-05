@@ -138,5 +138,6 @@
   "primary_color" : "Primary color",
   "secondary_color" : "Secondary color",
   "select_color" : "Pick a color",
-  "default" : "Default"
+  "default" : "Default",
+  "assig_colors" : "Color of subjects"
 }

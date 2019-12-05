@@ -137,5 +137,6 @@
   "primary_color" : "Color primario",
   "secondary_color" : "Color secundario",
   "select_color" : "Selecciona un color",
-  "default" : "Default"
+  "default" : "Default",
+  "assig_colors" : "Color de las asignaturas"
 }

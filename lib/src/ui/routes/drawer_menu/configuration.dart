@@ -12,6 +12,8 @@ import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/resources/user_repository.dart';
 import 'package:raco/src/utils/app_colors.dart';
 
+import 'subject_colors.dart';
+
 class Configuration extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -35,48 +37,55 @@ class ConfigurationState extends State<Configuration>
   Widget build(BuildContext context) {
     final _translationBloc = BlocProvider.of<TranslationsBloc>(context);
 
-    _onLanguageButtonPressed() async{
-      await showDialog(context: context, builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return new SimpleDialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              children: <Widget>[
-                new SimpleDialogOption(
-                  child: new Text(allTranslations.text('ca')),
-                  onPressed: (){
-                    _translationBloc
-                        .dispatch(TranslationsChangedEvent(newLangCode: 'ca'));
-                    Navigator.of(context).pop();
-                  },
-                ),
-                Divider(),
-                new SimpleDialogOption(
-                  child: new Text(allTranslations.text('es')),
-                  onPressed: (){
-                    _translationBloc
-                        .dispatch(TranslationsChangedEvent(newLangCode: 'es'));
-                    Navigator.of(context).pop();
-                  },
-                ),
-                Divider(),
-                new SimpleDialogOption(
-                  child: new Text(allTranslations.text('en')),
-                  onPressed: (){
-                    _translationBloc
-                        .dispatch(TranslationsChangedEvent(newLangCode: 'en'));
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
+    _onLanguageButtonPressed() async {
+      await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return StatefulBuilder(
+              builder: (context, setState) {
+                return new SimpleDialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                  children: <Widget>[
+                    new SimpleDialogOption(
+                      child: new Text(allTranslations.text('ca')),
+                      onPressed: () {
+                        _translationBloc.dispatch(
+                            TranslationsChangedEvent(newLangCode: 'ca'));
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    Divider(),
+                    new SimpleDialogOption(
+                      child: new Text(allTranslations.text('es')),
+                      onPressed: () {
+                        _translationBloc.dispatch(
+                            TranslationsChangedEvent(newLangCode: 'es'));
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    Divider(),
+                    new SimpleDialogOption(
+                      child: new Text(allTranslations.text('en')),
+                      onPressed: () {
+                        _translationBloc.dispatch(
+                            TranslationsChangedEvent(newLangCode: 'en'));
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              },
             );
-          },
-        );
-      });
+          });
     }
 
-
+    _onSubjectSelected() {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SubjectColors()),
+      );
+    }
 
     _onSelectColor(String mode) {
       Color s = AppColors().primary;
@@ -86,85 +95,99 @@ class ConfigurationState extends State<Configuration>
         s = AppColors().primary;
       }
       showDialog(
-
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20.0))),
-            title: Text(allTranslations.text('select_color'),overflow: TextOverflow.visible,),
-            content: SingleChildScrollView(
-              child: MaterialPicker(
-                 pickerColor: s,
-                 onColorChanged: (Color c) {
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              title: Text(
+                allTranslations.text('select_color'),
+                overflow: TextOverflow.visible,
+              ),
+              content: SingleChildScrollView(
+                child: MaterialPicker(
+                  pickerColor: s,
+                  onColorChanged: (Color c) {
                     print(c.toString());
                     s = c;
-                 },
-               ),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child:  Text(allTranslations.text('default'),overflow: TextOverflow.visible,),
-                onPressed: () {
-                  if (mode == 'p') {
-                    AppColors().primary = AppColors().default_primary;
-                    user.writeToPreferences('primary_color', AppColors().default_primary.value.toString());
-                  } else if (mode == 's') {
-                    AppColors().accentColor = AppColors().default_accentColor;
-                    user.writeToPreferences('secondary_color', AppColors().default_accentColor.value.toString());
-                  }
-                  String cur = allTranslations.currentLanguage;
-                  String an;
-                  if (cur == 'es') {
-                    an = 'en';
-                  } else if (cur == 'ca') {
-                    an = 'en';
-                  } else {
-                    an = 'ca';
-                  }
-                  _translationBloc
-                      .dispatch(TranslationsChangedEvent(newLangCode: an));
-                  _translationBloc
-                      .dispatch(TranslationsChangedEvent(newLangCode: cur));
-                  Navigator.of(context).pop();
-                },
+                  },
+                ),
               ),
-              FlatButton(
-                child:  Text(allTranslations.text('cancel'),overflow: TextOverflow.visible,),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              FlatButton(
-                child:  Text(allTranslations.text('accept'),overflow: TextOverflow.visible,),
-                onPressed: () {
-                  if (mode == 'p') {
-                    AppColors().primary = s;
-                    user.writeToPreferences('primary_color', s.value.toString());
-                  } else if (mode == 's') {
-                    AppColors().accentColor = s;
-                    user.writeToPreferences('secondary_color', s.value.toString());
-                  }
-                  String cur = allTranslations.currentLanguage;
-                  String an;
-                  if (cur == 'es') {
-                    an = 'en';
-                  } else if (cur == 'ca') {
-                    an = 'en';
-                  } else {
-                    an = 'ca';
-                  }
-                  _translationBloc
-                      .dispatch(TranslationsChangedEvent(newLangCode: an));
-                  _translationBloc
-                      .dispatch(TranslationsChangedEvent(newLangCode: cur));
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        }
-      );
+              actions: <Widget>[
+                FlatButton(
+                  child: Text(
+                    allTranslations.text('default'),
+                    overflow: TextOverflow.visible,
+                  ),
+                  onPressed: () {
+                    if (mode == 'p') {
+                      AppColors().primary = AppColors().default_primary;
+                      user.writeToPreferences('primary_color',
+                          AppColors().default_primary.value.toString());
+                    } else if (mode == 's') {
+                      AppColors().accentColor = AppColors().default_accentColor;
+                      user.writeToPreferences('secondary_color',
+                          AppColors().default_accentColor.value.toString());
+                    }
+                    String cur = allTranslations.currentLanguage;
+                    String an;
+                    if (cur == 'es') {
+                      an = 'en';
+                    } else if (cur == 'ca') {
+                      an = 'en';
+                    } else {
+                      an = 'ca';
+                    }
+                    _translationBloc
+                        .dispatch(TranslationsChangedEvent(newLangCode: an));
+                    _translationBloc
+                        .dispatch(TranslationsChangedEvent(newLangCode: cur));
+                    Navigator.of(context).pop();
+                  },
+                ),
+                FlatButton(
+                  child: Text(
+                    allTranslations.text('cancel'),
+                    overflow: TextOverflow.visible,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                FlatButton(
+                  child: Text(
+                    allTranslations.text('accept'),
+                    overflow: TextOverflow.visible,
+                  ),
+                  onPressed: () {
+                    if (mode == 'p') {
+                      AppColors().primary = s;
+                      user.writeToPreferences(
+                          'primary_color', s.value.toString());
+                    } else if (mode == 's') {
+                      AppColors().accentColor = s;
+                      user.writeToPreferences(
+                          'secondary_color', s.value.toString());
+                    }
+                    String cur = allTranslations.currentLanguage;
+                    String an;
+                    if (cur == 'es') {
+                      an = 'en';
+                    } else if (cur == 'ca') {
+                      an = 'en';
+                    } else {
+                      an = 'ca';
+                    }
+                    _translationBloc
+                        .dispatch(TranslationsChangedEvent(newLangCode: an));
+                    _translationBloc
+                        .dispatch(TranslationsChangedEvent(newLangCode: cur));
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          });
     }
 
     return new Scaffold(
@@ -176,18 +199,38 @@ class ConfigurationState extends State<Configuration>
             children: <Widget>[
               _language(() => _onLanguageButtonPressed()),
               Divider(),
-              _selectColor(allTranslations.text('primary_color'),() => _onSelectColor('p')),
+              _selectColor(allTranslations.text('primary_color'),
+                  () => _onSelectColor('p')),
               Divider(),
-              _selectColor(allTranslations.text('secondary_color'), () => _onSelectColor('s'))
+              _selectColor(allTranslations.text('secondary_color'),
+                  () => _onSelectColor('s')),
+              Divider(),
+              _subjectColor(() => _onSubjectSelected())
             ],
           ),
         ));
   }
 
+  Widget _subjectColor(VoidCallback onSubjectTap) {
+    return ListTile(
+      onTap: () => onSubjectTap(),
+      title: Text(
+        allTranslations.text('assig_colors'),
+        overflow: TextOverflow.visible,
+      ),
+    );
+  }
+
   Widget _selectColor(String t, VoidCallback onColorTap) {
     return ListTile(
       onTap: () => onColorTap(),
-      trailing: t == allTranslations.text('primary_color') ? CircleAvatar(backgroundColor: AppColors().primary,) : CircleAvatar(backgroundColor: AppColors().accentColor,),
+      trailing: t == allTranslations.text('primary_color')
+          ? CircleAvatar(
+              backgroundColor: AppColors().primary,
+            )
+          : CircleAvatar(
+              backgroundColor: AppColors().accentColor,
+            ),
       title: Text(
         t,
         overflow: TextOverflow.visible,
@@ -205,6 +248,4 @@ class ConfigurationState extends State<Configuration>
       ),
     );
   }
-
-
 }

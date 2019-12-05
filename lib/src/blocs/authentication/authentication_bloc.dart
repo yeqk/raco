@@ -358,7 +358,9 @@ class AuthenticationBloc
       Color c = hsvcolor.toColor();
       Dme().assigColors[a.id] = c.value.toString();
       await user.writeToPreferences(a.id, c.value.toString());
+      await user.writeToPreferences(a.id + 'default', c.value.toString());
     }
+    Dme().defaultAssigColors = Dme().assigColors;
   }
 
   bool _isValidColor(int v, int separation,List<int> generatedHues) {
@@ -376,9 +378,12 @@ class AuthenticationBloc
 
   void _loadSubjectColor(Assignatures assignatures) async {
     Dme().assigColors = new HashMap();
+    Dme().defaultAssigColors = new HashMap();
     for (Assignatura a in assignatures.results) {
       String colorValue = await user.readFromPreferences(a.id);
       Dme().assigColors[a.id] = colorValue;
+      String defaultv = await user.readFromPreferences(a.id + 'default');
+      Dme().defaultAssigColors[a.id] = defaultv;
     }
   }
 }
