@@ -43,6 +43,7 @@ class DrawerMenu extends Drawer {
                 child: Text(allTranslations.text('accept')),
                 onPressed: () {
                   Navigator.of(context).pop();
+                  Navigator.of(context).pop();
                   authenticationBloc.dispatch(LoggedOutEvent());
                 },
               )
@@ -107,7 +108,7 @@ class DrawerMenu extends Drawer {
     }
 
     _onFeedBackPressed() {
-      if (Platform.isIOS) {
+      if (Platform.isAndroid) {
         showCupertinoDialog(context: context, builder: (BuildContext context) {
           return new CupertinoAlertDialog(
             content: new Text(allTranslations.text('feedback_message')),
@@ -123,7 +124,7 @@ class DrawerMenu extends Drawer {
               CupertinoDialogAction(
                 child: Text(allTranslations.text('mail')),
                 onPressed: () {
-                  String mailTO = 'mailto:' + AuthenticationData.feedbackMail + '?subject=Raco App Feedback';
+                  String mailTO = 'mailto:' + AuthenticationData.feedbackMail;
                   Navigator.of(context).pop();
                   _launchURL(mailTO);
                 },
@@ -149,7 +150,7 @@ class DrawerMenu extends Drawer {
                   FlatButton(
                     child: Text(allTranslations.text('mail2')),
                     onPressed: () {
-                      String mailTO = 'mailto:' + AuthenticationData.feedbackMail + '?subject=Raco App Feedback';
+                      String mailTO = 'mailto:' + AuthenticationData.feedbackMail;
                       Navigator.of(context).pop();
                       _launchURL(mailTO);
                     },
