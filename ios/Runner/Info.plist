@@ -50,5 +50,9 @@
     </dict>
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>Share image to photo library</string>
+    <key>NSCalendarsUsageDescription</key>
+    <string>Export events to calendar</string>
+    <key>NSContactsUsageDescription</key>
+    <string>Export events to calendar</string>
 </dict>
 </plist>

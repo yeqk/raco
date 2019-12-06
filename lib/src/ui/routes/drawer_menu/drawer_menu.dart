@@ -108,7 +108,7 @@ class DrawerMenu extends Drawer {
     }
 
     _onFeedBackPressed() {
-      if (Platform.isAndroid) {
+      if (Platform.isIOS) {
         showCupertinoDialog(context: context, builder: (BuildContext context) {
           return new CupertinoAlertDialog(
             content: new Text(allTranslations.text('feedback_message')),

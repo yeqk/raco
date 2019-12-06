@@ -139,7 +139,12 @@ class AuthenticationBloc
       }
       SharedPreferences preferences = await SharedPreferences.getInstance();
       preferences.clear();
-      var dir = await getApplicationDocumentsDirectory();
+      Directory dir = await getApplicationDocumentsDirectory();
+      var f = dir.listSync();
+      print('fileees: ' + f.length.toString());
+      for (var s in f) {
+        print(s.toString());
+      }
       await dir.delete(recursive: true);
       yield AuthenticationUnauthenticatedState();
     }

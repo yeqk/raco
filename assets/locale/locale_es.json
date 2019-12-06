@@ -142,5 +142,6 @@
   "assig_colors" : "Color de las asignaturas",
   "update_data" : "Actualizar datos",
   "last_update" : "Última actualización",
-  "wait" : "Por favor, espera al menos 5 minutos para poder volver a actualizar."
+  "wait" : "Por favor, espera al menos 5 minutos para poder volver a actualizar.",
+  "export" : "Exportar"
 }

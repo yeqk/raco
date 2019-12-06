@@ -51,8 +51,9 @@ class SubjectViewState extends State<SubjectView> {
   @override
   void initState() {
     super.initState();
-    if (Dme().assigGuia.containsKey(widget.assignatura.sigles) ||
+    if (Dme().assigGuia.containsKey(widget.assignatura.sigles) &&
         widget.assignatura.guia != null) {
+     print(Dme().assigGuia.containsKey(widget.assignatura.sigles));
       _fillItems();
     }
   }
@@ -784,7 +785,7 @@ class SubjectViewState extends State<SubjectView> {
             '. ISBN: ' +
             p.isbn +
             ' ' +
-            '<a href=' +
+            '<a href=\"' +
             p.url +
             '\">' +
             p.url +
@@ -824,7 +825,7 @@ class SubjectViewState extends State<SubjectView> {
             '. ISBN: ' +
             p.isbn +
             ' ' +
-            '<a href=' +
+            '<a href=\"' +
             p.url +
             '\">' +
             p.url +

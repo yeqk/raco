@@ -22,6 +22,7 @@ import 'package:raco/src/utils/keys.dart';
 import 'package:raco/src/utils/read_write_file.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
+import 'package:add_2_calendar/add_2_calendar.dart' as calendar_events;
 
 class EventsView extends StatefulWidget {
   @override
@@ -197,6 +198,7 @@ class EventsViewState extends State<EventsView>
       if (i.isCustom) {
         resultList.add(Row(
           children: <Widget>[
+            Icon(Icons.person),
             Expanded(
                 child: Text(
               i.title,
@@ -216,7 +218,8 @@ class EventsViewState extends State<EventsView>
                 _examString(examen),
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-            )
+            ),
+            _exportPopUp(_examString(examen), '',i, setState, itemsList, kDate)
           ],
         ));
       } else if (i.title != null) {
@@ -228,7 +231,8 @@ class EventsViewState extends State<EventsView>
                 overflow: TextOverflow.visible,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-            )
+            ),
+            _exportPopUp(i.title, '',i, setState, itemsList, kDate)
           ],
         ));
       } else {
@@ -279,6 +283,40 @@ class EventsViewState extends State<EventsView>
     return resultList;
   }
 
+  Widget _exportPopUp(
+      String title, String desc,EventItem item, StateSetter po, List<EventItem> li, String kDate) =>
+      PopupMenuButton<int>(
+        itemBuilder: (context) => [
+
+          PopupMenuItem(
+            value: 1,
+            child: Row(
+              children: <Widget>[
+                Icon(Icons.calendar_today),
+                SizedBox(
+                  width: ScreenUtil().setWidth(10),
+                ),
+                Text(allTranslations.text('export'))
+              ],
+            ),
+          ),
+        ],
+        onSelected: (value) async {
+
+         if (value == 1) {
+            calendar_events.Event ce = calendar_events.Event(
+              title: title,
+              description: desc,
+              location: '',
+              startDate: parser.parse(item.inici),
+              endDate: parser.parse(item.fi),
+            );
+            await calendar_events.Add2Calendar.addEvent2Cal(ce);
+            print('exported');
+          }
+        },
+      );
+
   Widget _simplePopup(
           EventItem item, StateSetter po, List<EventItem> li, String kDate) =>
       PopupMenuButton<int>(
@@ -307,6 +345,18 @@ class EventsViewState extends State<EventsView>
               ],
             ),
           ),
+          PopupMenuItem(
+            value: 3,
+            child: Row(
+              children: <Widget>[
+                Icon(Icons.calendar_today),
+                SizedBox(
+                  width: ScreenUtil().setWidth(10),
+                ),
+                Text(allTranslations.text('export'))
+              ],
+            ),
+          ),
         ],
         onSelected: (value) async {
           if (value == 2) {
@@ -323,6 +373,16 @@ class EventsViewState extends State<EventsView>
             setState(() {});
           } else if (value == 1) {
             _buttonPressed(item, li, kDate, po);
+          } else if (value == 3) {
+            calendar_events.Event ce = calendar_events.Event(
+              title: item.title,
+              description: item.description,
+              location: '',
+              startDate: parser.parse(item.inici),
+              endDate: parser.parse(item.fi),
+            );
+            await calendar_events.Add2Calendar.addEvent2Cal(ce);
+            print('exported');
           }
         },
       );
