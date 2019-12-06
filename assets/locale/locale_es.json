@@ -38,6 +38,7 @@
   "exam_loading" : "Cargando exámenes...",
   "labs_loading" : "Cargando ocupación de los Labs...",
   "clossing_loading" : "Cerrando sesión...",
+  "error_loading" : "Se produjo un error, por favor intente más tarde...",
 
   "all" : "Todos",
   "attachments" : "ficheros adjuntos",
@@ -138,5 +139,7 @@
   "secondary_color" : "Color secundario",
   "select_color" : "Selecciona un color",
   "default" : "Default",
-  "assig_colors" : "Color de las asignaturas"
+  "assig_colors" : "Color de las asignaturas",
+  "update_data" : "Actualizar datos",
+  "last_update" : "Última actualización"
 }

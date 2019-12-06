@@ -7,10 +7,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/block_picker.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_colorpicker/material_picker.dart';
+import 'package:oauth2/oauth2.dart';
+import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:raco/src/blocs/translations/translations.dart';
+import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/resources/user_repository.dart';
 import 'package:raco/src/utils/app_colors.dart';
+import 'package:raco/src/utils/keys.dart';
+import 'package:intl/intl.dart';
 
 import 'subject_colors.dart';
 
@@ -23,6 +28,7 @@ class Configuration extends StatefulWidget {
 
 class ConfigurationState extends State<Configuration>
     with SingleTickerProviderStateMixin {
+
   @override
   void initState() {
     super.initState();
@@ -36,7 +42,7 @@ class ConfigurationState extends State<Configuration>
   @override
   Widget build(BuildContext context) {
     final _translationBloc = BlocProvider.of<TranslationsBloc>(context);
-
+    final _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
     _onLanguageButtonPressed() async {
       await showDialog(
           context: context,
@@ -86,7 +92,12 @@ class ConfigurationState extends State<Configuration>
         MaterialPageRoute(builder: (context) => SubjectColors()),
       );
     }
-
+    _onUpdateData() async{
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+      Credentials c = await user.getCredentials();
+      _authenticationBloc.dispatch(LoggedInEvent(credentials: c));
+    }
     _onSelectColor(String mode) {
       Color s = AppColors().primary;
       if (mode == 's') {
@@ -205,7 +216,9 @@ class ConfigurationState extends State<Configuration>
               _selectColor(allTranslations.text('secondary_color'),
                   () => _onSelectColor('s')),
               Divider(),
-              _subjectColor(() => _onSubjectSelected())
+              _subjectColor(() => _onSubjectSelected()),
+              Divider(),
+              _updateData(() => _onUpdateData())
             ],
           ),
         ));
@@ -247,5 +260,24 @@ class ConfigurationState extends State<Configuration>
         overflow: TextOverflow.visible,
       ),
     );
+  }
+
+  Widget _updateData(VoidCallback onTap) {
+    return ListTile(
+      onTap: () => onTap(),
+      leading: Icon(Icons.refresh),
+      title: Text(
+        allTranslations.text('update_data'),
+        overflow: TextOverflow.visible,
+      ),
+      subtitle: Text(_updateText(), overflow: TextOverflow.visible,),
+    );
+  }
+
+  String _updateText() {
+    DateTime t = DateTime.parse(Dme().lastUpdate);
+    DateFormat format = DateFormat.yMd(allTranslations.currentLanguage).add_Hm();
+    String res = allTranslations.text('last_update') + ': ' + format.format(t);
+    return res;
   }
 }

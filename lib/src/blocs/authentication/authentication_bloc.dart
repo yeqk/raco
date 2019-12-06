@@ -23,6 +23,7 @@ import 'package:http/http.dart' as http;
 import 'package:raco/src/models/models.dart';
 import 'package:flutter/painting.dart';
 import 'package:raco/src/utils/file_names.dart';
+import 'package:raco/src/utils/keys.dart';
 import 'package:raco/src/utils/read_write_file.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -58,8 +59,29 @@ class AuthenticationBloc
       }
       if (hasCredentials) {
         yield AuthenticationLoadingState();
-        await _loadData();
-        yield AuthenticationAuthenticatedState();
+        try{
+          await _loadData();
+          Dme().lastUpdate = await user.readFromPreferences(Keys.LAST_UPDATE);
+          yield AuthenticationAuthenticatedState();
+        }catch (e) {
+          loadingTextBloc
+              .dispatch(LoadTextEvent(text: allTranslations.text('error_loading')));
+          if (await user.isLoggedAsVisitor()) {
+            await user.deleteVisitor();
+          }
+          if (await user.hasCredentials()) {
+            //Clear image cache to update avatar
+            imageCache.clear();
+            await user.deleteCredentials();
+          }
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          preferences.clear();
+          var dir = await getApplicationDocumentsDirectory();
+          await dir.delete(recursive: true);
+          await Future.delayed(Duration(seconds:2));
+          yield AuthenticationUnauthenticatedState();
+        }
+
       } else {
         if (isVisitor) {
           yield AuthenticationVisitorLoggedState();
@@ -70,9 +92,37 @@ class AuthenticationBloc
 
     if (event is LoggedInEvent) {
       yield AuthenticationLoadingState();
+      bool firsLogin = !await user.hasCredentials();
       await user.persistCredentials(event.credentials);
-      await _downloadData();
-      yield AuthenticationAuthenticatedState();
+      try {
+        await _downloadData();
+        String u = DateTime.now().toIso8601String();
+        Dme().lastUpdate = u;
+        user.writeToPreferences(Keys.LAST_UPDATE, u);
+        yield AuthenticationAuthenticatedState();
+      }catch(e) {
+        loadingTextBloc
+            .dispatch(LoadTextEvent(text: allTranslations.text('error_loading')));
+        await Future.delayed(Duration(seconds:2));
+        if (firsLogin) {
+          if (await user.isLoggedAsVisitor()) {
+            await user.deleteVisitor();
+          }
+          if (await user.hasCredentials()) {
+            //Clear image cache to update avatar
+            imageCache.clear();
+            await user.deleteCredentials();
+          }
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          preferences.clear();
+          var dir = await getApplicationDocumentsDirectory();
+          await dir.delete(recursive: true);
+          yield AuthenticationUnauthenticatedState();
+        } else {
+          yield AuthenticationAuthenticatedState();
+        }
+
+      }
     }
 
     if (event is LoggedOutEvent) {
@@ -329,15 +379,28 @@ class AuthenticationBloc
 
 
     //Custom events
-    List<CustomEvent> customEventList = new List<CustomEvent>();
-    Dme().customEvents = CustomEvents(0, customEventList);
-    await ReadWriteFile().writeStringToFile(
-        FileNames.CUSTOM_EVENTS, jsonEncode(Dme().customEvents));
+    if (await ReadWriteFile().exists(FileNames.CUSTOM_EVENTS)) {
+      //Load custom events
+      Dme().customEvents = CustomEvents.fromJson(jsonDecode(
+          await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_EVENTS)));
+    } else {
+      List<CustomEvent> customEventList = new List<CustomEvent>();
+      Dme().customEvents = CustomEvents(0, customEventList);
+      await ReadWriteFile().writeStringToFile(
+          FileNames.CUSTOM_EVENTS, jsonEncode(Dme().customEvents));
+    }
     //Custom grades
-    List<CustomGrade> customGradesList = new List<CustomGrade>();
-    Dme().customGrades = CustomGrades(0, customGradesList);
-    await ReadWriteFile().writeStringToFile(
-        FileNames.CUSTOM_GRADES, jsonEncode(Dme().customGrades));
+    if (await ReadWriteFile().exists(FileNames.CUSTOM_GRADES)) {
+      //Load custom grades
+      Dme().customGrades = CustomGrades.fromJson(jsonDecode(
+          await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_GRADES)));
+    } else {
+      List<CustomGrade> customGradesList = new List<CustomGrade>();
+      Dme().customGrades = CustomGrades(0, customGradesList);
+      await ReadWriteFile().writeStringToFile(
+          FileNames.CUSTOM_GRADES, jsonEncode(Dme().customGrades));
+    }
+
   }
 
   void _fillSchedule(Classes classes) {

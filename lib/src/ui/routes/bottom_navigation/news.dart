@@ -139,7 +139,7 @@ class NewsState extends State<News> with SingleTickerProviderStateMixin {
       Dme().noticies = noticies;
     } catch (e) {
       Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text('Error'),
+        content: Text('Error' + e.toString()),
       ));
     }
     setState(() {});

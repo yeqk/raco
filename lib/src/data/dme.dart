@@ -42,4 +42,6 @@ class Dme {
   CustomEvents customEvents;
   CustomGrades customGrades;
 
+  String lastUpdate;
+
 }

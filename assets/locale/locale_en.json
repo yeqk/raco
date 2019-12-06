@@ -38,6 +38,7 @@
   "exam_loading" : "Loading exams...",
   "labs_loading" : "Loading labs ocupation...",
   "clossing_loading" : "Signing out...",
+  "error_loading" : "An error accurred, please try again later...",
 
   "all" : "All",
   "attachments" : "attachments",
@@ -139,5 +140,7 @@
   "secondary_color" : "Secondary color",
   "select_color" : "Pick a color",
   "default" : "Default",
-  "assig_colors" : "Color of subjects"
+  "assig_colors" : "Color of subjects",
+  "update_data" : "Update data",
+  "last_update" : "Last update"
 }

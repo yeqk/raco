@@ -53,6 +53,8 @@ class DrawerMenu extends Drawer {
         showDialog(context: context,
         builder: (BuildContext context) {
           return new AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
             title: new Text(allTranslations.text('signout')),
             content: new Text(allTranslations.text('signout_message')),
             actions: <Widget>[
@@ -133,6 +135,8 @@ class DrawerMenu extends Drawer {
         showDialog(context: context,
             builder: (BuildContext context) {
               return new AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20.0))),
                 title: new Text(allTranslations.text('feedback')),
                 content: new Text(allTranslations.text('feedback_message')),
                 actions: <Widget>[

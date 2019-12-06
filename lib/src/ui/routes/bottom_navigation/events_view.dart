@@ -87,7 +87,7 @@ class EventsViewState extends State<EventsView>
 
   void _onRefresh() async {
     //update events
-    try{
+    try {
       String accessToken = await user.getAccessToken();
       String lang = await user.getPreferredLanguage();
       RacoRepository rr = new RacoRepository(
@@ -97,7 +97,7 @@ class EventsViewState extends State<EventsView>
       await ReadWriteFile()
           .writeStringToFile(FileNames.EVENTS, jsonEncode(events));
       Dme().events = events;
-    }catch(e) {
+    } catch (e) {
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text('Error'),
       ));
@@ -340,7 +340,9 @@ class EventsViewState extends State<EventsView>
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
-                                SizedBox(height: ScreenUtil().setHeight(5),),
+                                SizedBox(
+                                  height: ScreenUtil().setHeight(5),
+                                ),
                                 new TextFormField(
                                   controller: _titleController,
                                   maxLines: 1,
@@ -372,7 +374,8 @@ class EventsViewState extends State<EventsView>
                                   maxLines: 3,
                                   maxLength: 320,
                                   decoration: new InputDecoration(
-                                    labelText: allTranslations.text('description'),
+                                    labelText:
+                                        allTranslations.text('description'),
                                     fillColor: Colors.white,
                                     border: new OutlineInputBorder(
                                       borderRadius:
@@ -545,10 +548,10 @@ class EventsViewState extends State<EventsView>
     if (allTranslations.currentLanguage == 'ca') {
       l = LocaleType.ca;
     } else if (allTranslations.currentLanguage == 'es') {
-      l =LocaleType.es;
+      l = LocaleType.es;
     } else {
       l = LocaleType.en;
-  }
+    }
     DatePicker.showDateTimePicker(context,
         showTitleActions: true,
         minTime: DateTime.now(),
@@ -690,12 +693,16 @@ class EventsViewState extends State<EventsView>
     List<EventItem> resultList = new List();
     for (Event e in Dme().events.results) {
       DateTime fiTime = parser.parse(e.fi);
-      if (fiTime.isAfter(DateTime.now()) &&
+      DateTime iniTime = parser.parse(e.inici);
+      if ((fiTime.isAfter(DateTime.now()) ||
+              (fiTime == iniTime &&
+                  fiTime.year == DateTime.now().year &&
+                  fiTime.month == DateTime.now().month &&
+                  fiTime.day == DateTime.now().day)) &&
           (e.nom == 'FESTIU' ||
               e.nom == 'VACANCES' ||
               e.nom == 'FESTA FIB' ||
               e.nom == 'CANVI DIA')) {
-        DateTime iniTime = parser.parse(e.inici);
         int difference = fiTime.difference(iniTime).inDays;
         for (int i = 0; i <= difference; i++) {
           DateTime iniciTime = iniTime.add(Duration(days: i));

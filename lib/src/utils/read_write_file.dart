@@ -18,4 +18,9 @@ class ReadWriteFile {
     final file = File(path + '/' + fileName);
     return file.readAsString();
   }
+
+  Future<bool> exists(String fileName) async{
+    final path = await _localPath;
+    return File(path + '/' + fileName).exists();
+  }
 }

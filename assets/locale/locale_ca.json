@@ -38,6 +38,7 @@
   "exam_loading" : "Carregant exàmens",
   "labs_loading" : "Carregant ocupació dels Labs...",
   "clossing_loading" : "Tancant sessió...",
+  "error_loading" : "Hi ha hagut un error. Siusplau, torni a intentar-ho més tard...",
 
   "all" : "Tots",
   "attachments" : "fitxers adjunts",
@@ -138,6 +139,9 @@
   "secondary_color" : "Color secundari",
   "select_color" : "Selecciona un color",
   "default" : "Default",
-  "assig_colors" : "Color de les assignatures"
+  "assig_colors" : "Color de les assignatures",
+
+  "update_data" : "Actualitzar dades",
+  "last_update" : "Darrera actualització"
 
 }
