@@ -243,23 +243,36 @@ class Schedule extends StatelessWidget {
       int codi = int.parse(Dme().assigColors[sched[key].codiAssig]);
       String cont =
           sched[key].codiAssig + ' ' + sched[key].grup + ' ' + sched[key].tipus;
-      return Container(
-        padding: EdgeInsets.all(ScreenUtil().setWidth(2)),
-        width: MediaQuery.of(context).size.width / 6,
-        color: Color(codi),
-        child: FittedBox(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(cont),
+      return InkWell(
+        onTap: () {
+          print('tap');
+        },
+        child: Container(
+            padding: EdgeInsets.all(ScreenUtil().setWidth(2)),
+            width: MediaQuery.of(context).size.width / 6,
+            color: Color(codi),
+            child: FittedBox(
+              child: MediaQuery.of(context).orientation != Orientation.portrait ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(cont),
+                  Text(' '),
+                  Text('['+sched[key].aules+']'),
 
-             Text(sched[key].aules),
+                ],
+              ) : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(cont),
+                  Text('['+sched[key].aules+']'),
 
-            ],
-          ),
-        )
+                ],
+              ),
+            )
+        ),
       );
     }
     return Text('');
   }
+
 }

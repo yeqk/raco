@@ -95,7 +95,7 @@ class AuthenticationBloc
       bool firsLogin = !await user.hasCredentials();
       await user.persistCredentials(event.credentials);
       try {
-        await _downloadData();
+        await _downloadData(firsLogin);
         String u = DateTime.now().toIso8601String();
         Dme().lastUpdate = u;
         user.writeToPreferences(Keys.LAST_UPDATE, u);
@@ -265,7 +265,7 @@ class AuthenticationBloc
         await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_GRADES)));
   }
 
-  Future<void> _downloadData() async {
+  Future<void> _downloadData(bool firstLogin) async {
     //load personal information
     loadingTextBloc.dispatch(
         LoadTextEvent(text: allTranslations.text('personal_info_loading')));
@@ -332,7 +332,7 @@ class AuthenticationBloc
         LoadTextEvent(text: allTranslations.text('subjects_loading')));
     Assignatures assignatures = await rr.getAssignatures();
     dme.assignatures = assignatures;
-    _assignColor(assignatures);
+    _assignColor(assignatures, firstLogin);
     await ReadWriteFile()
         .writeStringToFile(FileNames.ASSIGNATURES, jsonEncode(assignatures));
     dme.assigURL = new HashMap();
@@ -419,25 +419,29 @@ class AuthenticationBloc
     dme.schedule = schedule;
   }
 
-  void _assignColor(Assignatures assignatures) async {
+  void _assignColor(Assignatures assignatures, bool firstLogin) async {
     List<int> generatedHues = List();
     Random rand = Random();
     Dme().assigColors = new HashMap();
      int minimumSeparation = (360/(assignatures.count*4)).round();
     for (Assignatura a in assignatures.results) {
 
-      int genHue = rand.nextInt(361);
-      while(!_isValidColor(genHue, minimumSeparation,generatedHues)) {
-        genHue = rand.nextInt(361);
-      }
-      generatedHues.add(genHue);
+      if (firstLogin) {
+        int genHue = rand.nextInt(361);
+        while(!_isValidColor(genHue, minimumSeparation,generatedHues)) {
+          genHue = rand.nextInt(361);
+        }
+        generatedHues.add(genHue);
 
-      HSVColor hsvcolor =
-          HSVColor.fromAHSV(1, genHue.toDouble(), 0.5, 0.75);
-      Color c = hsvcolor.toColor();
-      Dme().assigColors[a.id] = c.value.toString();
-      await user.writeToPreferences(a.id, c.value.toString());
-      await user.writeToPreferences(a.id + 'default', c.value.toString());
+        HSVColor hsvcolor =
+        HSVColor.fromAHSV(1, genHue.toDouble(), 0.5, 0.75);
+        Color c = hsvcolor.toColor();
+        Dme().assigColors[a.id] = c.value.toString();
+        await user.writeToPreferences(a.id, c.value.toString());
+        await user.writeToPreferences(a.id + 'default', c.value.toString());
+      } else {
+        Dme().assigColors[a.id] = await user.readFromPreferences(a.id);
+      }
     }
     Dme().defaultAssigColors = Dme().assigColors;
   }

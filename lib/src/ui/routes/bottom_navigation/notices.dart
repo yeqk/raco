@@ -14,6 +14,7 @@ import 'package:raco/src/resources/global_translations.dart';
 import 'package:intl/intl.dart';
 import 'package:raco/src/resources/user_repository.dart';
 import 'package:raco/src/utils/file_names.dart';
+import 'package:raco/src/utils/keys.dart';
 import 'package:raco/src/utils/read_write_file.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
@@ -80,19 +81,33 @@ class NoticiesState extends State<Notices> with SingleTickerProviderStateMixin {
 
   void _onRefresh() async {
     //update notices
-    try{
-      String accessToken = await user.getAccessToken();
-      String lang = await user.getPreferredLanguage();
-      RacoRepository rr = new RacoRepository(
-          racoApiClient: RacoApiClient(
-              httpClient: http.Client(), accessToken: accessToken, lang: lang));
-      Avisos avisos = await rr.getAvisos();
-      Dme().avisos = avisos;
-      await ReadWriteFile()
-          .writeStringToFile(FileNames.AVISOS, jsonEncode(avisos));
-    }catch(e) {
+    bool canUpdate = true;
+    if (await user.isPresentInPreferences(Keys.LAST_NOTICES_REFRESH)) {
+      if (DateTime.now().difference(DateTime.parse(await user.readFromPreferences(Keys.LAST_NOTICES_REFRESH))).inMinutes < 5) {
+        canUpdate = false;
+      }
+    }
+    if (canUpdate)
+    {
+      try{
+        String accessToken = await user.getAccessToken();
+        String lang = await user.getPreferredLanguage();
+        RacoRepository rr = new RacoRepository(
+            racoApiClient: RacoApiClient(
+                httpClient: http.Client(), accessToken: accessToken, lang: lang));
+        Avisos avisos = await rr.getAvisos();
+        Dme().avisos = avisos;
+        await ReadWriteFile()
+            .writeStringToFile(FileNames.AVISOS, jsonEncode(avisos));
+        user.writeToPreferences(Keys.LAST_NOTICES_REFRESH, DateTime.now().toIso8601String());
+      }catch(e) {
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text('Error'),
+        ));
+      }
+    } else {
       Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text('Error'),
+        content: Text(allTranslations.text('wait')),
       ));
     }
     setState(() {});

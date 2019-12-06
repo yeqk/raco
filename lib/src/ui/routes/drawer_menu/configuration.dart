@@ -28,7 +28,7 @@ class Configuration extends StatefulWidget {
 
 class ConfigurationState extends State<Configuration>
     with SingleTickerProviderStateMixin {
-
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
@@ -93,10 +93,18 @@ class ConfigurationState extends State<Configuration>
       );
     }
     _onUpdateData() async{
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
-      Credentials c = await user.getCredentials();
-      _authenticationBloc.dispatch(LoggedInEvent(credentials: c));
+      if (DateTime.now().difference(DateTime.parse(await user.readFromPreferences(Keys.LAST_UPDATE))).inMinutes < 5) {
+        print(DateTime.parse(await user.readFromPreferences(Keys.LAST_UPDATE)).difference(DateTime.now()).inMinutes.toString());
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text(allTranslations.text('wait')),
+        ));
+      } else {
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+        Credentials c = await user.getCredentials();
+        _authenticationBloc.dispatch(LoggedInEvent(credentials: c));
+      }
+
     }
     _onSelectColor(String mode) {
       Color s = AppColors().primary;
@@ -202,6 +210,7 @@ class ConfigurationState extends State<Configuration>
     }
 
     return new Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Text(allTranslations.text('configuration')),
         ),

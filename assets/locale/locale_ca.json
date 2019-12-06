@@ -142,6 +142,7 @@
   "assig_colors" : "Color de les assignatures",
 
   "update_data" : "Actualitzar dades",
-  "last_update" : "Darrera actualització"
+  "last_update" : "Darrera actualització",
+  "wait" : "Si us plau, espera al menys 5 minuts per poder tornar a actualitzar."
 
 }

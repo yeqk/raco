@@ -15,6 +15,7 @@ import 'package:raco/src/resources/global_translations.dart';
 import 'package:intl/intl.dart';
 import 'package:raco/src/resources/user_repository.dart';
 import 'package:raco/src/utils/file_names.dart';
+import 'package:raco/src/utils/keys.dart';
 import 'package:raco/src/utils/read_write_file.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
@@ -143,20 +144,34 @@ class LabsState extends State<Labs> with SingleTickerProviderStateMixin {
 
   void _onRefresh(BuildContext context) async {
     //update labs ocupation
-    try {
-      String accessToken = await user.getAccessToken();
-      String lang = await user.getPreferredLanguage();
-      RacoRepository rr = new RacoRepository(
-          racoApiClient: RacoApiClient(
-              httpClient: http.Client(), accessToken: accessToken, lang: lang));
-      await rr.getImageA5();
-      await rr.getImageB5();
-      await rr.getImageC6();
-    } catch(e) {
+    bool canUpdate = true;
+    if (await user.isPresentInPreferences(Keys.LAST_LABS_REFRESH)) {
+      if (DateTime.now().difference(DateTime.parse(await user.readFromPreferences(Keys.LAST_LABS_REFRESH))).inMinutes < 5) {
+        canUpdate = false;
+      }
+    }
+    if (canUpdate) {
+      try {
+        String accessToken = await user.getAccessToken();
+        String lang = await user.getPreferredLanguage();
+        RacoRepository rr = new RacoRepository(
+            racoApiClient: RacoApiClient(
+                httpClient: http.Client(), accessToken: accessToken, lang: lang));
+        await rr.getImageA5();
+        await rr.getImageB5();
+        await rr.getImageC6();
+        user.writeToPreferences(Keys.LAST_LABS_REFRESH, DateTime.now().toIso8601String());
+      } catch(e) {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text('Error'),
+        ));
+      }
+    } else {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text('Error'),
+        content: Text(allTranslations.text('wait')),
       ));
     }
+
     setState(() {});
     _refreshController.refreshCompleted();
   }

@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:raco/src/repositories/repositories.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/resources/user_repository.dart';
+import 'package:raco/src/utils/read_write_file.dart';
 import 'package:share_extend/share_extend.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,6 +17,7 @@ import 'package:share_extend/share_extend.dart';
 
 class Notice extends StatelessWidget {
   final Avis avis;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Notice({Key key, @required this.avis}) : super(key: key);
 
@@ -35,6 +37,7 @@ class Notice extends StatelessWidget {
     DateTime ta = format.parse(avis.dataModificacio);
     String time = formatter.format(ta);
     return Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Text(appBarTitle),
         ),
@@ -116,28 +119,55 @@ class Notice extends StatelessWidget {
     }
   }
   void _downloadFile(Adjunt adjunt, BuildContext context) async{
-    ProgressDialog pr = new ProgressDialog(context);
-    pr.style(
-      message: allTranslations.text('downloading'),
-    );
-    pr.show();
-    String accessToken = await user.getAccessToken();
-    String lang = await user.getPreferredLanguage();
-    RacoRepository rr = new RacoRepository(
-        racoApiClient: RacoApiClient(
-            httpClient: http.Client(), accessToken: accessToken, lang: lang));
-    String filePath = await rr.downloadAndSaveFile(adjunt.nom, adjunt.url, adjunt.tipusMime);
 
-    pr.hide().then((isHidden) {
-      print(isHidden);
-    });
+    try{
+      String accessToken = await user.getAccessToken();
+      String lang = await user.getPreferredLanguage();
+      RacoRepository rr = new RacoRepository(
+          racoApiClient: RacoApiClient(
+              httpClient: http.Client(), accessToken: accessToken, lang: lang));
+      String filePath = '';
+      if (await ReadWriteFile().exists(adjunt.nom)) {
+        filePath = await ReadWriteFile().getPaht(adjunt.nom);
+        if (adjunt.tipusMime == 'application/pdf') {
+          await OpenFile.open(filePath);
+        }
+        else {
+          await ShareExtend.share(filePath, adjunt.nom);
+        }
+      } else {
+        ProgressDialog pr = new ProgressDialog(context, isDismissible: true);
+        pr.style(
+          message: allTranslations.text('downloading'),
+        );
+        pr.show();
+        try{
+          filePath = await rr.downloadAndSaveFile(adjunt.nom, adjunt.url, adjunt.tipusMime);
+          pr.dismiss();
+          if (adjunt.tipusMime == 'application/pdf') {
+            await OpenFile.open(filePath);
+          }
+          else {
+            await ShareExtend.share(filePath, adjunt.nom);
+          }
+        }catch(e) {
+          pr.dismiss();
+          _scaffoldKey.currentState.showSnackBar(SnackBar(
+            content: Text('Error'),
+          ));
+        }
 
-    if (adjunt.tipusMime == 'application/pdf') {
-      await OpenFile.open(filePath);
+      }
+
+
+
+    }catch(e) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text('Error'),
+      ));
+
     }
-    else {
-      await ShareExtend.share(filePath, adjunt.nom);
-    }
+
   }
   _onLinkTap(String url) async {
     if (await canLaunch(url)) {

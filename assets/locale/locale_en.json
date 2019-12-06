@@ -142,5 +142,6 @@
   "default" : "Default",
   "assig_colors" : "Color of subjects",
   "update_data" : "Update data",
-  "last_update" : "Last update"
+  "last_update" : "Last update",
+  "wait" : "Please wait at least 5 minutes to be able to upgrade again."
 }

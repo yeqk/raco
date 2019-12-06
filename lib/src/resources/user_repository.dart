@@ -31,6 +31,7 @@ class UserRepository {
   Future<bool> writeToPreferences(String key, String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.setString(_storageKey + key, value);
+
   }
 
   Future<bool> isPresentInPreferences(String key) async {
