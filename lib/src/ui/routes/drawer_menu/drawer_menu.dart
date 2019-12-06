@@ -66,6 +66,7 @@ class DrawerMenu extends Drawer {
                 child: Text(allTranslations.text('accept')),
                 onPressed: () {
                   Navigator.of(context).pop();
+                  Navigator.of(context).pop();
                   authenticationBloc.dispatch(LoggedOutEvent());
                 },
               ),

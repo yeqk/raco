@@ -116,7 +116,6 @@ class Notice extends StatelessWidget {
     }
   }
   void _downloadFile(Adjunt adjunt, BuildContext context) async{
-    print('url: ' + adjunt.url);
     ProgressDialog pr = new ProgressDialog(context);
     pr.style(
       message: allTranslations.text('downloading'),

@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
+import 'package:oauth2/oauth2.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:raco/src/blocs/loading_text/loading_text.dart';
 import 'package:raco/src/data/dme.dart';
@@ -13,6 +14,7 @@ import 'package:raco/src/data/dme.dart' as prefix0;
 import 'package:raco/src/models/custom_events.dart';
 import 'package:raco/src/models/custom_grades.dart';
 import 'package:raco/src/models/requisits.dart';
+import 'package:raco/src/resources/authentication_data.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/resources/user_repository.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
@@ -40,8 +42,20 @@ class AuthenticationBloc
     AuthenticationEvent event,
   ) async* {
     if (event is AppStartedEvent) {
-      final bool hasCredentials = await user.hasCredentials();
-      final bool isVisitor = await user.isLoggedAsVisitor();
+      bool hasCredentials = await user.hasCredentials();
+      bool isVisitor = await user.isLoggedAsVisitor();
+
+      if (hasCredentials) {
+        Credentials c = await user.getCredentials();
+        try {
+          if(c.expiration.isBefore(DateTime.now().add(Duration(hours: 1))) ) {
+            c = await c.refresh(identifier: AuthenticationData.identifier,secret: AuthenticationData.secret,);
+            await user.persistCredentials(c);
+          }
+        } catch(e) {
+          hasCredentials = false;
+        }
+      }
       if (hasCredentials) {
         yield AuthenticationLoadingState();
         await _loadData();
@@ -88,6 +102,8 @@ class AuthenticationBloc
   }
 
   Future<void> _loadData() async {
+
+
     //load personal information
     loadingTextBloc.dispatch(
         LoadTextEvent(text: allTranslations.text('personal_info_loading')));

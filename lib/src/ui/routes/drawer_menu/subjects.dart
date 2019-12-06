@@ -47,6 +47,7 @@ class SubjectsState extends State<Subjects>
   @override
   Widget build(BuildContext context) {
     List<Assignatura> subjects = Dme().assignatures.results;
+    /*
     return new Scaffold(
         appBar: AppBar(
           title: Text(allTranslations.text('subjects')),
@@ -60,6 +61,15 @@ class SubjectsState extends State<Subjects>
             onRefresh: _onRefresh,
             child: _subjectList(),
           ),
+        ));
+
+     */
+    return new Scaffold(
+        appBar: AppBar(
+          title: Text(allTranslations.text('subjects')),
+        ),
+        body: Container(
+          child: _subjectList()
         ));
   }
 
