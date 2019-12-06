@@ -29,6 +29,7 @@ class Labs extends StatefulWidget {
 
 class LabsState extends State<Labs> with SingleTickerProviderStateMixin {
   RefreshController _refreshController;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -45,6 +46,7 @@ class LabsState extends State<Labs> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Text(allTranslations.text('labs')),
         ),
@@ -54,7 +56,7 @@ class LabsState extends State<Labs> with SingleTickerProviderStateMixin {
             enablePullUp: false,
             header: BezierCircleHeader(),
             controller: _refreshController,
-            onRefresh: _onRefresh,
+            onRefresh: () => _onRefresh(context),
             child: _newsList(),
           ),
         ));
@@ -139,16 +141,22 @@ class LabsState extends State<Labs> with SingleTickerProviderStateMixin {
     );
   }
 
-  void _onRefresh() async {
+  void _onRefresh(BuildContext context) async {
     //update labs ocupation
-    String accessToken = await user.getAccessToken();
-    String lang = await user.getPreferredLanguage();
-    RacoRepository rr = new RacoRepository(
-        racoApiClient: RacoApiClient(
-            httpClient: http.Client(), accessToken: accessToken, lang: lang));
-    await rr.getImageA5();
-    await rr.getImageB5();
-    await rr.getImageC6();
+    try {
+      String accessToken = await user.getAccessToken();
+      String lang = await user.getPreferredLanguage();
+      RacoRepository rr = new RacoRepository(
+          racoApiClient: RacoApiClient(
+              httpClient: http.Client(), accessToken: accessToken, lang: lang));
+      await rr.getImageA5();
+      await rr.getImageB5();
+      await rr.getImageC6();
+    } catch(e) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text('Error'),
+      ));
+    }
     setState(() {});
     _refreshController.refreshCompleted();
   }

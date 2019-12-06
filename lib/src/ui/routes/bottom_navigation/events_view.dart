@@ -87,15 +87,21 @@ class EventsViewState extends State<EventsView>
 
   void _onRefresh() async {
     //update events
-    String accessToken = await user.getAccessToken();
-    String lang = await user.getPreferredLanguage();
-    RacoRepository rr = new RacoRepository(
-        racoApiClient: RacoApiClient(
-            httpClient: http.Client(), accessToken: accessToken, lang: lang));
-    Events events = await rr.getEvents();
-    await ReadWriteFile()
-        .writeStringToFile(FileNames.EVENTS, jsonEncode(events));
-    Dme().events = events;
+    try{
+      String accessToken = await user.getAccessToken();
+      String lang = await user.getPreferredLanguage();
+      RacoRepository rr = new RacoRepository(
+          racoApiClient: RacoApiClient(
+              httpClient: http.Client(), accessToken: accessToken, lang: lang));
+      Events events = await rr.getEvents();
+      await ReadWriteFile()
+          .writeStringToFile(FileNames.EVENTS, jsonEncode(events));
+      Dme().events = events;
+    }catch(e) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text('Error'),
+      ));
+    }
     setState(() {});
     _refreshController.refreshCompleted();
   }

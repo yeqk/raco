@@ -167,28 +167,34 @@ class SubjectsState extends State<Subjects>
 
   void _onRefresh() async {
     //update subjects info
-    String accessToken = await user.getAccessToken();
-    String lang = await user.getPreferredLanguage();
-    RacoRepository rr = new RacoRepository(
-        racoApiClient: RacoApiClient(
-            httpClient: http.Client(), accessToken: accessToken, lang: lang));
-    Assignatures assignatures = await rr.getAssignatures();
-    Dme dme = Dme();
-    dme.assignatures = assignatures;
-    _assignColor(assignatures);
-    await ReadWriteFile()
-        .writeStringToFile(FileNames.ASSIGNATURES, jsonEncode(assignatures));
-    dme.assigURL = new HashMap();
-    dme.assigGuia = new HashMap();
-    for (Assignatura a in assignatures.results) {
-      AssignaturaURL assigURL = await rr.getAssignaturaURL(a);
+    try{
+      String accessToken = await user.getAccessToken();
+      String lang = await user.getPreferredLanguage();
+      RacoRepository rr = new RacoRepository(
+          racoApiClient: RacoApiClient(
+              httpClient: http.Client(), accessToken: accessToken, lang: lang));
+      Assignatures assignatures = await rr.getAssignatures();
+      Dme dme = Dme();
+      dme.assignatures = assignatures;
+      _assignColor(assignatures);
       await ReadWriteFile()
-          .writeStringToFile(FileNames.ASSIGNATURA_URL, jsonEncode(assigURL));
-      dme.assigURL[a.id] = assigURL;
-      AssignaturaGuia assigGuia = await rr.getAssignaturaGuia(a);
-      await ReadWriteFile()
-          .writeStringToFile(FileNames.ASSIGNATURA_GUIA, jsonEncode(assigGuia));
-      dme.assigGuia[a.id] = assigGuia;
+          .writeStringToFile(FileNames.ASSIGNATURES, jsonEncode(assignatures));
+      dme.assigURL = new HashMap();
+      dme.assigGuia = new HashMap();
+      for (Assignatura a in assignatures.results) {
+        AssignaturaURL assigURL = await rr.getAssignaturaURL(a);
+        await ReadWriteFile()
+            .writeStringToFile(FileNames.ASSIGNATURA_URL, jsonEncode(assigURL));
+        dme.assigURL[a.id] = assigURL;
+        AssignaturaGuia assigGuia = await rr.getAssignaturaGuia(a);
+        await ReadWriteFile()
+            .writeStringToFile(FileNames.ASSIGNATURA_GUIA, jsonEncode(assigGuia));
+        dme.assigGuia[a.id] = assigGuia;
+      }
+    }catch(e) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text('Error'),
+      ));
     }
     setState(() {});
     _refreshController.refreshCompleted();

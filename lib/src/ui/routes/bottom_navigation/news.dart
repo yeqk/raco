@@ -127,15 +127,21 @@ class NewsState extends State<News> with SingleTickerProviderStateMixin {
 
   void _onRefresh() async {
     //update news
-    String accessToken = await user.getAccessToken();
-    String lang = await user.getPreferredLanguage();
-    RacoRepository rr = new RacoRepository(
-        racoApiClient: RacoApiClient(
-            httpClient: http.Client(), accessToken: accessToken, lang: lang));
-    Noticies noticies = await rr.getNoticies();
-    await ReadWriteFile()
-        .writeStringToFile(FileNames.NOTICIES, jsonEncode(noticies));
-    Dme().noticies = noticies;
+    try {
+      String accessToken = await user.getAccessToken();
+      String lang = await user.getPreferredLanguage();
+      RacoRepository rr = new RacoRepository(
+          racoApiClient: RacoApiClient(
+              httpClient: http.Client(), accessToken: accessToken, lang: lang));
+      Noticies noticies = await rr.getNoticies();
+      await ReadWriteFile()
+          .writeStringToFile(FileNames.NOTICIES, jsonEncode(noticies));
+      Dme().noticies = noticies;
+    } catch (e) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text('Error'),
+      ));
+    }
     setState(() {});
     _refreshController.refreshCompleted();
   }
