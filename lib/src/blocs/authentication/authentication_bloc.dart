@@ -78,8 +78,10 @@ class AuthenticationBloc
           SharedPreferences preferences = await SharedPreferences.getInstance();
           preferences.clear();
           var dir = await getApplicationDocumentsDirectory();
-          if (!Platform.isIOS) {
-            await dir.delete(recursive: true);
+          List<FileSystemEntity> _files;
+          _files = dir.listSync(recursive: true, followLinks: false);
+          for (FileSystemEntity f in _files) {
+            f.deleteSync(recursive: false);
           }
           await Future.delayed(Duration(seconds:2));
           yield AuthenticationUnauthenticatedState();
@@ -119,7 +121,11 @@ class AuthenticationBloc
           SharedPreferences preferences = await SharedPreferences.getInstance();
           preferences.clear();
           var dir = await getApplicationDocumentsDirectory();
-          await dir.delete(recursive: true);
+          List<FileSystemEntity> _files;
+          _files = dir.listSync(recursive: true, followLinks: false);
+          for (FileSystemEntity f in _files) {
+            f.deleteSync(recursive: false);
+          }
           yield AuthenticationUnauthenticatedState();
         } else {
           yield AuthenticationAuthenticatedState();
@@ -143,8 +149,10 @@ class AuthenticationBloc
       SharedPreferences preferences = await SharedPreferences.getInstance();
       preferences.clear();
       Directory dir = await getApplicationDocumentsDirectory();
-      if (!Platform.isIOS) {
-        await dir.delete(recursive: true);
+      List<FileSystemEntity> _files;
+      _files = dir.listSync(recursive: true, followLinks: false);
+      for (FileSystemEntity f in _files) {
+        f.deleteSync(recursive: false);
       }
       yield AuthenticationUnauthenticatedState();
     }
