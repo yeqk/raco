@@ -144,5 +144,8 @@
   "update_data" : "Update data",
   "last_update" : "Last update",
   "wait" : "Please wait at least 5 minutes to be able to upgrade again.",
-  "export" : "Export"
+  "export" : "Export",
+
+  "event_delete_confirmation" : "Are you sure you want to delete this event?",
+  "grade_delete_confirmation" : "Are you sure you want to delete this grade?"
 }

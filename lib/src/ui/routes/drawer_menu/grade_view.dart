@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -266,14 +267,76 @@ class GradeViewState extends State<GradeView>
         ],
         onSelected: (value) async {
           if (value == 2) {
-            Dme().customGrades.results.removeWhere((i) {
-              return i.id == g.id;
-            });
-            Dme().customGrades.count -= 1;
-            await ReadWriteFile().writeStringToFile(
-                FileNames.CUSTOM_GRADES, jsonEncode(Dme().customGrades));
-            setState(() {});
-            Navigator.of(context).pop();
+            if (Platform.isIOS) {
+              showCupertinoDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return new CupertinoAlertDialog(
+                      title: new Text(allTranslations.text('delete')),
+                      content: new Text(
+                          allTranslations.text('grade_delete_confirmation')),
+                      actions: <Widget>[
+                        CupertinoDialogAction(
+                          isDefaultAction: true,
+                          child: Text(allTranslations.text('cancel')),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        CupertinoDialogAction(
+                          child: Text(allTranslations.text('accept')),
+                          onPressed: () async {
+                            Dme().customGrades.results.removeWhere((i) {
+                              return i.id == g.id;
+                            });
+                            Dme().customGrades.count -= 1;
+                            await ReadWriteFile().writeStringToFile(
+                                FileNames.CUSTOM_GRADES, jsonEncode(Dme().customGrades));
+                            setState(() {});
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      ],
+                    );
+                  });
+            } else {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return new AlertDialog(
+                      shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(20.0))),
+                      title: new Text(allTranslations.text('delete')),
+                      content: new Text(
+                          allTranslations.text('grade_delete_confirmation')),
+                      actions: <Widget>[
+                        FlatButton(
+                          child: Text(allTranslations.text('cancel')),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        FlatButton(
+                          child: Text(allTranslations.text('accept')),
+                          onPressed: () async {
+                            Dme().customGrades.results.removeWhere((i) {
+                              return i.id == g.id;
+                            });
+                            Dme().customGrades.count -= 1;
+                            await ReadWriteFile().writeStringToFile(
+                                FileNames.CUSTOM_GRADES, jsonEncode(Dme().customGrades));
+                            setState(() {});
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  });
+            }
+
           } else if (value == 1) {
             _editButtonPressed(g, po);
           }
@@ -531,7 +594,7 @@ class GradeViewState extends State<GradeView>
     for (CustomGrade c in lista) {
       p += c.grade * (c.percentage / 10);
     }
-    ;
+
     return p;
   }
 
@@ -771,6 +834,8 @@ class GradeViewState extends State<GradeView>
                                   _descriptionController.clear();
                                   _percentageController.clear();
                                   _markController.clear();
+                                  _startDateController.text =
+                                      _formatter.format(DateTime.now());
                                   setState(() {});
                                   Navigator.of(context).pop();
                                 }

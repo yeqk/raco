@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -91,7 +92,11 @@ class EventsViewState extends State<EventsView>
     //update events
     bool canUpdate = true;
     if (await user.isPresentInPreferences(Keys.LAST_EVENTS_REFRESH)) {
-      if (DateTime.now().difference(DateTime.parse(await user.readFromPreferences(Keys.LAST_EVENTS_REFRESH))).inMinutes < 5) {
+      if (DateTime.now()
+              .difference(DateTime.parse(
+                  await user.readFromPreferences(Keys.LAST_EVENTS_REFRESH)))
+              .inMinutes <
+          5) {
         canUpdate = false;
       }
     }
@@ -101,12 +106,15 @@ class EventsViewState extends State<EventsView>
         String lang = await user.getPreferredLanguage();
         RacoRepository rr = new RacoRepository(
             racoApiClient: RacoApiClient(
-                httpClient: http.Client(), accessToken: accessToken, lang: lang));
+                httpClient: http.Client(),
+                accessToken: accessToken,
+                lang: lang));
         Events events = await rr.getEvents();
         await ReadWriteFile()
             .writeStringToFile(FileNames.EVENTS, jsonEncode(events));
         Dme().events = events;
-        user.writeToPreferences(Keys.LAST_EVENTS_REFRESH, DateTime.now().toIso8601String());
+        user.writeToPreferences(
+            Keys.LAST_EVENTS_REFRESH, DateTime.now().toIso8601String());
       } catch (e) {
         Scaffold.of(context).showSnackBar(SnackBar(
           content: Text('Error'),
@@ -219,7 +227,7 @@ class EventsViewState extends State<EventsView>
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
-            _exportPopUp(_examString(examen), '',i, setState, itemsList, kDate)
+            _exportPopUp(_examString(examen), '', i, setState, itemsList, kDate)
           ],
         ));
       } else if (i.title != null) {
@@ -232,7 +240,7 @@ class EventsViewState extends State<EventsView>
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
-            _exportPopUp(i.title, '',i, setState, itemsList, kDate)
+            _exportPopUp(i.title, '', i, setState, itemsList, kDate)
           ],
         ));
       } else {
@@ -283,11 +291,10 @@ class EventsViewState extends State<EventsView>
     return resultList;
   }
 
-  Widget _exportPopUp(
-      String title, String desc,EventItem item, StateSetter po, List<EventItem> li, String kDate) =>
+  Widget _exportPopUp(String title, String desc, EventItem item, StateSetter po,
+          List<EventItem> li, String kDate) =>
       PopupMenuButton<int>(
         itemBuilder: (context) => [
-
           PopupMenuItem(
             value: 1,
             child: Row(
@@ -302,8 +309,7 @@ class EventsViewState extends State<EventsView>
           ),
         ],
         onSelected: (value) async {
-
-         if (value == 1) {
+          if (value == 1) {
             calendar_events.Event ce = calendar_events.Event(
               title: title,
               description: desc,
@@ -360,17 +366,83 @@ class EventsViewState extends State<EventsView>
         ],
         onSelected: (value) async {
           if (value == 2) {
-            Dme().customEvents.results.removeWhere((i) {
-              return i.id == item.customId;
-            });
-            Dme().customEvents.count -= 1;
-            await ReadWriteFile().writeStringToFile(
-                FileNames.CUSTOM_EVENTS, jsonEncode(Dme().customEvents));
-            li.removeWhere((i) {
-              return i.customId == item.customId;
-            });
-            po(() {});
-            setState(() {});
+            if (Platform.isIOS) {
+              showCupertinoDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return new CupertinoAlertDialog(
+                      title: new Text(allTranslations.text('delete')),
+                      content: new Text(
+                          allTranslations.text('event_delete_confirmation')),
+                      actions: <Widget>[
+                        CupertinoDialogAction(
+                          isDefaultAction: true,
+                          child: Text(allTranslations.text('cancel')),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        CupertinoDialogAction(
+                          child: Text(allTranslations.text('accept')),
+                          onPressed: () async {
+                            Dme().customEvents.results.removeWhere((i) {
+                              return i.id == item.customId;
+                            });
+                            Dme().customEvents.count -= 1;
+                            await ReadWriteFile().writeStringToFile(
+                                FileNames.CUSTOM_EVENTS,
+                                jsonEncode(Dme().customEvents));
+                            li.removeWhere((i) {
+                              return i.customId == item.customId;
+                            });
+                            po(() {});
+                            setState(() {});
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      ],
+                    );
+                  });
+            } else {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return new AlertDialog(
+                      shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(20.0))),
+                      title: new Text(allTranslations.text('delete')),
+                      content: new Text(
+                          allTranslations.text('event_delete_confirmation')),
+                      actions: <Widget>[
+                        FlatButton(
+                          child: Text(allTranslations.text('cancel')),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        FlatButton(
+                          child: Text(allTranslations.text('accept')),
+                          onPressed: () async {
+                            Dme().customEvents.results.removeWhere((i) {
+                              return i.id == item.customId;
+                            });
+                            Dme().customEvents.count -= 1;
+                            await ReadWriteFile().writeStringToFile(
+                                FileNames.CUSTOM_EVENTS,
+                                jsonEncode(Dme().customEvents));
+                            li.removeWhere((i) {
+                              return i.customId == item.customId;
+                            });
+                            po(() {});
+                            setState(() {});
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  });
+            }
           } else if (value == 1) {
             _buttonPressed(item, li, kDate, po);
           } else if (value == 3) {
@@ -880,5 +952,3 @@ class EventItem {
       this.customId)
       : this.isCustom = true;
 }
-
-

@@ -27,7 +27,6 @@ class Notice extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return NoticeState();
   }
 

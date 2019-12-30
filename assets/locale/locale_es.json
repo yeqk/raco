@@ -143,5 +143,8 @@
   "update_data" : "Actualizar datos",
   "last_update" : "Última actualización",
   "wait" : "Por favor, espera al menos 5 minutos para poder volver a actualizar.",
-  "export" : "Exportar"
+  "export" : "Exportar",
+
+  "event_delete_confirmation" : "¿Seguro que quieres eliminar este evento?",
+  "grade_delete_confirmation" : "¿Seguro que quieres eliminar esta nota?"
 }

@@ -251,6 +251,10 @@ class _DestinationViewState extends State<DestinationView> {
 
                                   });
                                   Navigator.of(context).pop();
+                                  _titleController.clear();
+                                  _descriptionController.clear();
+                                  _startDateController.text = _formatter.format(DateTime.now());
+                                  _endDateController.text = _formatter.format(DateTime.now());
 
                                 }
                               })
