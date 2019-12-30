@@ -42,7 +42,7 @@ class Notice extends StatelessWidget {
           title: Text(appBarTitle),
         ),
         body: Container(
-            color: Colors.grey,
+            color: Colors.white,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -145,6 +145,7 @@ class Notice extends StatelessWidget {
           filePath = await rr.downloadAndSaveFile(adjunt.nom, adjunt.url, adjunt.tipusMime);
           pr.dismiss();
           if (adjunt.tipusMime == 'application/pdf') {
+            print('aaaaaaaaa');
             await OpenFile.open(filePath);
           }
           else {

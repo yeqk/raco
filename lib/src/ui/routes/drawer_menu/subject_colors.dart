@@ -38,7 +38,6 @@ class SubjectColorsState extends State<SubjectColors>
     _onSelectColor(String assignatura) {
       Color s = Color(int.parse(Dme().assigColors[assignatura]));
       showDialog(
-
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(

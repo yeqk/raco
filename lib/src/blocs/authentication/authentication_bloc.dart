@@ -447,7 +447,7 @@ class AuthenticationBloc
         Dme().assigColors[a.id] = await user.readFromPreferences(a.id);
       }
     }
-    Dme().defaultAssigColors = Dme().assigColors;
+    Dme().defaultAssigColors = new HashMap.from(Dme().assigColors);
   }
 
   bool _isValidColor(int v, int separation,List<int> generatedHues) {

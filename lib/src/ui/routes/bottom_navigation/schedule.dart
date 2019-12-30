@@ -184,36 +184,56 @@ class Schedule extends StatelessWidget {
           Container(
             color: rowColor,
             width: MediaQuery.of(context).size.width / 6,
-            child: Center(
-              child: _elemtnt(index, 0, context),
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  child: _elemtnt(index, 0, context),
+                )
+              ],
             ),
           ),
           Container(
             color: rowColor,
             width: MediaQuery.of(context).size.width / 6,
-            child: Center(
-              child: _elemtnt(index, 1, context),
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  child: _elemtnt(index, 1, context),
+                )
+              ],
             ),
           ),
           Container(
             color: rowColor,
             width: MediaQuery.of(context).size.width / 6,
-            child: Center(
-              child: _elemtnt(index, 2, context),
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  child: _elemtnt(index, 2, context),
+                )
+              ],
             ),
           ),
           Container(
             color: rowColor,
             width: MediaQuery.of(context).size.width / 6,
-            child: Center(
-              child: _elemtnt(index, 3, context),
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  child: _elemtnt(index, 3, context),
+                )
+              ],
             ),
           ),
           Container(
             color: rowColor,
             width: MediaQuery.of(context).size.width / 6,
-            child: Center(
-              child: _elemtnt(index, 4, context),
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  child: _elemtnt(index, 4, context),
+                )
+              ],
             ),
           ),
         ],
@@ -245,7 +265,6 @@ class Schedule extends StatelessWidget {
           sched[key].codiAssig + ' ' + sched[key].grup + ' ' + sched[key].tipus;
       return InkWell(
         onTap: () {
-          print('tap');
         },
         child: Container(
             padding: EdgeInsets.all(ScreenUtil().setWidth(2)),
