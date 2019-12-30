@@ -1,6 +1,7 @@
 import 'package:raco/src/models/assignatura_guia.dart';
 import 'package:raco/src/models/assignatures.dart';
 import 'package:raco/src/models/classes.dart';
+import 'package:raco/src/models/custom_downloads.dart';
 import 'package:raco/src/models/custom_events.dart';
 import 'package:raco/src/models/custom_grades.dart';
 import 'package:raco/src/models/models.dart';
@@ -44,4 +45,6 @@ class Dme {
 
   String lastUpdate;
 
+
+  CustomDownloads customDownloads;
 }

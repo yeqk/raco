@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:raco/src/blocs/loading_text/loading_text.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/data/dme.dart' as prefix0;
+import 'package:raco/src/models/custom_downloads.dart';
 import 'package:raco/src/models/custom_events.dart';
 import 'package:raco/src/models/custom_grades.dart';
 import 'package:raco/src/models/requisits.dart';
@@ -267,6 +268,10 @@ class AuthenticationBloc
     //Load custom grades
     Dme().customGrades = CustomGrades.fromJson(jsonDecode(
         await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_GRADES)));
+
+    //load custom downloads
+    Dme().customDownloads = CustomDownloads.fromJson(jsonDecode(
+        await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_DOWNLOADS)));
   }
 
   Future<void> _downloadData(bool firstLogin) async {
@@ -403,6 +408,18 @@ class AuthenticationBloc
       Dme().customGrades = CustomGrades(0, customGradesList);
       await ReadWriteFile().writeStringToFile(
           FileNames.CUSTOM_GRADES, jsonEncode(Dme().customGrades));
+    }
+
+    //Custom downloads
+    if (await ReadWriteFile().exists(FileNames.CUSTOM_DOWNLOADS)) {
+      //Load custom grades
+      Dme().customDownloads = CustomDownloads.fromJson(jsonDecode(
+          await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_DOWNLOADS)));
+    } else {
+      List<String> customDownloadsList = new List<String>();
+      Dme().customDownloads = CustomDownloads(0, customDownloadsList);
+      await ReadWriteFile().writeStringToFile(
+          FileNames.CUSTOM_DOWNLOADS, jsonEncode(Dme().customDownloads));
     }
 
   }

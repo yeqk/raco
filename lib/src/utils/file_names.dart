@@ -17,5 +17,6 @@ class FileNames {
   static final EXAMENS_LABORATORI = 'examens_laboratori.json';
   static final CUSTOM_EVENTS = 'custom_events.json';
   static final CUSTOM_GRADES ='custom_grades.json';
+  static final CUSTOM_DOWNLOADS = "custom_downloads.json";
   static final REQUISITS = 'requisits.json';
 }

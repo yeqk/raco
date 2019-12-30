@@ -881,17 +881,4 @@ class EventItem {
       : this.isCustom = true;
 }
 
-class CustomDialog extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return CustomDialogState();
-  }
-}
 
-class CustomDialogState extends State<CustomDialog> {
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return null;
-  }
-}
