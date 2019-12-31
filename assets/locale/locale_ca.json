@@ -147,5 +147,8 @@
   "export" : "Exportar",
 
   "event_delete_confirmation" : "Estàs segur que vols suprimir aquest esdeveniment?",
-  "grade_delete_confirmation" : "Estàs segur que vols suprimir aquesta nota?"
+  "grade_delete_confirmation" : "Estàs segur que vols suprimir aquesta nota?",
+
+  "please_conditions" : "Si us plau, accepti primer els termes i condicions per iniciar sessió.",
+  "terms" : "Acceptar termes i condicions"
 }

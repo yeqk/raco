@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as prefix0;
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/utils/app_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,9 +24,8 @@ class LoginRoute extends StatefulWidget {
   }
 }
 
-
 class LoginRouteState extends State<LoginRoute> {
-
+  bool _value = false;
 
   @override
   Widget build(BuildContext context) {
@@ -37,70 +41,113 @@ class LoginRouteState extends State<LoginRoute> {
           final _translationBloc = BlocProvider.of<TranslationsBloc>(context);
 
           _onLoginButtonPressed() {
-            _loginBloc.dispatch(LoginButtonPressedEvent(context: context));
+            if (_value) {
+              _loginBloc.dispatch(LoginButtonPressedEvent(context: context));
+            } else {
+              if (Platform.isIOS) {
+                showCupertinoDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return new CupertinoAlertDialog(
+                        content:
+                            new Text(allTranslations.text('please_conditions')),
+                        actions: <Widget>[
+                          CupertinoDialogAction(
+                            child: Text(allTranslations.text('accept')),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          )
+                        ],
+                      );
+                    });
+              } else {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return new AlertDialog(
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20.0))),
+                        content:
+                            new Text(allTranslations.text('please_conditions')),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text(allTranslations.text('accept')),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    });
+              }
+            }
           }
 
-          _onLanguageButtonPressed() async{
-            await showDialog(context: context, builder: (BuildContext context) {
-              return StatefulBuilder(
-                builder: (context, setState) {
-                  return new SimpleDialog(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                    children: <Widget>[
-                      new SimpleDialogOption(
-                        child: new Text(allTranslations.text('ca')),
-                        onPressed: (){
-                          _translationBloc
-                              .dispatch(TranslationsChangedEvent(newLangCode: 'ca'));
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      Divider(),
-                      new SimpleDialogOption(
-                        child: new Text(allTranslations.text('es')),
-                        onPressed: (){
-                          _translationBloc
-                              .dispatch(TranslationsChangedEvent(newLangCode: 'es'));
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      Divider(),
-                      new SimpleDialogOption(
-                        child: new Text(allTranslations.text('en')),
-                        onPressed: (){
-                          _translationBloc
-                              .dispatch(TranslationsChangedEvent(newLangCode: 'en'));
-                          Navigator.of(context).pop();
-                        },
-                      )
-                    ],
+          _onLanguageButtonPressed() async {
+            await showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return StatefulBuilder(
+                    builder: (context, setState) {
+                      return new SimpleDialog(
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20.0))),
+                        children: <Widget>[
+                          new SimpleDialogOption(
+                            child: new Text(allTranslations.text('ca')),
+                            onPressed: () {
+                              _translationBloc.dispatch(
+                                  TranslationsChangedEvent(newLangCode: 'ca'));
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          Divider(),
+                          new SimpleDialogOption(
+                            child: new Text(allTranslations.text('es')),
+                            onPressed: () {
+                              _translationBloc.dispatch(
+                                  TranslationsChangedEvent(newLangCode: 'es'));
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          Divider(),
+                          new SimpleDialogOption(
+                            child: new Text(allTranslations.text('en')),
+                            onPressed: () {
+                              _translationBloc.dispatch(
+                                  TranslationsChangedEvent(newLangCode: 'en'));
+                              Navigator.of(context).pop();
+                            },
+                          )
+                        ],
+                      );
+                    },
                   );
-                },
-              );
-            });
+                });
           }
-
 
           if (MediaQuery.of(context).orientation == Orientation.portrait) {
             return FittedBox(
-              fit: BoxFit.fill,
-              child: Container(
-                height: MediaQuery.of(context).size.height,
-                decoration: BoxDecoration(
-                  color: AppColors().primary,
-                ),
-                child: Column(
-                  children: <Widget>[
-                    logoSection(context),
-                    titleSection(context),
-                    loginButtonsSection(() => _onLoginButtonPressed(),
+                fit: BoxFit.fill,
+                child: Material(
+                  child: Container(
+                    height: MediaQuery.of(context).size.height,
+                    decoration: BoxDecoration(
+                      color: AppColors().primary,
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        logoSection(context),
+                        titleSection(context),
+                        loginButtonsSection(() => _onLoginButtonPressed(),
                             () => _onLanguageButtonPressed(), context),
-
-                  ],
-                ),
-              ),
-            );
+                      ],
+                    ),
+                  ),
+                ));
           } else {
             return Text('');
           }
@@ -136,27 +183,28 @@ class LoginRouteState extends State<LoginRoute> {
 
   Widget titleSection(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.only(top: ScreenUtil().setHeight(10)),
-      child: Center(child: RichText(
-        text: TextSpan(
-          style: TextStyle(
-            fontSize: ScreenUtil().setSp(50),
-            color: Colors.white,
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.only(top: ScreenUtil().setHeight(10)),
+        child: Center(
+          child: RichText(
+            text: TextSpan(
+              style: TextStyle(
+                fontSize: ScreenUtil().setSp(50),
+                color: Colors.white,
+              ),
+              children: <TextSpan>[
+                new TextSpan(text: 'el '),
+                new TextSpan(
+                    text: 'racó',
+                    style: new TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            ),
           ),
-          children: <TextSpan>[
-            new TextSpan(text: 'el '),
-            new TextSpan(
-                text: 'racó',
-                style: new TextStyle(fontWeight: FontWeight.bold)),
-          ],
-        ),
-      ),)
-    );
+        ));
   }
 
-  Widget loginButtonsSection(
-      VoidCallback onLoginTap, VoidCallback onLanguageTap, BuildContext context) {
+  Widget loginButtonsSection(VoidCallback onLoginTap,
+      VoidCallback onLanguageTap, BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.all(ScreenUtil().setWidth(30)),
@@ -211,9 +259,55 @@ class LoginRouteState extends State<LoginRoute> {
                 shape: RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(30))),
           ),
+          SizedBox(
+            height: ScreenUtil().setHeight(15),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Checkbox(
+                value: _value,
+                onChanged: (bool newValue) {
+                  setState(() {
+                    _value = newValue;
+                  });
+                },
+              ),
+              RichText(
+                text: TextSpan(
+                  text: allTranslations.text('terms'),
+                  style: TextStyle(
+                    color: Colors.white,
+                    decoration: TextDecoration.underline,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () async {
+                      File f;
+                      if (allTranslations.currentLanguage == 'ca') {
+                        f = await copyAsset('terms_conditions_ca.pdf');
+                      } else if (allTranslations.currentLanguage == 'es') {
+                        f = await copyAsset('terms_conditions_es.pdf');
+                      } else if (allTranslations.currentLanguage == 'en') {
+                        f = await copyAsset('terms_conditions_en.pdf');
+                      }
+                      await OpenFile.open(f.path);
+                    },
+                ),
+              ),
+            ],
+          )
         ],
       ),
     );
+  }
+
+  Future<File> copyAsset(String fileName) async {
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+    File tempFile = File('$tempPath/terms.pdf');
+    ByteData bd = await rootBundle.load('assets/files/' + fileName);
+    await tempFile.writeAsBytes(bd.buffer.asUint8List(), flush: true);
+    return tempFile;
   }
 
   @override
@@ -235,6 +329,4 @@ class LoginRouteState extends State<LoginRoute> {
     ]);
     super.dispose();
   }
-
-
 }

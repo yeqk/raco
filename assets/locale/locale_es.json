@@ -146,5 +146,8 @@
   "export" : "Exportar",
 
   "event_delete_confirmation" : "¿Seguro que quieres eliminar este evento?",
-  "grade_delete_confirmation" : "¿Seguro que quieres eliminar esta nota?"
+  "grade_delete_confirmation" : "¿Seguro que quieres eliminar esta nota?",
+
+  "please_conditions" : "Por favor, acepte primero los términos y condiciones  para iniciar sessión.",
+  "terms" : "Aceptar términos y condiciones"
 }

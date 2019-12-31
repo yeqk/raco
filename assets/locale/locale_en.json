@@ -147,5 +147,8 @@
   "export" : "Export",
 
   "event_delete_confirmation" : "Are you sure you want to delete this event?",
-  "grade_delete_confirmation" : "Are you sure you want to delete this grade?"
+  "grade_delete_confirmation" : "Are you sure you want to delete this grade?",
+
+  "please_conditions" : "Please accept the terms and conditions first in order to login.",
+  "terms" : "Accept terms and conditions"
 }
