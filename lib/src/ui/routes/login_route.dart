@@ -14,6 +14,7 @@ import 'package:raco/src/blocs/login/login.dart';
 import 'package:raco/src/blocs/translations/translations.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:flutter/services.dart';
+import 'package:raco/src/utils/read_write_file.dart';
 
 typedef OnChangeLanguagePressedCallback = Function(String code);
 
@@ -302,12 +303,8 @@ class LoginRouteState extends State<LoginRoute> {
   }
 
   Future<File> copyAsset(String fileName) async {
-    Directory tempDir = await getTemporaryDirectory();
-    String tempPath = tempDir.path;
-    File tempFile = File('$tempPath/terms.pdf');
     ByteData bd = await rootBundle.load('assets/files/' + fileName);
-    await tempFile.writeAsBytes(bd.buffer.asUint8List(), flush: true);
-    return tempFile;
+    return await ReadWriteFile().wirteBytesToFile("terms.pdf", bd);
   }
 
   @override

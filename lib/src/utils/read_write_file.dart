@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
 
 class ReadWriteFile {
@@ -11,6 +12,12 @@ class ReadWriteFile {
     final path = await _localPath;
     final file = File(path + '/' + fileName);
     return file.writeAsString(content);
+  }
+
+  Future<File> wirteBytesToFile(String fileName, ByteData content) async {
+    final path = await _localPath;
+    final file = File(path + '/' + fileName);
+    return file.writeAsBytes(content.buffer.asUint8List(), flush: true);
   }
 
   Future<String> readStringFromFile(String fileName) async {

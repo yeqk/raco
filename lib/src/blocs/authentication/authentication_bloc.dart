@@ -81,7 +81,9 @@ class AuthenticationBloc
           List<FileSystemEntity> _files;
           _files = dir.listSync(recursive: true, followLinks: false);
           for (FileSystemEntity f in _files) {
-            f.deleteSync(recursive: false);
+            if (!f.path.contains('flutter_assets')) {
+              f.deleteSync(recursive: false);
+            }
           }
           await Future.delayed(Duration(seconds:2));
           yield AuthenticationUnauthenticatedState();
@@ -124,7 +126,9 @@ class AuthenticationBloc
           List<FileSystemEntity> _files;
           _files = dir.listSync(recursive: true, followLinks: false);
           for (FileSystemEntity f in _files) {
-            f.deleteSync(recursive: false);
+            if (!f.path.contains('flutter_assets')) {
+              f.deleteSync(recursive: false);
+            }
           }
           yield AuthenticationUnauthenticatedState();
         } else {
@@ -152,15 +156,11 @@ class AuthenticationBloc
       List<FileSystemEntity> _files;
       _files = dir.listSync(recursive: true, followLinks: false);
       for (FileSystemEntity f in _files) {
-        f.deleteSync(recursive: false);
+        if (!f.path.contains('flutter_assets')) {
+          f.deleteSync(recursive: false);
+        }
       }
       yield AuthenticationUnauthenticatedState();
-    }
-
-    if (event is LoggedAsVisitorEvent) {
-      yield AuthenticationLoadingState();
-      await user.setLoggedAsVisitor();
-      yield AuthenticationVisitorLoggedState();
     }
   }
 

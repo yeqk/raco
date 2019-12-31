@@ -72,10 +72,6 @@ class App extends StatelessWidget {
                 if (state is AuthenticationLoadingState) {
                   return LoadingRoute();
                 }
-
-                if (state is AuthenticationVisitorLoggedState) {
-                  return VisitorHomeRoute();
-                }
                 return MissingRoute();
               },
             ),
