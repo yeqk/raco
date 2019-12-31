@@ -6,9 +6,19 @@ abstract class NewsEvent extends Equatable {
   NewsEvent([List props = const []]) : super(props);
 }
 
-class UpdateNewsEvent extends NewsEvent {
+class NewsInitEvent extends NewsEvent {
 
+  NewsInitEvent();
   @override
   String toString() =>
-      'UpdateNewsEvent';
+      'NewsInitEvent';
+}
+
+
+class NewsChangedEvent extends NewsEvent {
+
+  NewsChangedEvent();
+  @override
+  String toString() =>
+      'NewsChangedEvent';
 }

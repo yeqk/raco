@@ -16,7 +16,7 @@ import 'package:raco/src/ui/routes/drawer_menu/drawer_menu.dart';
 import 'package:raco/src/utils/app_colors.dart';
 import 'package:raco/src/utils/file_names.dart';
 import 'package:raco/src/utils/read_write_file.dart';
-import 'news.dart';
+import 'news_route.dart';
 import 'notices.dart';
 import 'package:intl/intl.dart';
 import 'package:raco/flutter_datetime_picker-1.2.8-with-ca/flutter_datetime_picker.dart';
@@ -343,7 +343,7 @@ class _DestinationViewState extends State<DestinationView> {
       return EventsView();
     } else if (widget.destination.index == 3) {
       //news
-      return News();
+      return NewsRoute();
     } else {
       return null;
     }

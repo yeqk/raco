@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:raco/src/blocs/loading_text/loading_text.dart';
+import 'package:raco/src/blocs/news/news.dart';
 import 'package:raco/src/blocs/translations/translations.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/resources/user_repository.dart';
@@ -9,6 +10,7 @@ import 'package:raco/src/ui/app.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:raco/src/utils/app_colors.dart';
+
 
 
 class SimpleBlocDelegate extends BlocDelegate {
@@ -60,6 +62,11 @@ void main() async {
       BlocProvider<TranslationsBloc>(
         builder: (context) {
           return TranslationsBloc();
+        },
+      ),
+      BlocProvider<NewsBloc>(
+        builder: (context) {
+          return NewsBloc();
         },
       ),
     ],
