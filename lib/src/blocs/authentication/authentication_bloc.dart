@@ -45,7 +45,6 @@ class AuthenticationBloc
   ) async* {
     if (event is AppStartedEvent) {
       bool hasCredentials = await user.hasCredentials();
-      bool isVisitor = await user.isLoggedAsVisitor();
 
       if (hasCredentials) {
         Credentials c = await user.getCredentials();
@@ -67,9 +66,6 @@ class AuthenticationBloc
         }catch (e) {
           loadingTextBloc
               .dispatch(LoadTextEvent(text: allTranslations.text('error_loading')));
-          if (await user.isLoggedAsVisitor()) {
-            await user.deleteVisitor();
-          }
           if (await user.hasCredentials()) {
             //Clear image cache to update avatar
             imageCache.clear();
@@ -90,9 +86,6 @@ class AuthenticationBloc
         }
 
       } else {
-        if (isVisitor) {
-          yield AuthenticationVisitorLoggedState();
-        }
         yield AuthenticationUnauthenticatedState();
       }
     }
@@ -112,9 +105,6 @@ class AuthenticationBloc
             .dispatch(LoadTextEvent(text: allTranslations.text('error_loading')));
         await Future.delayed(Duration(seconds:2));
         if (firsLogin) {
-          if (await user.isLoggedAsVisitor()) {
-            await user.deleteVisitor();
-          }
           if (await user.hasCredentials()) {
             //Clear image cache to update avatar
             imageCache.clear();
@@ -142,9 +132,6 @@ class AuthenticationBloc
       yield AuthenticationLoadingState();
       loadingTextBloc.dispatch(
           LoadTextEvent(text: allTranslations.text('clossing_loading')));
-      if (await user.isLoggedAsVisitor()) {
-        await user.deleteVisitor();
-      }
       if (await user.hasCredentials()) {
         //Clear image cache to update avatar
         imageCache.clear();
@@ -250,12 +237,9 @@ class AuthenticationBloc
     //Load lab ocupation
     loadingTextBloc
         .dispatch(LoadTextEvent(text: allTranslations.text('labs_loading')));
-    String a5Path = directory.path + '/' + FileNames.A5;
-    String b5Path = directory.path + '/' + FileNames.B5;
-    String c6Path = directory.path + '/' + FileNames.C6;
-    Dme().A5 = a5Path;
-    Dme().B5 = b5Path;
-    Dme().C6 = c6Path;
+    Dme().A5 = await user.readFromPreferences('a5');
+    Dme().B5 = await user.readFromPreferences('b5');
+    Dme().C6 = await user.readFromPreferences('c6');
 
     //Load custom events
     Dme().customEvents = CustomEvents.fromJson(jsonDecode(
@@ -393,6 +377,9 @@ class AuthenticationBloc
     Dme().A5 =  await rr.getImageA5();
     Dme().B5 =  await rr.getImageB5();
     Dme().C6 =  await rr.getImageC6();
+    user.writeToPreferences('a5', Dme().A5);
+    user.writeToPreferences('b5', Dme().B5);
+    user.writeToPreferences('c6', Dme().C6);
 
 
     //Custom events

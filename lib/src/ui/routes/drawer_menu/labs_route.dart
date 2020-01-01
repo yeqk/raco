@@ -3,10 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:raco/src/blocs/labs/labs.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/models/classes.dart';
 import 'package:raco/src/models/models.dart';
@@ -21,14 +23,14 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
-class Labs extends StatefulWidget {
+class LabsRoute extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return LabsState();
+    return LabsRouteState();
   }
 }
 
-class LabsState extends State<Labs> with SingleTickerProviderStateMixin {
+class LabsRouteState extends State<LabsRoute> with SingleTickerProviderStateMixin {
   RefreshController _refreshController;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -40,6 +42,7 @@ class LabsState extends State<Labs> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
+
     _refreshController.dispose();
     super.dispose();
   }
@@ -52,18 +55,48 @@ class LabsState extends State<Labs> with SingleTickerProviderStateMixin {
           title: Text(allTranslations.text('labs')),
         ),
         body: Container(
-          child: SmartRefresher(
-            enablePullDown: true,
-            enablePullUp: false,
-            header: BezierCircleHeader(),
-            controller: _refreshController,
-            onRefresh: () => _onRefresh(context),
-            child: _newsList(),
+          child: BlocBuilder<LabsBloc, LabsState>(
+            builder: (context, state) {
+              final _labsBloc = BlocProvider.of<LabsBloc>(context);
+              if (state is UpdateLabsErrorState) {
+                _refreshController.refreshCompleted();
+                WidgetsBinding.instance.addPostFrameCallback((_) => _showMessage('Error',context));
+                _labsBloc.dispatch(LabsInitEvent());
+              } else if (state is UpdateLabsTooFrequentlyState) {
+                _refreshController.refreshCompleted();
+                WidgetsBinding.instance.addPostFrameCallback((_) => _showMessage(allTranslations.text('wait'),context));
+                _labsBloc.dispatch(LabsInitEvent());
+              } else if (state is UpdateLabsSuccessfullyState) {
+                _refreshController.refreshCompleted();
+                _labsBloc.dispatch(LabsInitEvent());
+              /*  WidgetsBinding.instance.addPostFrameCallback((_) =>    setState(() {
+
+                }));*/
+              }
+              return SmartRefresher(
+                enablePullDown: true,
+                enablePullUp: false,
+                header: BezierCircleHeader(),
+                controller: _refreshController,
+                onRefresh: () => _onRefresh(_labsBloc),
+                child: _labsList(),
+              );
+
+            },
           ),
         ));
+
+
   }
 
-  Widget _newsList() {
+  void _showMessage(String msg, BuildContext context)
+  {
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text(msg),
+    ));
+  }
+
+  Widget _labsList() {
     return new ListView(
       children: <Widget>[
         Card(
@@ -142,38 +175,8 @@ class LabsState extends State<Labs> with SingleTickerProviderStateMixin {
     );
   }
 
-  void _onRefresh(BuildContext context) async {
-    //update labs ocupation
-    bool canUpdate = true;
-    if (await user.isPresentInPreferences(Keys.LAST_LABS_REFRESH)) {
-      if (DateTime.now().difference(DateTime.parse(await user.readFromPreferences(Keys.LAST_LABS_REFRESH))).inMinutes < 5) {
-        canUpdate = false;
-      }
-    }
-    if (canUpdate) {
-      try {
-        String accessToken = await user.getAccessToken();
-        String lang = await user.getPreferredLanguage();
-        RacoRepository rr = new RacoRepository(
-            racoApiClient: RacoApiClient(
-                httpClient: http.Client(), accessToken: accessToken, lang: lang));
-        await rr.getImageA5();
-        await rr.getImageB5();
-        await rr.getImageC6();
-        user.writeToPreferences(Keys.LAST_LABS_REFRESH, DateTime.now().toIso8601String());
-      } catch(e) {
-        _scaffoldKey.currentState.showSnackBar(SnackBar(
-          content: Text('Error'),
-        ));
-      }
-    } else {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text(allTranslations.text('wait')),
-      ));
-    }
-
-    setState(() {});
-    _refreshController.refreshCompleted();
+  void _onRefresh(var _labsBloc) async {
+    _labsBloc.dispatch(LabsChangedEvent());
   }
 }
 

@@ -5,11 +5,13 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:raco/flutter_datetime_picker-1.2.8-with-ca/flutter_datetime_picker.dart';
+import 'package:raco/src/blocs/events/events.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/models/classes.dart';
 import 'package:raco/src/models/custom_events.dart';
@@ -25,14 +27,14 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'package:add_2_calendar/add_2_calendar.dart' as calendar_events;
 
-class EventsView extends StatefulWidget {
+class EventsRoute extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return EventsViewState();
+    return EventsRouteState();
   }
 }
 
-class EventsViewState extends State<EventsView>
+class EventsRouteState extends State<EventsRoute>
     with SingleTickerProviderStateMixin {
   RefreshController _refreshController;
   DateFormat parser;
@@ -76,61 +78,55 @@ class EventsViewState extends State<EventsView>
   Widget build(BuildContext context) {
     DateFormat formatter = DateFormat.Md(allTranslations.currentLanguage);
     return Container(
-        child: SmartRefresher(
-      enablePullDown: true,
-      enablePullUp: false,
-      header: BezierCircleHeader(),
-      controller: _refreshController,
-      onRefresh: _onRefresh,
-      child: ListView(
-        children: _eventsList(context, setState),
-      ),
+        child: BlocBuilder<EventsBloc, EventsState>(
+          builder: (context, state) {
+            final _eventsBloc = BlocProvider.of<EventsBloc>(context);
+            if (state is UpdateEventsErrorState) {
+              _refreshController.refreshCompleted();
+              WidgetsBinding.instance.addPostFrameCallback((_) => _showMessage('Error',context));
+              _eventsBloc.dispatch(EventsInitEvent());
+            } else if (state is UpdateEventsTooFrequentlyState) {
+              _refreshController.refreshCompleted();
+              WidgetsBinding.instance.addPostFrameCallback((_) => _showMessage(allTranslations.text('wait'),context));
+              _eventsBloc.dispatch(EventsInitEvent());
+            } else if (state is UpdateEventsSuccessfullyState) {
+              _refreshController.refreshCompleted();
+              _eventsBloc.dispatch(EventsInitEvent());
+
+            } else if (state is EventDeletedState) {
+              WidgetsBinding.instance.addPostFrameCallback((_) => Navigator.of(context).pop());
+
+              _eventsBloc.dispatch(EventsInitEvent());
+            }
+            return SmartRefresher(
+              enablePullDown: true,
+              enablePullUp: false,
+              header: BezierCircleHeader(),
+              controller: _refreshController,
+              onRefresh: () => _onRefresh(_eventsBloc),
+              child: ListView(
+                children: _eventsList(_eventsBloc ,context, setState),
+              ),
+            );
+
+          },
+        ),
+
+        );
+  }
+
+  void _showMessage(String msg, BuildContext context)
+  {
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text(msg),
     ));
   }
 
-  void _onRefresh() async {
-    //update events
-    bool canUpdate = true;
-    if (await user.isPresentInPreferences(Keys.LAST_EVENTS_REFRESH)) {
-      if (DateTime.now()
-              .difference(DateTime.parse(
-                  await user.readFromPreferences(Keys.LAST_EVENTS_REFRESH)))
-              .inMinutes <
-          5) {
-        canUpdate = false;
-      }
-    }
-    if (canUpdate) {
-      try {
-        String accessToken = await user.getAccessToken();
-        String lang = await user.getPreferredLanguage();
-        RacoRepository rr = new RacoRepository(
-            racoApiClient: RacoApiClient(
-                httpClient: http.Client(),
-                accessToken: accessToken,
-                lang: lang));
-        Events events = await rr.getEvents();
-        await ReadWriteFile()
-            .writeStringToFile(FileNames.EVENTS, jsonEncode(events));
-        Dme().events = events;
-        user.writeToPreferences(
-            Keys.LAST_EVENTS_REFRESH, DateTime.now().toIso8601String());
-      } catch (e) {
-        Scaffold.of(context).showSnackBar(SnackBar(
-          content: Text('Error'),
-        ));
-      }
-    } else {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text(allTranslations.text('wait')),
-      ));
-    }
-
-    setState(() {});
-    _refreshController.refreshCompleted();
+  void _onRefresh(var _eventsBloc) async {
+    _eventsBloc.dispatch(EventsChangedEvent());
   }
 
-  List<Widget> _eventsList(BuildContext context, StateSetter setState) {
+  List<Widget> _eventsList(var _eventsBloc ,BuildContext context, StateSetter setState) {
     List<Widget> lista = new List();
 
     List<EventItem> listEventItem = _createEventItemList();
@@ -147,7 +143,7 @@ class EventsViewState extends State<EventsView>
       DateFormat.yMMMMd(allTranslations.currentLanguage);
       lista.add(Card(
         child: InkWell(
-            onTap: () => _onTap(kDate, itemMap[kDate]),
+            onTap: () => _onTap(_eventsBloc,kDate, itemMap[kDate]),
             child: Container(
               padding: EdgeInsets.all(ScreenUtil().setWidth(5)),
               child: Column(
@@ -160,7 +156,7 @@ class EventsViewState extends State<EventsView>
     return lista;
   }
 
-  _onTap(String kDate, List<EventItem> itemsList) {
+  _onTap(var _eventsBloc,String kDate, List<EventItem> itemsList) {
     showDialog(
         context: context,
         barrierDismissible: true,
@@ -188,7 +184,7 @@ class EventsViewState extends State<EventsView>
                         Expanded(
                           child: ListView(
                             children:
-                                _itemsExpanded(itemsList, setState, kDate),
+                                _itemsExpanded(_eventsBloc ,itemsList, setState, kDate),
                           ),
                         ),
                       ],
@@ -199,7 +195,7 @@ class EventsViewState extends State<EventsView>
         });
   }
 
-  List<Widget> _itemsExpanded(
+  List<Widget> _itemsExpanded(var _eventsBloc,
       List<EventItem> itemsList, StateSetter setState, String kDate) {
     List<Widget> resultList = new List();
     for (EventItem i in itemsList) {
@@ -213,7 +209,7 @@ class EventsViewState extends State<EventsView>
               style: TextStyle(fontWeight: FontWeight.bold),
               overflow: TextOverflow.visible,
             )),
-            _simplePopup(i, setState, itemsList, kDate)
+            _simplePopup(_eventsBloc ,i, setState, itemsList, kDate)
           ],
         ));
       } else if (i.examId != null) {
@@ -323,7 +319,7 @@ class EventsViewState extends State<EventsView>
         },
       );
 
-  Widget _simplePopup(
+  Widget _simplePopup(var _eventsBloc,
           EventItem item, StateSetter po, List<EventItem> li, String kDate) =>
       PopupMenuButton<int>(
         itemBuilder: (context) => [
@@ -385,19 +381,11 @@ class EventsViewState extends State<EventsView>
                         CupertinoDialogAction(
                           child: Text(allTranslations.text('accept')),
                           onPressed: () async {
-                            Dme().customEvents.results.removeWhere((i) {
-                              return i.id == item.customId;
-                            });
-                            Dme().customEvents.count -= 1;
-                            await ReadWriteFile().writeStringToFile(
-                                FileNames.CUSTOM_EVENTS,
-                                jsonEncode(Dme().customEvents));
+                            _eventsBloc.dispatch(EventsDeleteEvent(item: item));
                             li.removeWhere((i) {
                               return i.customId == item.customId;
                             });
                             po(() {});
-                            setState(() {});
-                            Navigator.of(context).pop();
                           },
                         )
                       ],
@@ -424,19 +412,11 @@ class EventsViewState extends State<EventsView>
                         FlatButton(
                           child: Text(allTranslations.text('accept')),
                           onPressed: () async {
-                            Dme().customEvents.results.removeWhere((i) {
-                              return i.id == item.customId;
-                            });
-                            Dme().customEvents.count -= 1;
-                            await ReadWriteFile().writeStringToFile(
-                                FileNames.CUSTOM_EVENTS,
-                                jsonEncode(Dme().customEvents));
                             li.removeWhere((i) {
                               return i.customId == item.customId;
                             });
                             po(() {});
-                            setState(() {});
-                            Navigator.of(context).pop();
+                            _eventsBloc.dispatch(EventsDeleteEvent(item: item));
                           },
                         ),
                       ],

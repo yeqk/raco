@@ -15,7 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'configuration.dart';
 import 'exams.dart';
 import 'grades.dart';
-import 'labs.dart';
+import 'labs_route.dart';
 
 class DrawerMenu extends Drawer {
   @override
@@ -103,7 +103,7 @@ class DrawerMenu extends Drawer {
     _onLabsPressed() {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Labs()),
+        MaterialPageRoute(builder: (context) => LabsRoute()),
       );
     }
 

@@ -10,16 +10,17 @@ import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/models/custom_events.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/ui/routes/bottom_navigation/destination.dart';
-import 'package:raco/src/ui/routes/bottom_navigation/events_view.dart';
 import 'package:raco/src/ui/routes/bottom_navigation/schedule.dart';
 import 'package:raco/src/ui/routes/drawer_menu/drawer_menu.dart';
 import 'package:raco/src/utils/app_colors.dart';
 import 'package:raco/src/utils/file_names.dart';
 import 'package:raco/src/utils/read_write_file.dart';
+import 'events_route.dart';
 import 'news_route.dart';
-import 'notices.dart';
 import 'package:intl/intl.dart';
 import 'package:raco/flutter_datetime_picker-1.2.8-with-ca/flutter_datetime_picker.dart';
+
+import 'notices_route.dart';
 
 class DestinationView extends StatefulWidget {
   const DestinationView({Key key, this.destination}) : super(key: key);
@@ -337,10 +338,10 @@ class _DestinationViewState extends State<DestinationView> {
       return Schedule();
     } else if (widget.destination.index == 1) {
       //notes
-      return Notices();
+      return NoticesRoute();
     } else if (widget.destination.index == 2) {
       //events
-      return EventsView();
+      return EventsRoute();
     } else if (widget.destination.index == 3) {
       //news
       return NewsRoute();

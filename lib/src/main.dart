@@ -11,6 +11,11 @@ import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:raco/src/utils/app_colors.dart';
 
+import 'blocs/events/events.dart';
+import 'blocs/labs/labs.dart';
+import 'blocs/notice/notice.dart';
+import 'blocs/notices/notices.dart';
+
 
 
 class SimpleBlocDelegate extends BlocDelegate {
@@ -67,6 +72,26 @@ void main() async {
       BlocProvider<NewsBloc>(
         builder: (context) {
           return NewsBloc();
+        },
+      ),
+      BlocProvider<LabsBloc>(
+        builder: (context) {
+          return LabsBloc();
+        },
+      ),
+      BlocProvider<NoticesBloc>(
+        builder: (context) {
+          return NoticesBloc();
+        },
+      ),
+      BlocProvider<NoticeBloc>(
+        builder: (context) {
+          return NoticeBloc();
+        },
+      ),
+      BlocProvider<EventsBloc>(
+        builder: (context) {
+          return EventsBloc();
         },
       ),
     ],

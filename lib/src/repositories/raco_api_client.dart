@@ -11,6 +11,7 @@ import 'package:raco/src/models/models.dart';
 import 'package:raco/src/models/requisits.dart';
 import 'package:raco/src/resources/user_repository.dart';
 import 'package:raco/src/utils/file_names.dart';
+import 'package:uuid/uuid.dart';
 
 class RacoApiClient {
   static const baseUrl = 'https://api.fib.upc.edu/v2';
@@ -62,7 +63,8 @@ class RacoApiClient {
         .downloadFile(locationUrl, authHeaders: headers);
     Io.File file = fileInfo.file;
     Image image = decodeImage(file.readAsBytesSync());
-    Io.File imgFile = new Io.File(localPath + '/' + FileNames.A5)
+    var uuid = Uuid();
+    Io.File imgFile = new Io.File(localPath + '/' + uuid.v1()+ FileNames.A5)
       ..writeAsBytesSync(encodePng(image), flush: true);
     return imgFile.path;
   }
@@ -76,7 +78,8 @@ class RacoApiClient {
         .downloadFile(locationUrl, authHeaders: headers);
     Io.File file = fileInfo.file;
     Image image = decodeImage(file.readAsBytesSync());
-    Io.File imgFile = new Io.File(localPath + '/' + FileNames.C6)
+    var uuid = Uuid();
+    Io.File imgFile = new Io.File(localPath + '/'+ uuid.v1()+ FileNames.C6)
       ..writeAsBytesSync(encodePng(image), flush: true);
     return imgFile.path;
   }
@@ -90,7 +93,8 @@ class RacoApiClient {
         .downloadFile(locationUrl, authHeaders: headers);
     Io.File file = fileInfo.file;
     Image image = decodeImage(file.readAsBytesSync());
-    Io.File imgFile = new Io.File(localPath + '/' + FileNames.B5)
+    var uuid = Uuid();
+    Io.File imgFile = new Io.File(localPath + '/'+ uuid.v1()+ FileNames.B5)
       ..writeAsBytesSync(encodePng(image), flush: true);
     return imgFile.path;
   }

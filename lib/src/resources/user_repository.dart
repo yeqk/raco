@@ -108,23 +108,6 @@ class UserRepository {
 
     return hasCreds;
   }
-
-  Future<void> setLoggedAsVisitor() async {
-    await writeToStorage('visitor', 'true');
-  }
-
-  Future<void> deleteVisitor() async {
-    await _deleteFromStorage('visitor');
-  }
-
-  Future<bool> isLoggedAsVisitor() async {
-    String isVisitor = await readFromStorage('visitor');
-    if (isVisitor == 'true') {
-      return true;
-    }
-    return false;
-  }
-
   Future<String> getPreferredLanguage() async {
     return readFromPreferences('language');
   }

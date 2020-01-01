@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:raco/src/blocs/notice/notice.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/models/custom_downloads.dart';
 import 'package:raco/src/models/models.dart';
@@ -19,21 +21,19 @@ import 'package:http/http.dart' as http;
 import 'package:open_file/open_file.dart';
 import 'package:share_extend/share_extend.dart';
 
-class Notice extends StatefulWidget {
+class NoticeRoute extends StatefulWidget {
   final Avis avis;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  Notice({Key key, @required this.avis}) : super(key: key);
+  NoticeRoute({Key key, @required this.avis}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return NoticeState();
+    return NoticeRouteState();
   }
-
 }
 
-class NoticeState extends State<Notice> {
-
+class NoticeRouteState extends State<NoticeRoute> {
   @override
   Widget build(BuildContext context) {
     String appBarTitle;
@@ -44,6 +44,11 @@ class NoticeState extends State<Notice> {
     } else {
       appBarTitle = widget.avis.codiAssig;
     }
+
+    ProgressDialog pr = new ProgressDialog(context, isDismissible: true);
+    pr.style(
+      message: allTranslations.text('downloading'),
+    );
 
     DateFormat format = DateFormat('yyyy-M-dTH:m:s');
     var formatter = new DateFormat.yMMMMd(allTranslations.currentLanguage);
@@ -69,16 +74,17 @@ class NoticeState extends State<Notice> {
                     child: Card(
                         child: Container(
                   padding: EdgeInsets.all(10),
-                  child: ListView(children: _noticeBody(widget.avis, context)),
+                  child:
+                      ListView(children: _noticeBody(pr, widget.avis, context)),
                 )))
               ],
             )));
   }
 
-  List<Widget> _noticeBody(Avis avis, BuildContext context) {
+  List<Widget> _noticeBody(ProgressDialog pr, Avis avis, BuildContext context) {
     List<Widget> body = new List();
     if (avis.adjunts.length > 0) {
-      body.add(_attachments(avis, context));
+      body.add(_attachments(pr, avis, context));
     }
     body.add(Html(
       data: avis.text,
@@ -87,39 +93,65 @@ class NoticeState extends State<Notice> {
     return body;
   }
 
-  Widget _attachments(Avis avis, BuildContext context) {
+  Widget _attachments(ProgressDialog pr, Avis avis, BuildContext context) {
     return Card(
       child: Container(
-        padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(avis.adjunts.length.toString() +
-                ' ' +
-                allTranslations.text('attachments') +
-                ' :'),
-            Column(children: _attachedFiles(avis, context))
-          ],
-        ),
-      ),
+          padding: EdgeInsets.all(ScreenUtil().setWidth(10)),
+          child: BlocBuilder<NoticeBloc, NoticeState>(
+            builder: (context, state) {
+              final _noticeBloc = BlocProvider.of<NoticeBloc>(context);
+              if (state is NoticeAttachmentDownloadErrorState) {
+                WidgetsBinding.instance.addPostFrameCallback(
+                    (_) => _showMessage('Error', context));
+                _noticeBloc.dispatch(NoticeInitEvent());
+              } else if (state is NoticeAttachmentDownloadingState) {
+                WidgetsBinding.instance.addPostFrameCallback((_) => pr.show());
+
+                _noticeBloc.dispatch(NoticeInitEvent());
+              } else if (state is NoticeAttachmentDownloadSuccessfullyState) {
+                WidgetsBinding.instance
+                    .addPostFrameCallback((_) => pr.dismiss());
+
+                _noticeBloc.dispatch(NoticeInitEvent());
+              }
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(avis.adjunts.length.toString() +
+                      ' ' +
+                      allTranslations.text('attachments') +
+                      ' :'),
+                  Column(children: _attachedFiles(_noticeBloc, avis, context))
+                ],
+              );
+            },
+          )),
     );
   }
 
-  List<Widget> _attachedFiles(Avis avis, BuildContext context) {
+  void _showMessage(String msg, BuildContext context) {
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text(msg),
+    ));
+  }
+
+  List<Widget> _attachedFiles(
+      var _noticeBloc, Avis avis, BuildContext context) {
     List<Widget> files = new List();
     for (Adjunt adjunt in avis.adjunts) {
       files.add(RaisedButton(
-        onPressed: () => _downloadFile(adjunt, context),
+        onPressed: () => _downloadFile(_noticeBloc, adjunt, context),
         shape: RoundedRectangleBorder(
             borderRadius: new BorderRadius.circular(30.0)),
         child: FittedBox(
           child: Dme().customDownloads.name.contains(adjunt.nom)
               ? Row(
-            children: <Widget>[
-              Text(adjunt.nom + ' (' + fileSize(adjunt.mida) + ') '),
-              Icon(Icons.offline_pin)
-            ],
-          )
+                  children: <Widget>[
+                    Text(adjunt.nom + ' (' + fileSize(adjunt.mida) + ') '),
+                    Icon(Icons.offline_pin)
+                  ],
+                )
               : Text(adjunt.nom + ' (' + fileSize(adjunt.mida) + ')'),
         ),
       ));
@@ -139,8 +171,11 @@ class NoticeState extends State<Notice> {
     }
   }
 
-  void _downloadFile(Adjunt adjunt, BuildContext context) async {
-    try {
+  void _downloadFile(
+      var _noticeBloc, Adjunt adjunt, BuildContext context) async {
+    _noticeBloc.dispatch(NoticeDownloadAttachmentEvent(adjunt: adjunt));
+
+    /*  try {
       String accessToken = await user.getAccessToken();
       String lang = await user.getPreferredLanguage();
       RacoRepository rr = new RacoRepository(
@@ -188,7 +223,7 @@ class NoticeState extends State<Notice> {
       widget._scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text('Error'),
       ));
-    }
+    }*/
   }
 
   _onLinkTap(String url) async {

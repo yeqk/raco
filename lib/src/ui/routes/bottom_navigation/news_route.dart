@@ -41,6 +41,7 @@ class NewsRouteState extends State<NewsRoute> with SingleTickerProviderStateMixi
 
   @override
   void dispose() {
+
     _refreshController.dispose();
     super.dispose();
   }
@@ -49,8 +50,6 @@ class NewsRouteState extends State<NewsRoute> with SingleTickerProviderStateMixi
   Widget build(BuildContext context) {
     return BlocBuilder<NewsBloc, NewsState>(
       builder: (context, state) {
-        print('caca');
-        print('HEEERE');
         final _newsBloc = BlocProvider.of<NewsBloc>(context);
         if (state is UpdateNewsErrorState) {
           _refreshController.refreshCompleted();
@@ -63,6 +62,9 @@ class NewsRouteState extends State<NewsRoute> with SingleTickerProviderStateMixi
         } else if (state is UpdateNewsSuccessfullyState) {
           _refreshController.refreshCompleted();
           _newsBloc.dispatch(NewsInitEvent());
+          WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {
+
+          }));
         }
         return Container(
           child: SmartRefresher(

@@ -24,7 +24,3 @@ class AuthenticationLoadingState extends AuthenticationState {
   String toString() => 'AuthenticationLoadingState';
 }
 
-class AuthenticationVisitorLoggedState extends AuthenticationState {
-  @override
-  String toString() => 'AuthenticationVisitorLoggedState';
-}

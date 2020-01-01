@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/models/models.dart';
@@ -25,7 +23,6 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
       yield NewsInitState();
     }
     if (event is NewsChangedEvent) {
-      print('aaaaa');
       //update news
       bool canUpdate = true;
       if (await user.isPresentInPreferences(Keys.LAST_NEWS_REFRESH)) {
@@ -38,7 +35,6 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
         }
       }
       if (canUpdate) {
-        print('bbb');
         try {
           String accessToken = await user.getAccessToken();
           String lang = await user.getPreferredLanguage();
@@ -53,16 +49,12 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
           Dme().noticies = noticies;
           user.writeToPreferences(
               Keys.LAST_NEWS_REFRESH, DateTime.now().toIso8601String());
-          print('ccc');
           yield UpdateNewsSuccessfullyState();
         } catch (e) {
-          print('ddd');
           yield UpdateNewsErrorState();
-          print('dddddddddd');
         }
       } else {
-        print('eee');
-       yield UpdateNewsTooFrequentlyState();
+        yield UpdateNewsTooFrequentlyState();
       }
     }
   }

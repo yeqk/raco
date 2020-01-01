@@ -2,10 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:raco/src/blocs/news/news.dart';
+import 'package:raco/src/blocs/notices/notices.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/models/classes.dart';
 import 'package:raco/src/models/models.dart';
@@ -19,16 +22,16 @@ import 'package:raco/src/utils/read_write_file.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
-import 'notice.dart';
+import 'notice_route.dart';
 
-class Notices extends StatefulWidget {
+class NoticesRoute extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return NoticiesState();
+    return NoticiesRouteState();
   }
 }
 
-class NoticiesState extends State<Notices> with SingleTickerProviderStateMixin {
+class NoticiesRouteState extends State<NoticesRoute> with SingleTickerProviderStateMixin {
   Assignatures assignatures = Dme().assignatures;
   TabController _tabController;
   RefreshController _refreshController;
@@ -55,11 +58,41 @@ class NoticiesState extends State<Notices> with SingleTickerProviderStateMixin {
         controller: _tabController,
         tabs: _tabs(),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: _tabViews(),
+      body:
+      BlocBuilder<NoticesBloc, NoticesState>(
+        builder: (context, state) {
+          final _noticesBloc = BlocProvider.of<NoticesBloc>(context);
+          if (state is UpdateNoticesErrorState) {
+            _refreshController.refreshCompleted();
+            WidgetsBinding.instance.addPostFrameCallback((_) => _showMessage('Error',context));
+            _noticesBloc.dispatch(NoticesInitEvent());
+          } else if (state is UpdateNoticesTooFrequentlyState) {
+            _refreshController.refreshCompleted();
+            WidgetsBinding.instance.addPostFrameCallback((_) => _showMessage(allTranslations.text('wait'),context));
+            _noticesBloc.dispatch(NoticesInitEvent());
+          } else if (state is UpdateNoticesSuccessfullyState) {
+            _refreshController.refreshCompleted();
+            _noticesBloc.dispatch(NoticesInitEvent());
+            WidgetsBinding.instance.addPostFrameCallback((_) =>    setState(() {
+
+            }));
+          }
+          return TabBarView(
+            controller: _tabController,
+            children: _tabViews(_noticesBloc),
+          );
+
+        },
       ),
+      
     );
+  }
+
+  void _showMessage(String msg, BuildContext context)
+  {
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text(msg),
+    ));
   }
 
   List<Widget> _tabs() {
@@ -79,43 +112,12 @@ class NoticiesState extends State<Notices> with SingleTickerProviderStateMixin {
 
   //---------------------------
 
-  void _onRefresh() async {
-    //update notices
-    bool canUpdate = true;
-    if (await user.isPresentInPreferences(Keys.LAST_NOTICES_REFRESH)) {
-      if (DateTime.now().difference(DateTime.parse(await user.readFromPreferences(Keys.LAST_NOTICES_REFRESH))).inMinutes < 5) {
-        canUpdate = false;
-      }
-    }
-    if (canUpdate)
-    {
-      try{
-        String accessToken = await user.getAccessToken();
-        String lang = await user.getPreferredLanguage();
-        RacoRepository rr = new RacoRepository(
-            racoApiClient: RacoApiClient(
-                httpClient: http.Client(), accessToken: accessToken, lang: lang));
-        Avisos avisos = await rr.getAvisos();
-        Dme().avisos = avisos;
-        await ReadWriteFile()
-            .writeStringToFile(FileNames.AVISOS, jsonEncode(avisos));
-        user.writeToPreferences(Keys.LAST_NOTICES_REFRESH, DateTime.now().toIso8601String());
-      }catch(e) {
-        Scaffold.of(context).showSnackBar(SnackBar(
-          content: Text('Error'),
-        ));
-      }
-    } else {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text(allTranslations.text('wait')),
-      ));
-    }
-    setState(() {});
-    _refreshController.refreshCompleted();
+  void _onRefresh(var _noticesBloc) async {
+    _noticesBloc.dispatch(NoticesChangedEvent());
   }
 
   //_------------------------------------
-  List<Widget> _tabViews() {
+  List<Widget> _tabViews(var _noticesBloc) {
     List<Container> tabViews = [
       Container(
         child: Container(
@@ -124,7 +126,7 @@ class NoticiesState extends State<Notices> with SingleTickerProviderStateMixin {
               enablePullUp: false,
               header: BezierCircleHeader(),
               controller: _refreshController,
-              onRefresh: _onRefresh,
+              onRefresh: () => _onRefresh(_noticesBloc),
               child: _noticesList(Dme().avisos.results)),
         ),
       )
@@ -141,7 +143,7 @@ class NoticiesState extends State<Notices> with SingleTickerProviderStateMixin {
             enablePullUp: false,
             header: BezierCircleHeader(),
             controller: _refreshController,
-            onRefresh: _onRefresh,
+            onRefresh: () => _onRefresh(_noticesBloc),
             child: _noticesList(avisos)),
       );
     }).toList());
@@ -241,6 +243,6 @@ class NoticiesState extends State<Notices> with SingleTickerProviderStateMixin {
 
   _onTap(Avis avis) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => Notice(avis: avis)));
+        context, MaterialPageRoute(builder: (context) => NoticeRoute(avis: avis)));
   }
 }
