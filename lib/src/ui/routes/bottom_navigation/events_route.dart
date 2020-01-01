@@ -97,6 +97,9 @@ class EventsRouteState extends State<EventsRoute>
               WidgetsBinding.instance.addPostFrameCallback((_) => Navigator.of(context).pop());
 
               _eventsBloc.dispatch(EventsInitEvent());
+            } else if ( state is EventEditedState) {
+              WidgetsBinding.instance.addPostFrameCallback((_) => Navigator.of(context).pop());
+              _eventsBloc.dispatch(EventsInitEvent());
             }
             return SmartRefresher(
               enablePullDown: true,
@@ -424,7 +427,7 @@ class EventsRouteState extends State<EventsRoute>
                   });
             }
           } else if (value == 1) {
-            _buttonPressed(item, li, kDate, po);
+            _buttonPressed(_eventsBloc,item, li, kDate, po);
           } else if (value == 3) {
             calendar_events.Event ce = calendar_events.Event(
               title: item.title,
@@ -439,7 +442,7 @@ class EventsRouteState extends State<EventsRoute>
         },
       );
 
-  void _buttonPressed(
+  void _buttonPressed(var _eventsBloc,
       EventItem item, List<EventItem> li, String kDate, StateSetter po) {
     _titleController.text = item.title;
     _descriptionController.text = item.description;
@@ -594,24 +597,22 @@ class EventsRouteState extends State<EventsRoute>
                                       .parse(_startDateController.text);
                                   DateTime fiT = dateFormatWithHour
                                       .parse(_endDateController.text);
-                                  Dme().customEvents.results.removeWhere((i) {
-                                    return i.id == item.customId;
-                                  });
+
                                   li.removeWhere((i) {
                                     return i.customId == item.customId;
                                   });
                                   String customId =
                                       DateTime.now().toIso8601String();
 
-                                  Dme().customEvents.results.add(CustomEvent(
+                                  CustomEvent ce = CustomEvent(
                                       customId,
                                       _titleController.text,
                                       _descriptionController.text,
                                       parser.format(ini),
-                                      parser.format(fiT)));
-                                  await ReadWriteFile().writeStringToFile(
-                                      FileNames.CUSTOM_EVENTS,
-                                      jsonEncode(Dme().customEvents));
+                                      parser.format(fiT));
+
+                                  _eventsBloc.dispatch(EventsEditEvent(customEvent: ce, eventItem: item));
+
                                   DateTime groupTime = dateFormat.parse(kDate);
 
                                   if (groupTime.year >= ini.year &&
@@ -630,8 +631,7 @@ class EventsRouteState extends State<EventsRoute>
                                   }
 
                                   po(() {});
-                                  setState(() {});
-                                  Navigator.of(context).pop();
+
                                 }
                               })
                         ])

@@ -5,12 +5,14 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:raco/flutter_datetime_picker-1.2.8-with-ca/flutter_datetime_picker.dart';
+import 'package:raco/src/blocs/grades/grades.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/models/classes.dart';
 import 'package:raco/src/models/custom_events.dart';
@@ -25,18 +27,18 @@ import 'package:raco/src/utils/read_write_file.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
-class GradeView extends StatefulWidget {
+class GradeRoute extends StatefulWidget {
   Assignatura assignatura;
 
-  GradeView({Key key, @required this.assignatura}) : super(key: key);
+  GradeRoute({Key key, @required this.assignatura}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return GradeViewState();
+    return GradeRouteState();
   }
 }
 
-class GradeViewState extends State<GradeView>
+class GradeRouteState extends State<GradeRoute>
     with SingleTickerProviderStateMixin {
   TextEditingController _titleController;
   TextEditingController _descriptionController;
@@ -60,22 +62,37 @@ class GradeViewState extends State<GradeView>
 
   @override
   Widget build(BuildContext context) {
+    final _gradesBloc = BlocProvider.of<GradesBloc>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(_subjectString(widget.assignatura)),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _buttonPressed(),
+        onPressed: () => _buttonPressed(_gradesBloc),
         child: IconTheme(
           data: IconThemeData(color: Colors.white),
           child: Icon(Icons.add),
         ),
       ),
-      body: Container(child: ListView(children: _listViewBody(context))),
+      body: BlocBuilder<GradesBloc, GradesState>(
+        builder: (context, state) {
+          if (state is GradeDeletedState) {
+            WidgetsBinding.instance.addPostFrameCallback((_) => Navigator.of(context).pop());
+            WidgetsBinding.instance.addPostFrameCallback((_) => Navigator.of(context).pop());
+            _gradesBloc.dispatch(GradesInitEvent());
+          } else if ( state is GradeEditedState) {
+            WidgetsBinding.instance.addPostFrameCallback((_) => Navigator.of(context).pop());
+            _gradesBloc.dispatch(GradesInitEvent());
+          }
+         return Container(child: ListView(children: _listViewBody(_gradesBloc,context)));
+
+        },
+      ),
+
     );
   }
 
-  List<Widget> _listViewBody(BuildContext context) {
+  List<Widget> _listViewBody(var _gradeBloc,BuildContext context) {
     int codi = int.parse(Dme().assigColors[widget.assignatura.sigles]);
     List<Widget> result = new List();
     result.add(SizedBox(
@@ -93,7 +110,9 @@ class GradeViewState extends State<GradeView>
       circularStrokeCap: CircularStrokeCap.round,
       progressColor: Color(codi),
     ));
-    List<CustomGrade> grades = Dme().customGrades.results;
+    List<CustomGrade> grades = Dme().customGrades.results.where((g) {
+      return g.subjectId == widget.assignatura.sigles;
+    }).toList();
     for (CustomGrade g in grades) {
       result.add(
         Card(
@@ -124,7 +143,7 @@ class GradeViewState extends State<GradeView>
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ),
-                                    _simplePopup(g, setState)
+                                    _simplePopup(_gradeBloc ,g, setState)
                                   ],
                                 ),
                                 Divider(
@@ -137,7 +156,7 @@ class GradeViewState extends State<GradeView>
                                       overflow: TextOverflow.visible,
                                     ),
                                     Text(
-                                      g.grade.toString(),
+                                      g.grade.toStringAsFixed(2),
                                       overflow: TextOverflow.visible,
                                     ),
                                   ],
@@ -149,7 +168,7 @@ class GradeViewState extends State<GradeView>
                                       overflow: TextOverflow.visible,
                                     ),
                                     Text(
-                                      (g.percentage * 100).toString() + '%',
+                                      (g.percentage * 100).toStringAsFixed(2) + '%',
                                       overflow: TextOverflow.visible,
                                     )
                                   ],
@@ -214,7 +233,7 @@ class GradeViewState extends State<GradeView>
                         overflow: TextOverflow.visible,
                       ),
                       Text(
-                        g.grade.toString(),
+                        g.grade.toStringAsFixed(2),
                         overflow: TextOverflow.visible,
                       ),
                       SizedBox(
@@ -225,7 +244,7 @@ class GradeViewState extends State<GradeView>
                         overflow: TextOverflow.visible,
                       ),
                       Text(
-                        (g.percentage * 100).toString() + '%',
+                        (g.percentage * 100).toStringAsFixed(2) + '%',
                         overflow: TextOverflow.visible,
                       )
                     ],
@@ -238,7 +257,7 @@ class GradeViewState extends State<GradeView>
     return result;
   }
 
-  Widget _simplePopup(CustomGrade g, StateSetter po) => PopupMenuButton<int>(
+  Widget _simplePopup(var _gradeBloc,CustomGrade g, StateSetter po) => PopupMenuButton<int>(
         itemBuilder: (context) => [
           PopupMenuItem(
             value: 1,
@@ -286,15 +305,7 @@ class GradeViewState extends State<GradeView>
                         CupertinoDialogAction(
                           child: Text(allTranslations.text('accept')),
                           onPressed: () async {
-                            Dme().customGrades.results.removeWhere((i) {
-                              return i.id == g.id;
-                            });
-                            Dme().customGrades.count -= 1;
-                            await ReadWriteFile().writeStringToFile(
-                                FileNames.CUSTOM_GRADES, jsonEncode(Dme().customGrades));
-                            setState(() {});
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pop();
+                            _gradeBloc.dispatch(GradesDeleteEvent(customGrade: g));
                           },
                         )
                       ],
@@ -321,15 +332,7 @@ class GradeViewState extends State<GradeView>
                         FlatButton(
                           child: Text(allTranslations.text('accept')),
                           onPressed: () async {
-                            Dme().customGrades.results.removeWhere((i) {
-                              return i.id == g.id;
-                            });
-                            Dme().customGrades.count -= 1;
-                            await ReadWriteFile().writeStringToFile(
-                                FileNames.CUSTOM_GRADES, jsonEncode(Dme().customGrades));
-                            setState(() {});
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pop();
+                            _gradeBloc.dispatch(GradesDeleteEvent(customGrade: g));
                           },
                         ),
                       ],
@@ -338,12 +341,12 @@ class GradeViewState extends State<GradeView>
             }
 
           } else if (value == 1) {
-            _editButtonPressed(g, po);
+            _editButtonPressed(_gradeBloc,g, po);
           }
         },
       );
 
-  void _editButtonPressed(CustomGrade g, StateSetter po) {
+  void _editButtonPressed(var _gradeBloc ,CustomGrade g, StateSetter po) {
     _titleController.text = g.name;
     _descriptionController.text = g.comments;
     _startDateController.text = g.data;
@@ -496,9 +499,9 @@ class GradeViewState extends State<GradeView>
                                           .text('incorrect_value');
                                     }
                                     List<CustomGrade> e =
-                                        Dme().customGrades.results.where((g) {
-                                      return g.subjectId ==
-                                          widget.assignatura.sigles;
+                                        Dme().customGrades.results.where((gr) {
+                                      return gr.subjectId ==
+                                          widget.assignatura.sigles && g.id != gr.id;
                                     }).toList();
                                     double ac = v;
                                     for (CustomGrade c in e) {
@@ -566,16 +569,13 @@ class GradeViewState extends State<GradeView>
                                       double.tryParse(_markController.text);
                                   aux.comments = _descriptionController.text;
 
-                                  await ReadWriteFile().writeStringToFile(
-                                      FileNames.CUSTOM_GRADES,
-                                      jsonEncode(Dme().customGrades));
+                                  _gradeBloc.dispatch(GradesEditEvent());
                                   _titleController.clear();
                                   _descriptionController.clear();
                                   _percentageController.clear();
                                   _markController.clear();
-                                  setState(() {});
+                                  //setState(() {});
                                   po(() {});
-                                  Navigator.of(context).pop();
                                 }
                               })
                         ])
@@ -613,7 +613,7 @@ class GradeViewState extends State<GradeView>
     return a.nom;
   }
 
-  void _buttonPressed() {
+  void _buttonPressed(var _gradesBloc) {
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -816,8 +816,7 @@ class GradeViewState extends State<GradeView>
                                       new BorderRadius.circular(30.0)),
                               onPressed: () async {
                                 if (_formKey.currentState.validate()) {
-                                  Dme().customGrades.count += 1;
-                                  Dme().customGrades.results.add(CustomGrade(
+                                  CustomGrade customGrade = CustomGrade(
                                       DateTime.now().toIso8601String(),
                                       widget.assignatura.sigles,
                                       _titleController.text,
@@ -825,11 +824,11 @@ class GradeViewState extends State<GradeView>
                                       _startDateController.text,
                                       double.tryParse(_markController.text),
                                       double.tryParse(
-                                              _percentageController.text) /
-                                          100));
-                                  await ReadWriteFile().writeStringToFile(
-                                      FileNames.CUSTOM_GRADES,
-                                      jsonEncode(Dme().customGrades));
+                                          _percentageController.text) /
+                                          100);
+
+                                  _gradesBloc.dispatch(GradesAddEvent(customGrade: customGrade));
+
                                   _titleController.clear();
                                   _descriptionController.clear();
                                   _percentageController.clear();

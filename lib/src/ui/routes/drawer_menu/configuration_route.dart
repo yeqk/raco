@@ -9,6 +9,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_colorpicker/material_picker.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
+import 'package:raco/src/blocs/configuration/configuration.dart';
 import 'package:raco/src/blocs/translations/translations.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/resources/global_translations.dart';
@@ -19,14 +20,14 @@ import 'package:intl/intl.dart';
 
 import 'subject_colors.dart';
 
-class Configuration extends StatefulWidget {
+class ConfigurationRoute extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return ConfigurationState();
+    return ConfigurationRouteState();
   }
 }
 
-class ConfigurationState extends State<Configuration>
+class ConfigurationRouteState extends State<ConfigurationRoute>
     with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
@@ -41,6 +42,7 @@ class ConfigurationState extends State<Configuration>
 
   @override
   Widget build(BuildContext context) {
+    final _configurationBloc = BlocProvider.of<ConfigurationBloc>(context);
     final _translationBloc = BlocProvider.of<TranslationsBloc>(context);
     final _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
     _onLanguageButtonPressed() async {
@@ -107,6 +109,7 @@ class ConfigurationState extends State<Configuration>
 
     }
     _onSelectColor(String mode) {
+
       Color s = AppColors().primary;
       if (mode == 's') {
         s = AppColors().accentColor;
@@ -141,12 +144,10 @@ class ConfigurationState extends State<Configuration>
                   onPressed: () {
                     if (mode == 'p') {
                       AppColors().primary = AppColors().default_primary;
-                      user.writeToPreferences('primary_color',
-                          AppColors().default_primary.value.toString());
+                      _configurationBloc.dispatch(ChangePrimaryColorEvent(colorCode: AppColors().default_primary.value.toString()));
                     } else if (mode == 's') {
                       AppColors().accentColor = AppColors().default_accentColor;
-                      user.writeToPreferences('secondary_color',
-                          AppColors().default_accentColor.value.toString());
+                      _configurationBloc.dispatch(ChangePrimaryColorEvent(colorCode: AppColors().default_accentColor.value.toString()));
                     }
                     String cur = allTranslations.currentLanguage;
                     String an;
@@ -181,12 +182,11 @@ class ConfigurationState extends State<Configuration>
                   onPressed: () {
                     if (mode == 'p') {
                       AppColors().primary = s;
-                      user.writeToPreferences(
-                          'primary_color', s.value.toString());
+                      _configurationBloc.dispatch(ChangePrimaryColorEvent(colorCode: s.value.toString()));
                     } else if (mode == 's') {
                       AppColors().accentColor = s;
-                      user.writeToPreferences(
-                          'secondary_color', s.value.toString());
+                      _configurationBloc.dispatch(ChangePrimaryColorEvent(colorCode: s.value.toString()));
+
                     }
                     String cur = allTranslations.currentLanguage;
                     String an;

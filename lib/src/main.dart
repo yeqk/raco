@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:raco/src/blocs/grades/grades_bloc.dart';
 import 'package:raco/src/blocs/loading_text/loading_text.dart';
 import 'package:raco/src/blocs/news/news.dart';
 import 'package:raco/src/blocs/translations/translations.dart';
@@ -11,6 +12,7 @@ import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:raco/src/utils/app_colors.dart';
 
+import 'blocs/configuration/configuration.dart';
 import 'blocs/events/events.dart';
 import 'blocs/labs/labs.dart';
 import 'blocs/notice/notice.dart';
@@ -71,17 +73,17 @@ void main() async {
       ),
       BlocProvider<NewsBloc>(
         builder: (context) {
-          return NewsBloc();
+          return NewsBloc(authenticationBloc: BlocProvider.of<AuthenticationBloc>(context));
         },
       ),
       BlocProvider<LabsBloc>(
         builder: (context) {
-          return LabsBloc();
+          return LabsBloc(authenticationBloc: BlocProvider.of<AuthenticationBloc>(context));
         },
       ),
       BlocProvider<NoticesBloc>(
         builder: (context) {
-          return NoticesBloc();
+          return NoticesBloc(authenticationBloc: BlocProvider.of<AuthenticationBloc>(context));
         },
       ),
       BlocProvider<NoticeBloc>(
@@ -91,7 +93,17 @@ void main() async {
       ),
       BlocProvider<EventsBloc>(
         builder: (context) {
-          return EventsBloc();
+          return EventsBloc(authenticationBloc: BlocProvider.of<AuthenticationBloc>(context));
+        },
+      ),
+      BlocProvider<GradesBloc>(
+        builder: (context) {
+          return GradesBloc();
+        },
+      ),
+      BlocProvider<ConfigurationBloc>(
+        builder: (context) {
+          return ConfigurationBloc();
         },
       ),
     ],

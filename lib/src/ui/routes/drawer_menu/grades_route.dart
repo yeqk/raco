@@ -15,20 +15,20 @@ import 'package:raco/src/repositories/repositories.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:intl/intl.dart';
 import 'package:raco/src/resources/user_repository.dart';
-import 'package:raco/src/ui/routes/drawer_menu/grade_view.dart';
+import 'package:raco/src/ui/routes/drawer_menu/grade_route.dart';
 import 'package:raco/src/utils/file_names.dart';
 import 'package:raco/src/utils/read_write_file.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
-class Grades extends StatefulWidget {
+class GradesRoute extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return GradesState();
+    return GradesRouteState();
   }
 }
 
-class GradesState extends State<Grades>
+class GradesRouteState extends State<GradesRoute>
     with SingleTickerProviderStateMixin {
   RefreshController _refreshController;
 
@@ -170,7 +170,7 @@ class GradesState extends State<Grades>
 
   void _subjectTapped(Assignatura a) async {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => GradeView(assignatura: a,)));
+        context, MaterialPageRoute(builder: (context) => GradeRoute(assignatura: a,)));
   }
 
   void _onRefresh() async {

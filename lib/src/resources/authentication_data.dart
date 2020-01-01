@@ -1,8 +1,5 @@
 class AuthenticationData {
 
-  //public API
-  static const String publicClientID = '';
-
   //private API with OAuth2
   static const authorizationEndpoint = '';
   static final tokenEndpoint = '';

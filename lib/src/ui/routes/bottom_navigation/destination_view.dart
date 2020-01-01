@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:raco/flutter_datetime_picker-1.2.8-with-ca/flutter_datetime_picker.dart' as prefix0;
 import 'package:raco/src/blocs/drawer_menu/drawer_bloc.dart';
+import 'package:raco/src/blocs/events/events.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/models/custom_events.dart';
 import 'package:raco/src/resources/global_translations.dart';
@@ -59,7 +60,7 @@ class _DestinationViewState extends State<DestinationView> {
     _onDrawerIconPressed() {
       _translationBloc.dispatch(DrawerIconPressedEvent());
     }
-
+    final _eventsBloc = BlocProvider.of<EventsBloc>(context);
     return Scaffold(
       appBar: new AppBar(
         leading: new IconButton(
@@ -74,14 +75,14 @@ class _DestinationViewState extends State<DestinationView> {
       ),
       backgroundColor: Colors.white,
       body: _buildBody(),
-      floatingActionButton: _addEventButton(),
+      floatingActionButton: _addEventButton(_eventsBloc),
     );
   }
 
-  Widget _addEventButton() {
+  Widget _addEventButton(var _eventsBloc) {
     if (widget.destination.index == 2) {
       return FloatingActionButton(
-        onPressed: () => _buttonPressed(),
+        onPressed: () => _buttonPressed(_eventsBloc),
         child: IconTheme(
           data: IconThemeData(color: Colors.white),
           child: Icon(Icons.add),
@@ -91,7 +92,7 @@ class _DestinationViewState extends State<DestinationView> {
     return null;
   }
 
-  void _buttonPressed() {
+  void _buttonPressed(var _eventsBloc) {
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -234,20 +235,18 @@ class _DestinationViewState extends State<DestinationView> {
                                       new BorderRadius.circular(30.0)),
                               onPressed: () async {
                                 if (_formKey.currentState.validate()) {
-                                  Dme().customEvents.count += 1;
                                   DateTime ini = _formatter
                                       .parse(_startDateController.text);
                                   DateTime fiT =
                                   _formatter.parse(_endDateController.text);
                                   DateFormat customFormat =
                                       DateFormat('yyyy-MM-ddTHH:mm:ss');
-                                  Dme().customEvents.results.add(CustomEvent(DateTime.now().toIso8601String(),
+                                  CustomEvent ce = CustomEvent(DateTime.now().toIso8601String(),
                                       _titleController.text,
                                       _descriptionController.text,
                                       customFormat.format(ini),
-                                      customFormat.format(fiT)));
-                                  await ReadWriteFile().writeStringToFile(
-                                      FileNames.CUSTOM_EVENTS, jsonEncode(Dme().customEvents));
+                                      customFormat.format(fiT));
+                                  _eventsBloc.dispatch(EventsAddEvent(customEvent: ce));
                                   setState(() {
 
                                   });
@@ -256,6 +255,7 @@ class _DestinationViewState extends State<DestinationView> {
                                   _descriptionController.clear();
                                   _startDateController.text = _formatter.format(DateTime.now());
                                   _endDateController.text = _formatter.format(DateTime.now());
+
 
                                 }
                               })

@@ -4,11 +4,14 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
+import 'package:oauth2/oauth2.dart';
+import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:raco/src/blocs/labs/labs.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/models/models.dart';
 import 'package:raco/src/repositories/raco_api_client.dart';
 import 'package:raco/src/repositories/raco_repository.dart';
+import 'package:raco/src/resources/authentication_data.dart';
 import 'package:raco/src/resources/user_repository.dart';
 import 'package:raco/src/utils/file_names.dart';
 import 'package:raco/src/utils/keys.dart';
@@ -16,6 +19,12 @@ import 'package:raco/src/utils/read_write_file.dart';
 import 'package:http/http.dart' as http;
 
 class LabsBloc extends Bloc<LabsEvent, LabsState> {
+  final AuthenticationBloc authenticationBloc;
+
+  LabsBloc({
+    @required this.authenticationBloc,
+  }) : assert(authenticationBloc != null);
+
 
   LabsState get initialState => LabsInitState();
 
@@ -25,6 +34,15 @@ class LabsBloc extends Bloc<LabsEvent, LabsState> {
       yield LabsInitState();
     }
     if (event is LabsChangedEvent) {
+      Credentials c = await user.getCredentials();
+      try {
+        if(c.expiration.isBefore(DateTime.now().add(Duration(hours: 1))) ) {
+          c = await c.refresh(identifier: AuthenticationData.identifier,secret: AuthenticationData.secret,);
+          await user.persistCredentials(c);
+        }
+      } catch(e) {
+        authenticationBloc.dispatch(LoggedOutEvent());
+      }
       //update news
       bool canUpdate = true;
       if (await user.isPresentInPreferences(Keys.LAST_LABS_REFRESH)) {

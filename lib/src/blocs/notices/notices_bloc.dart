@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
+import 'package:meta/meta.dart';
+import 'package:oauth2/oauth2.dart';
+import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/models/models.dart';
 import 'package:raco/src/repositories/raco_api_client.dart';
 import 'package:raco/src/repositories/raco_repository.dart';
+import 'package:raco/src/resources/authentication_data.dart';
 import 'package:raco/src/resources/user_repository.dart';
 import 'package:raco/src/utils/file_names.dart';
 import 'package:raco/src/utils/keys.dart';
@@ -14,6 +18,11 @@ import 'package:http/http.dart' as http;
 import 'Notices.dart';
 
 class NoticesBloc extends Bloc<NoticesEvent, NoticesState> {
+  final AuthenticationBloc authenticationBloc;
+
+  NoticesBloc({
+    @required this.authenticationBloc,
+  }) : assert(authenticationBloc != null);
 
   NoticesState get initialState => NoticesInitState();
 
@@ -23,6 +32,15 @@ class NoticesBloc extends Bloc<NoticesEvent, NoticesState> {
       yield NoticesInitState();
     }
     if (event is NoticesChangedEvent) {
+      Credentials c = await user.getCredentials();
+      try {
+        if(c.expiration.isBefore(DateTime.now().add(Duration(hours: 1))) ) {
+          c = await c.refresh(identifier: AuthenticationData.identifier,secret: AuthenticationData.secret,);
+          await user.persistCredentials(c);
+        }
+      } catch(e) {
+        authenticationBloc.dispatch(LoggedOutEvent());
+      }
       //update notices
       bool canUpdate = true;
       if (await user.isPresentInPreferences(Keys.LAST_NOTICES_REFRESH)) {

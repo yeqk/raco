@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
+import 'package:meta/meta.dart';
+import 'package:oauth2/oauth2.dart';
+import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/models/models.dart';
 import 'package:raco/src/repositories/raco_api_client.dart';
 import 'package:raco/src/repositories/raco_repository.dart';
+import 'package:raco/src/resources/authentication_data.dart';
 import 'package:raco/src/resources/user_repository.dart';
 import 'package:raco/src/utils/file_names.dart';
 import 'package:raco/src/utils/keys.dart';
@@ -14,7 +18,11 @@ import 'package:http/http.dart' as http;
 import 'news.dart';
 
 class NewsBloc extends Bloc<NewsEvent, NewsState> {
+  final AuthenticationBloc authenticationBloc;
 
+  NewsBloc({
+    @required this.authenticationBloc,
+  }) : assert(authenticationBloc != null);
   NewsState get initialState => NewsInitState();
 
   @override
@@ -23,6 +31,15 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
       yield NewsInitState();
     }
     if (event is NewsChangedEvent) {
+      Credentials c = await user.getCredentials();
+      try {
+        if(c.expiration.isBefore(DateTime.now().add(Duration(hours: 1))) ) {
+          c = await c.refresh(identifier: AuthenticationData.identifier,secret: AuthenticationData.secret,);
+          await user.persistCredentials(c);
+        }
+      } catch(e) {
+        authenticationBloc.dispatch(LoggedOutEvent());
+      }
       //update news
       bool canUpdate = true;
       if (await user.isPresentInPreferences(Keys.LAST_NEWS_REFRESH)) {

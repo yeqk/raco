@@ -32,3 +32,14 @@ class EventDeletedState extends EventsState {
   @override
   String toString() => 'EventDeletedState';
 }
+
+class EventEditedState extends EventsState {
+  @override
+  String toString() => 'EventEditedState';
+}
+
+class EventAddedState extends EventsState {
+  @override
+  String toString() => 'EventAddedState';
+}
+

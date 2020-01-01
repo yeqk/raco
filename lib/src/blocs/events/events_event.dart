@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
+import 'package:raco/src/models/custom_events.dart';
 import 'package:raco/src/ui/routes/bottom_navigation/events_route.dart';
 
 abstract class EventsEvent extends Equatable {
@@ -31,3 +32,21 @@ class EventsDeleteEvent extends EventsEvent {
   String toString() =>
       'EventsDeleteEvent';
 }
+
+class EventsEditEvent extends EventsEvent {
+  EventItem eventItem;
+  CustomEvent customEvent;
+  EventsEditEvent({@required this.customEvent, @required this.eventItem}) : super([customEvent, eventItem]);
+  @override
+  String toString() =>
+      'EventsEditEvent';
+}
+
+class EventsAddEvent extends EventsEvent {
+  CustomEvent customEvent;
+  EventsAddEvent({@required this.customEvent}) : super([customEvent]);
+  @override
+  String toString() =>
+      'EventsEditEvent';
+}
+

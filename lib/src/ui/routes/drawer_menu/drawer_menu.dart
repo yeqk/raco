@@ -8,13 +8,11 @@ import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/resources/authentication_data.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:flutter/services.dart';
+import 'package:raco/src/ui/routes/drawer_menu/grades_route.dart';
 import 'package:raco/src/ui/routes/drawer_menu/subjects.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-
-import 'configuration.dart';
-import 'exams.dart';
-import 'grades.dart';
+import 'configuration_route.dart';
 import 'labs_route.dart';
 
 class DrawerMenu extends Drawer {
@@ -86,17 +84,10 @@ class DrawerMenu extends Drawer {
       );
     }
 
-    _onExamsPressed() {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Exams()),
-      );
-    }
-
     _onGradesPressed() {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Grades()),
+        MaterialPageRoute(builder: (context) => GradesRoute()),
       );
     }
 
@@ -164,7 +155,7 @@ class DrawerMenu extends Drawer {
     _onConfigurationPressed() {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Configuration()),
+        MaterialPageRoute(builder: (context) => ConfigurationRoute()),
       );
     }
 
@@ -186,7 +177,6 @@ class DrawerMenu extends Drawer {
                 ),
               ),
               _listTile(allTranslations.text('subjects'), new Icon(Icons.collections_bookmark), () => _onSubjectsPressed()),
-             // _listTile(allTranslations.text('exams'), new Icon(Icons.event_busy), () => _onExamsPressed()),
               _listTile(allTranslations.text('grades'), new Icon(Icons.grade), () => _onGradesPressed()),
               _listTile(allTranslations.text('labs'), new Icon(Icons.laptop), () => _onLabsPressed()),
               _listTile(allTranslations.text('feedback'), new Icon(Icons.feedback), () => _onFeedBackPressed()),

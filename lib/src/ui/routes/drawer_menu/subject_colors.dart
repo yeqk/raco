@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/block_picker.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_colorpicker/material_picker.dart';
+import 'package:raco/src/blocs/configuration/configuration.dart';
 import 'package:raco/src/blocs/translations/translations.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/resources/global_translations.dart';
@@ -34,6 +35,7 @@ class SubjectColorsState extends State<SubjectColors>
 
   @override
   Widget build(BuildContext context) {
+    final _configurationBloc = BlocProvider.of<ConfigurationBloc>(context);
     final _translationBloc = BlocProvider.of<TranslationsBloc>(context);
     _onSelectColor(String assignatura) {
       Color s = Color(int.parse(Dme().assigColors[assignatura]));
@@ -43,23 +45,28 @@ class SubjectColorsState extends State<SubjectColors>
             return AlertDialog(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              title: Text(allTranslations.text('select_color'),overflow: TextOverflow.visible,),
+              title: Text(
+                allTranslations.text('select_color'),
+                overflow: TextOverflow.visible,
+              ),
               content: SingleChildScrollView(
                 child: MaterialPicker(
                   pickerColor: s,
                   onColorChanged: (Color c) {
-                    print(c.toString());
                     s = c;
                   },
                 ),
               ),
               actions: <Widget>[
                 FlatButton(
-                  child:  Text(allTranslations.text('default'),overflow: TextOverflow.visible,),
+                  child: Text(
+                    allTranslations.text('default'),
+                    overflow: TextOverflow.visible,
+                  ),
                   onPressed: () {
-
-                    Dme().assigColors[assignatura] = Dme().defaultAssigColors[assignatura];
-                    user.writeToPreferences(assignatura, Dme().defaultAssigColors[assignatura]);
+                    _configurationBloc.dispatch(ChangeSubjectColorEvent(
+                        subject: assignatura,
+                        colorCode: Dme().defaultAssigColors[assignatura]));
 
                     String cur = allTranslations.currentLanguage;
                     String an;
@@ -78,16 +85,22 @@ class SubjectColorsState extends State<SubjectColors>
                   },
                 ),
                 FlatButton(
-                  child:  Text(allTranslations.text('cancel'),overflow: TextOverflow.visible,),
+                  child: Text(
+                    allTranslations.text('cancel'),
+                    overflow: TextOverflow.visible,
+                  ),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                 ),
                 FlatButton(
-                  child:  Text(allTranslations.text('accept'),overflow: TextOverflow.visible,),
+                  child: Text(
+                    allTranslations.text('accept'),
+                    overflow: TextOverflow.visible,
+                  ),
                   onPressed: () {
-                    Dme().assigColors[assignatura] = s.value.toString();
-                    user.writeToPreferences(assignatura, s.value.toString());
+                    _configurationBloc.dispatch(ChangeSubjectColorEvent(
+                        subject: assignatura, colorCode: s.value.toString()));
 
                     String cur = allTranslations.currentLanguage;
                     String an;
@@ -107,8 +120,7 @@ class SubjectColorsState extends State<SubjectColors>
                 ),
               ],
             );
-          }
-      );
+          });
     }
 
     return new Scaffold(
@@ -118,17 +130,17 @@ class SubjectColorsState extends State<SubjectColors>
         body: Container(
           child: ListView(
               children: Dme().assignatures.results.map((a) {
-                return ListTile(
-                  onTap: () => _onSelectColor(a.id),
-                  title: Text((a.nom != null && a.nom != ' ') ? a.nom : a.sigles, overflow: TextOverflow.visible,),
-                  trailing: CircleAvatar(backgroundColor: Color(int.parse(Dme().assigColors[a.sigles])),),
-                );
-              }).toList()
-          ),
+            return ListTile(
+              onTap: () => _onSelectColor(a.id),
+              title: Text(
+                (a.nom != null && a.nom != ' ') ? a.nom : a.sigles,
+                overflow: TextOverflow.visible,
+              ),
+              trailing: CircleAvatar(
+                backgroundColor: Color(int.parse(Dme().assigColors[a.sigles])),
+              ),
+            );
+          }).toList()),
         ));
   }
-
-
-
-
 }
