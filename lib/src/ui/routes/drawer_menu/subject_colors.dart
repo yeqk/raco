@@ -11,7 +11,7 @@ import 'package:raco/src/blocs/configuration/configuration.dart';
 import 'package:raco/src/blocs/translations/translations.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/resources/global_translations.dart';
-import 'package:raco/src/resources/user_repository.dart';
+import 'package:raco/src/repositories/user_repository.dart';
 import 'package:raco/src/utils/app_colors.dart';
 
 class SubjectColors extends StatefulWidget {

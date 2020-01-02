@@ -9,7 +9,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:raco/src/models/models.dart';
 import 'package:raco/src/models/requisits.dart';
-import 'package:raco/src/resources/user_repository.dart';
+import 'package:raco/src/repositories/user_repository.dart';
 import 'package:raco/src/utils/file_names.dart';
 import 'package:uuid/uuid.dart';
 

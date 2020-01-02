@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/blocs/translations/translations.dart';
-import 'package:raco/src/resources/user_repository.dart';
+import 'package:raco/src/repositories/user_repository.dart';
 
 
 

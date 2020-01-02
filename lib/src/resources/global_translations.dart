@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/services.dart';
-import 'package:raco/src/resources/user_repository.dart';
+import 'package:raco/src/repositories/user_repository.dart';
 
 const List<String> _kSupportedLanguages  = ["en", "es", "ca"];
 const _kDefaultLanguage  = "en";

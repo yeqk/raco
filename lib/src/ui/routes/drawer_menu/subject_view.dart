@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:raco/src/models/requisits.dart';
 import 'package:raco/src/repositories/repositories.dart';
 import 'package:raco/src/resources/global_translations.dart';
-import 'package:raco/src/resources/user_repository.dart';
+import 'package:raco/src/repositories/user_repository.dart';
 import 'package:share_extend/share_extend.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

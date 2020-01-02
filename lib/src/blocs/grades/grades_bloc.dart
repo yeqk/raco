@@ -12,7 +12,7 @@ import 'package:raco/src/models/custom_grades.dart';
 import 'package:raco/src/models/models.dart';
 import 'package:raco/src/repositories/raco_api_client.dart';
 import 'package:raco/src/repositories/raco_repository.dart';
-import 'package:raco/src/resources/user_repository.dart';
+import 'package:raco/src/repositories/user_repository.dart';
 import 'package:raco/src/ui/routes/bottom_navigation/events_route.dart';
 import 'package:raco/src/utils/file_names.dart';
 import 'package:raco/src/utils/keys.dart';

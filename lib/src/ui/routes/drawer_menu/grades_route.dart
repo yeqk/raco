@@ -14,7 +14,7 @@ import 'package:raco/src/models/models.dart';
 import 'package:raco/src/repositories/repositories.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:intl/intl.dart';
-import 'package:raco/src/resources/user_repository.dart';
+import 'package:raco/src/repositories/user_repository.dart';
 import 'package:raco/src/ui/routes/drawer_menu/grade_route.dart';
 import 'package:raco/src/utils/file_names.dart';
 import 'package:raco/src/utils/read_write_file.dart';

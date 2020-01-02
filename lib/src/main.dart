@@ -6,7 +6,7 @@ import 'package:raco/src/blocs/loading_text/loading_text.dart';
 import 'package:raco/src/blocs/news/news.dart';
 import 'package:raco/src/blocs/translations/translations.dart';
 import 'package:raco/src/resources/global_translations.dart';
-import 'package:raco/src/resources/user_repository.dart';
+import 'package:raco/src/repositories/user_repository.dart';
 import 'package:raco/src/ui/app.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

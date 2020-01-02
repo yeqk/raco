@@ -9,7 +9,7 @@ import 'package:raco/src/models/models.dart';
 import 'package:raco/src/repositories/raco_api_client.dart';
 import 'package:raco/src/repositories/raco_repository.dart';
 import 'package:raco/src/resources/authentication_data.dart';
-import 'package:raco/src/resources/user_repository.dart';
+import 'package:raco/src/repositories/user_repository.dart';
 import 'package:raco/src/utils/file_names.dart';
 import 'package:raco/src/utils/keys.dart';
 import 'package:raco/src/utils/read_write_file.dart';
@@ -34,7 +34,7 @@ class NoticesBloc extends Bloc<NoticesEvent, NoticesState> {
     if (event is NoticesChangedEvent) {
       Credentials c = await user.getCredentials();
       try {
-        if(c.expiration.isBefore(DateTime.now().add(Duration(hours: 1))) ) {
+        if(c.isExpired ) {
           c = await c.refresh(identifier: AuthenticationData.identifier,secret: AuthenticationData.secret,);
           await user.persistCredentials(c);
         }

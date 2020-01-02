@@ -17,7 +17,7 @@ import 'package:raco/src/models/custom_grades.dart';
 import 'package:raco/src/models/requisits.dart';
 import 'package:raco/src/resources/authentication_data.dart';
 import 'package:raco/src/resources/global_translations.dart';
-import 'package:raco/src/resources/user_repository.dart';
+import 'package:raco/src/repositories/user_repository.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:raco/src/repositories/repositories.dart';
 import 'package:http/http.dart' as http;
@@ -46,7 +46,7 @@ class AuthenticationBloc
     if (event is AppStartedEvent) {
       bool hasCredentials = await user.hasCredentials();
 
-      if (hasCredentials) {
+/*      if (hasCredentials) {
         Credentials c = await user.getCredentials();
         try {
           if(c.expiration.isBefore(DateTime.now().add(Duration(hours: 1))) ) {
@@ -56,7 +56,7 @@ class AuthenticationBloc
         } catch(e) {
           hasCredentials = false;
         }
-      }
+      }*/
       if (hasCredentials) {
         yield AuthenticationLoadingState();
         try{
@@ -95,6 +95,13 @@ class AuthenticationBloc
       bool firsLogin = !await user.hasCredentials();
       await user.persistCredentials(event.credentials);
       try {
+        if (!firsLogin) {
+          Credentials c = await user.getCredentials();
+          if(c.isExpired) {
+            c = await c.refresh(identifier: AuthenticationData.identifier,secret: AuthenticationData.secret,);
+            await user.persistCredentials(c);
+          }
+        }
         await _downloadData(firsLogin);
         String u = DateTime.now().toIso8601String();
         Dme().lastUpdate = u;

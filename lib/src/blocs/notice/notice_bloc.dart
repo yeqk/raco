@@ -6,7 +6,7 @@ import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/models/models.dart';
 import 'package:raco/src/repositories/raco_api_client.dart';
 import 'package:raco/src/repositories/raco_repository.dart';
-import 'package:raco/src/resources/user_repository.dart';
+import 'package:raco/src/repositories/user_repository.dart';
 import 'package:raco/src/utils/file_names.dart';
 import 'package:raco/src/utils/keys.dart';
 import 'package:raco/src/utils/read_write_file.dart';
