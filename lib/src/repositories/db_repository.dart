@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'package:raco/src/models/classes.dart';
+import 'package:raco/src/models/db_helpers/schedule_helper.dart';
+import 'package:raco/src/models/db_helpers/user_helper.dart';
 import 'package:raco/src/models/models.dart';
 import 'package:raco/src/models/requisits.dart';
 import 'package:sqflite/sqflite.dart';
@@ -10,7 +12,9 @@ import 'raco_api_client.dart';
 class DbRepository {
   Database db;
   final String databaseName = 'raco_db.db';
-  final String meTable = 'me';
+
+  final String userTable = 'user';
+  final String scheduleTable = "schedule";
 
   //Singleton
   DbRepository._internal();
@@ -24,7 +28,7 @@ class DbRepository {
     db = await openDatabase(databaseName, version: 1, onCreate: (Database db, int version) async {
 
       await db.execute('''
-      create table $meTable (
+      create table $userTable (
         assignatures text,
         avisos text,
         classes text,
@@ -34,8 +38,25 @@ class DbRepository {
         username text primary key,
         nom text,
         cognoms text,
-        email text)
+        email text,
+        avatarPath text)
       ''');
+
+      await db.execute('''
+      create table $scheduleTable (
+        id integer primary key autoincrement,
+        username text,
+        codiAssig text,
+        grup text,
+        diaSetmana integer,
+        inici text,
+        durada integer,
+        tipus text,
+        aules text,
+        foreign key(username) references $userTable(username))
+      ''');
+
+
     });
   }
 
@@ -49,16 +70,29 @@ class DbRepository {
     await deleteDatabase(path);
   }
 
-  Future insertMe(Me me) async {
-    await db.insert(meTable, me.toMap());
+  Future insertMeHelper(UserHelper userHelper) async {
+    await db.insert(userTable, userHelper.toMap());
   }
 
-  Future<Me> getMe() async {
-    print('hhhh');
-    List<Map> maps = await db.query(meTable);
+  Future<UserHelper> getMeHelper() async {
+    List<Map> maps = await db.query(userTable);
     if (maps.length > 0) {
-      return Me.fromMap(maps.first);
+      return UserHelper.fromMap(maps.first);
     }
+    return null;
+  }
+
+  Future insertScheduleHelper(ScheduleHelper scheduleHelper) async {
+    await db.insert(scheduleTable, scheduleHelper.toMap());
+  }
+
+  Future<List<ScheduleHelper>> getAllScheduleHelper() async {
+    List<Map> maps = await db.query(scheduleTable);
+    List<ScheduleHelper> allResults = List();
+    maps.forEach((map) {
+      allResults.add(ScheduleHelper.fromMap(map));
+    });
+    return allResults;
   }
 
 }

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:raco/src/models/db_helpers/schedule_helper.dart';
 
 part 'classes.g.dart';
 
@@ -28,6 +29,17 @@ class Classe {
 
   Classe(this.codiAssig, this.grup, this.diaSetmana, this.inici, this.durada,
       this.tipus, this.aules);
+
+
+  Classe.fromScheduleHelper(ScheduleHelper scheduleHelper) {
+    this.codiAssig = scheduleHelper.codiAssig;
+    this.grup = scheduleHelper.grup;
+    this.diaSetmana = scheduleHelper.diaSetmana;
+    this.inici = scheduleHelper.inici;
+    this.durada = scheduleHelper.durada;
+    this.tipus = scheduleHelper.tipus;
+    this.aules = scheduleHelper.aules;
+  }
 
   factory Classe.fromJson(Map<String, dynamic> json) => _$ClasseFromJson(json);
   Map<String, dynamic> toJson() => _$ClasseToJson(this);

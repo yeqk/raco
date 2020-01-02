@@ -14,6 +14,8 @@ import 'package:raco/src/data/dme.dart' as prefix0;
 import 'package:raco/src/models/custom_downloads.dart';
 import 'package:raco/src/models/custom_events.dart';
 import 'package:raco/src/models/custom_grades.dart';
+import 'package:raco/src/models/db_helpers/schedule_helper.dart';
+import 'package:raco/src/models/db_helpers/user_helper.dart';
 import 'package:raco/src/models/requisits.dart';
 import 'package:raco/src/resources/authentication_data.dart';
 import 'package:raco/src/resources/global_translations.dart';
@@ -164,13 +166,14 @@ class AuthenticationBloc
     //singleton data object
     Dme dme = Dme();
     //read data from local files
+
     /*Me me = Me.fromJson(
         jsonDecode(await ReadWriteFile().readStringFromFile(FileNames.JO)));*/
 
-    Me me = await dbRepository.getMe();
+    UserHelper userHelper = await dbRepository.getMeHelper();
+    Me me = Me.fromHelper(userHelper);
 
-    final directory = await getApplicationDocumentsDirectory();
-    dme.imgPath = directory.path + '/' + FileNames.AVATAR;
+    dme.imgPath = userHelper.avatarPath;
     dme.username = me.username;
     dme.nom = me.nom;
     dme.cognoms = me.cognoms;
@@ -179,8 +182,14 @@ class AuthenticationBloc
     //Load schedule information
     loadingTextBloc.dispatch(
         LoadTextEvent(text: allTranslations.text('schedule_loading')));
-    Classes classes = Classes.fromJson(jsonDecode(
-        await ReadWriteFile().readStringFromFile(FileNames.CLASSES)));
+/*    Classes classes = Classes.fromJson(jsonDecode(
+        await ReadWriteFile().readStringFromFile(FileNames.CLASSES)));*/
+    List<ScheduleHelper> schedules = await dbRepository.getAllScheduleHelper();
+    List<Classe> classeList = List();
+    schedules.forEach((sch) {
+      classeList.add(Classe.fromScheduleHelper(sch));
+    });
+    Classes classes = new Classes(schedules.length, classeList);
     _fillSchedule(classes);
 
     //Load notices information
@@ -277,6 +286,7 @@ class AuthenticationBloc
       await dbRepository.closeDB();
       await dbRepository.deleteDB();
     }
+
     await dbRepository.openDB();
 
     //load personal information
@@ -292,32 +302,35 @@ class AuthenticationBloc
         racoApiClient: RacoApiClient(
             httpClient: http.Client(), accessToken: accessToken, lang: lang));
 
-
-    Me me = await rr.getMe();
-    await dbRepository.insertMe(me);
-    me = await dbRepository.getMe();
-
     //Clear image cache to update avatar
     imageCache.clear();
-    String imgPaht = await rr.getImage();
+    String imgPath = await rr.getImage();
+
+    Me me = await rr.getMe();
+    UserHelper meHelper = UserHelper.fromMe(me, imgPath);
+    await dbRepository.insertMeHelper(meHelper);
+
 
     //singleton data object
     Dme dme = Dme();
-    dme.imgPath = imgPaht;
+    dme.imgPath = imgPath;
     dme.username = me.username;
     dme.nom = me.nom;
     dme.cognoms = me.cognoms;
     dme.email = me.email;
 
-    await ReadWriteFile().writeStringToFile(FileNames.JO, jsonEncode(me));
+   // await ReadWriteFile().writeStringToFile(FileNames.JO, jsonEncode(me));
 
     //Schedule information
     loadingTextBloc.dispatch(
         LoadTextEvent(text: allTranslations.text('schedule_loading')));
     Classes classes = await rr.getClasses();
+    classes.results.forEach((cl) {
+      dbRepository.insertScheduleHelper(ScheduleHelper.fromClasse(cl, me.username));
+    });
     _fillSchedule(classes);
-    await ReadWriteFile()
-        .writeStringToFile(FileNames.CLASSES, jsonEncode(classes));
+/*    await ReadWriteFile()
+        .writeStringToFile(FileNames.CLASSES, jsonEncode(classes));*/
 
     //Notices information
     loadingTextBloc
