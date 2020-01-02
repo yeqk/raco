@@ -23,4 +23,34 @@ class Me {
 
   Map<String, dynamic> toJson() => _$MeToJson(this);
 
+  Map<String, dynamic> toMap() {
+    var map = <String, dynamic>{
+      'assignatures': assignatures,
+      'avisos': avisos,
+      'classes': classes,
+      'foto': foto,
+      'practiques': practiques,
+      'projectes': projectes,
+      'username': username,
+      'nom': nom,
+      'cognoms': cognoms,
+      'email': email,
+    };
+    return map;
+  }
+
+  Me.fromMap(Map<String, dynamic> map) {
+    assignatures = map['assignatures'];
+    avisos = map['avisos'];
+    classes = map['classes'];
+    foto = map['foto'];
+    practiques = map['practiques'];
+    projectes = map['projectes'];
+    username = map['username'];
+    nom = map['nom'];
+    cognoms = map['cognoms'];
+    email = map['email'];
+  }
+
+
 }

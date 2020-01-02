@@ -46,17 +46,6 @@ class AuthenticationBloc
     if (event is AppStartedEvent) {
       bool hasCredentials = await user.hasCredentials();
 
-/*      if (hasCredentials) {
-        Credentials c = await user.getCredentials();
-        try {
-          if(c.expiration.isBefore(DateTime.now().add(Duration(hours: 1))) ) {
-            c = await c.refresh(identifier: AuthenticationData.identifier,secret: AuthenticationData.secret,);
-            await user.persistCredentials(c);
-          }
-        } catch(e) {
-          hasCredentials = false;
-        }
-      }*/
       if (hasCredentials) {
         yield AuthenticationLoadingState();
         try{
@@ -81,6 +70,8 @@ class AuthenticationBloc
               f.deleteSync(recursive: false);
             }
           }
+          await dbRepository.closeDB();
+          await dbRepository.deleteDB();
           await Future.delayed(Duration(seconds:2));
           yield AuthenticationUnauthenticatedState();
         }
@@ -127,6 +118,8 @@ class AuthenticationBloc
               f.deleteSync(recursive: false);
             }
           }
+          await dbRepository.closeDB();
+          await dbRepository.deleteDB();
           yield AuthenticationUnauthenticatedState();
         } else {
           yield AuthenticationAuthenticatedState();
@@ -154,12 +147,15 @@ class AuthenticationBloc
           f.deleteSync(recursive: false);
         }
       }
+      await dbRepository.closeDB();
+      await dbRepository.deleteDB();
       yield AuthenticationUnauthenticatedState();
     }
   }
 
   Future<void> _loadData() async {
 
+    await dbRepository.openDB();
 
     //load personal information
     loadingTextBloc.dispatch(
@@ -168,8 +164,11 @@ class AuthenticationBloc
     //singleton data object
     Dme dme = Dme();
     //read data from local files
-    Me me = Me.fromJson(
-        jsonDecode(await ReadWriteFile().readStringFromFile(FileNames.JO)));
+    /*Me me = Me.fromJson(
+        jsonDecode(await ReadWriteFile().readStringFromFile(FileNames.JO)));*/
+
+    Me me = await dbRepository.getMe();
+
     final directory = await getApplicationDocumentsDirectory();
     dme.imgPath = directory.path + '/' + FileNames.AVATAR;
     dme.username = me.username;
@@ -274,6 +273,12 @@ class AuthenticationBloc
   }
 
   Future<void> _downloadData(bool firstLogin) async {
+    if (!firstLogin) {
+      await dbRepository.closeDB();
+      await dbRepository.deleteDB();
+    }
+    await dbRepository.openDB();
+
     //load personal information
     loadingTextBloc.dispatch(
         LoadTextEvent(text: allTranslations.text('personal_info_loading')));
@@ -287,7 +292,10 @@ class AuthenticationBloc
         racoApiClient: RacoApiClient(
             httpClient: http.Client(), accessToken: accessToken, lang: lang));
 
+
     Me me = await rr.getMe();
+    await dbRepository.insertMe(me);
+    me = await dbRepository.getMe();
 
     //Clear image cache to update avatar
     imageCache.clear();
