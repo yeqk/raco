@@ -1,4 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:raco/src/models/db_helpers/attachment_helper.dart';
+
+import 'db_helpers/notice_helper.dart';
 
 part 'avisos.g.dart';
 
@@ -33,6 +36,17 @@ class Avis {
   Avis(this.id, this.titol, this.codiAssig, this.text, this.dataInsercio,
       this.dataModificacio, this.adjunts);
 
+  Avis.fromNoticeHelper(NoticeHelper noticeHelper, List<Adjunt> adjunts) {
+    this.id = noticeHelper.id;
+    this.titol = noticeHelper.titol;
+    this.codiAssig = noticeHelper.codiAssig;
+    this.text = noticeHelper.textContent;
+    this.dataInsercio = noticeHelper.dataInsercio;
+    this.dataModificacio = noticeHelper.dataModificacio;
+    this.dataCaducitat = noticeHelper.dataCaducitat;
+    this.adjunts = adjunts;
+  }
+
   factory Avis.fromJson(Map<String, dynamic> json) =>
       _$AvisFromJson(json);
   Map<String, dynamic> toJson() => _$AvisToJson(this);
@@ -49,6 +63,14 @@ class Adjunt {
   int mida;
 
   Adjunt(this.tipusMime, this.nom, this.url, this.dataModificacio, this.mida);
+
+  Adjunt.fromAttachmentHelper(AttachmentHelper attachmentHelper) {
+    this.tipusMime = attachmentHelper.tipusMime;
+    this.nom = attachmentHelper.nom;
+    this.url = attachmentHelper.url;
+    this.dataModificacio = attachmentHelper.dataModificacio;
+    this.mida = attachmentHelper.mida;
+  }
 
   factory Adjunt.fromJson(Map<String, dynamic> json) =>
       _$AdjuntFromJson(json);

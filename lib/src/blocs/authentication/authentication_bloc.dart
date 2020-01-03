@@ -8,13 +8,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:raco/flutter_datetime_picker-1.2.8-with-ca/src/date_format.dart';
 import 'package:raco/src/blocs/loading_text/loading_text.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/data/dme.dart' as prefix0;
 import 'package:raco/src/models/custom_downloads.dart';
 import 'package:raco/src/models/custom_events.dart';
 import 'package:raco/src/models/custom_grades.dart';
+import 'package:raco/src/models/db_helpers/attachment_helper.dart';
+import 'package:raco/src/models/db_helpers/event_helper.dart';
+import 'package:raco/src/models/db_helpers/exam_helper.dart';
+import 'package:raco/src/models/db_helpers/lab_image_helper.dart';
+import 'package:raco/src/models/db_helpers/news_helper.dart';
+import 'package:raco/src/models/db_helpers/notice_helper.dart';
 import 'package:raco/src/models/db_helpers/schedule_helper.dart';
+import 'package:raco/src/models/db_helpers/subject_helper.dart';
 import 'package:raco/src/models/db_helpers/user_helper.dart';
 import 'package:raco/src/models/requisits.dart';
 import 'package:raco/src/resources/authentication_data.dart';
@@ -50,34 +58,9 @@ class AuthenticationBloc
 
       if (hasCredentials) {
         yield AuthenticationLoadingState();
-        try{
-          await _loadData();
-          Dme().lastUpdate = await user.readFromPreferences(Keys.LAST_UPDATE);
-          yield AuthenticationAuthenticatedState();
-        }catch (e) {
-          loadingTextBloc
-              .dispatch(LoadTextEvent(text: allTranslations.text('error_loading')));
-          if (await user.hasCredentials()) {
-            //Clear image cache to update avatar
-            imageCache.clear();
-            await user.deleteCredentials();
-          }
-          SharedPreferences preferences = await SharedPreferences.getInstance();
-          preferences.clear();
-          var dir = await getApplicationDocumentsDirectory();
-          List<FileSystemEntity> _files;
-          _files = dir.listSync(recursive: true, followLinks: false);
-          for (FileSystemEntity f in _files) {
-            if (!f.path.contains('flutter_assets')) {
-              f.deleteSync(recursive: false);
-            }
-          }
-          await dbRepository.closeDB();
-          await dbRepository.deleteDB();
-          await Future.delayed(Duration(seconds:2));
-          yield AuthenticationUnauthenticatedState();
-        }
-
+        await _loadData();
+        Dme().lastUpdate = await user.readFromPreferences(Keys.LAST_UPDATE);
+        yield AuthenticationAuthenticatedState();
       } else {
         yield AuthenticationUnauthenticatedState();
       }
@@ -189,40 +172,64 @@ class AuthenticationBloc
     schedules.forEach((sch) {
       classeList.add(Classe.fromScheduleHelper(sch));
     });
-    Classes classes = new Classes(schedules.length, classeList);
+    Classes classes = Classes(schedules.length, classeList);
     _fillSchedule(classes);
 
     //Load notices information
     loadingTextBloc
         .dispatch(LoadTextEvent(text: allTranslations.text('notices_loading')));
-    Avisos avisos = Avisos.fromJson(
-        jsonDecode(await ReadWriteFile().readStringFromFile(FileNames.AVISOS)));
-    dme.avisos = avisos;
+/*    Avisos avisos = Avisos.fromJson(
+        jsonDecode(await ReadWriteFile().readStringFromFile(FileNames.AVISOS)));*/
+    List<NoticeHelper> noticeHelperList = await dbRepository.getAllNoticeHelper();
+    List<Avis> avisList = List();
+    noticeHelperList.forEach((n) async{
+      List<AttachmentHelper> attachmentHelperList = await dbRepository.getAttachmentHelperByNoticeId(n.id);
+      List<Adjunt> adjuntList = List();
+      attachmentHelperList.forEach((at) {
+        adjuntList.add(Adjunt.fromAttachmentHelper(at));
+      });
+      avisList.add(Avis.fromNoticeHelper(n, adjuntList));
+    });
+    dme.avisos = Avisos(avisList.length, avisList);
 
     //Load events
     loadingTextBloc
         .dispatch(LoadTextEvent(text: allTranslations.text('events_loading')));
-    Events events = Events.fromJson(
-        jsonDecode(await ReadWriteFile().readStringFromFile(FileNames.EVENTS)));
-    dme.events = events;
+/*    Events events = Events.fromJson(
+        jsonDecode(await ReadWriteFile().readStringFromFile(FileNames.EVENTS)));*/
+    List<EventHelper> eventHelperList = await dbRepository.getAllEventHelper();
+    List<Event> eventList = List();
+    eventHelperList.forEach((e) {
+      eventList.add(Event.fromEventHelper(e));
+    });
+    dme.events = Events(eventList.length, eventList);;
 
     //Load news
     loadingTextBloc
         .dispatch(LoadTextEvent(text: allTranslations.text('news_loading')));
-    Noticies noticies = Noticies.fromJson(jsonDecode(
-        await ReadWriteFile().readStringFromFile(FileNames.NOTICIES)));
-    Dme().noticies = noticies;
-
+/*    Noticies noticies = Noticies.fromJson(jsonDecode(
+        await ReadWriteFile().readStringFromFile(FileNames.NOTICIES)));*/
+    List<NewsHelper> newsHelperList = await dbRepository.getAllNewsHelper();
+    List<Noticia> noticiaList = List();
+    newsHelperList.forEach((nh) {
+      noticiaList.add(Noticia.fromNewsHelper(nh));
+    });
+    Dme().noticies = Noticies(noticiaList.length, noticiaList);
     //Load subjects information
     loadingTextBloc.dispatch(
         LoadTextEvent(text: allTranslations.text('subjects_loading')));
-    Assignatures assignatures = Assignatures.fromJson(jsonDecode(
-        await ReadWriteFile().readStringFromFile(FileNames.ASSIGNATURES)));
-    dme.assignatures = assignatures;
-    _loadSubjectColor(assignatures);
+ /*   Assignatures assignatures = Assignatures.fromJson(jsonDecode(
+        await ReadWriteFile().readStringFromFile(FileNames.ASSIGNATURES)));*/
+    List<SubjectHelper> subjectHelperList = await dbRepository.getAllSubjectHelper();
+    List<Assignatura> assignaturaList = List();
+    subjectHelperList.forEach((s) {
+      assignaturaList.add(Assignatura.fromSubjectHelper(s));
+    });
+    dme.assignatures = Assignatures(assignaturaList.length,assignaturaList);
+    _loadSubjectColor(dme.assignatures);
     dme.assigGuia = new HashMap();
     dme.assigURL = new HashMap();
-    for (Assignatura a in assignatures.results) {
+    for (Assignatura a in dme.assignatures.results) {
       AssignaturaURL assigURL = AssignaturaURL.fromJson(jsonDecode(
           await ReadWriteFile().readStringFromFile(FileNames.ASSIGNATURA_URL + a.id)));
       dme.assigURL[a.id] = assigURL;
@@ -241,20 +248,21 @@ class AuthenticationBloc
     //Load exams
     loadingTextBloc
         .dispatch(LoadTextEvent(text: allTranslations.text('exam_loading')));
-    ExamensLaboratori labExams = ExamensLaboratori.fromJson(jsonDecode(
-        await ReadWriteFile()
-            .readStringFromFile(FileNames.EXAMENS_LABORATORI)));
-    dme.labExams = labExams;
-    Examens examens = Examens.fromJson(jsonDecode(
-        await ReadWriteFile().readStringFromFile(FileNames.EXAMENS)));
-    dme.examens = examens;
+ /*   Examens examens = Examens.fromJson(jsonDecode(
+        await ReadWriteFile().readStringFromFile(FileNames.EXAMENS)));*/
+    List<ExamHelper> examHelperList = await dbRepository.getAllExamHelper();
+    List<Examen> examenList = List();
+    examHelperList.forEach((e) {
+      examenList.add(Examen.fromExamHelper(e));
+    });
+    dme.examens = Examens(examenList.length, examenList);
 
     //Load lab ocupation
     loadingTextBloc
         .dispatch(LoadTextEvent(text: allTranslations.text('labs_loading')));
-    Dme().A5 = await user.readFromPreferences('a5');
-    Dme().B5 = await user.readFromPreferences('b5');
-    Dme().C6 = await user.readFromPreferences('c6');
+    Dme().A5 = await dbRepository.getLabImagePathByName('a5');
+    Dme().B5 = await dbRepository.getLabImagePathByName('b5');
+    Dme().C6 = await dbRepository.getLabImagePathByName('c6');
 
     //Load custom events
     Dme().customEvents = CustomEvents.fromJson(jsonDecode(
@@ -325,8 +333,8 @@ class AuthenticationBloc
     loadingTextBloc.dispatch(
         LoadTextEvent(text: allTranslations.text('schedule_loading')));
     Classes classes = await rr.getClasses();
-    classes.results.forEach((cl) {
-      dbRepository.insertScheduleHelper(ScheduleHelper.fromClasse(cl, me.username));
+    classes.results.forEach((cl) async {
+      await dbRepository.insertScheduleHelper(ScheduleHelper.fromClasse(cl, me.username));
     });
     _fillSchedule(classes);
 /*    await ReadWriteFile()
@@ -336,34 +344,49 @@ class AuthenticationBloc
     loadingTextBloc
         .dispatch(LoadTextEvent(text: allTranslations.text('notices_loading')));
     Avisos avisos = await rr.getAvisos();
+    avisos.results.forEach((a) async {
+      await dbRepository.insertNoticeHelper(NoticeHelper.fromAvis(a, me.username));
+      a.adjunts.forEach((adj) async {
+        await dbRepository.insertAttachmentHelper(AttachmentHelper.fromAdjunt(adj, a.id));
+      });
+    });
     dme.avisos = avisos;
-    await ReadWriteFile()
-        .writeStringToFile(FileNames.AVISOS, jsonEncode(avisos));
+   /* await ReadWriteFile()
+        .writeStringToFile(FileNames.AVISOS, jsonEncode(avisos));*/
 
     //Events information
     loadingTextBloc
         .dispatch(LoadTextEvent(text: allTranslations.text('events_loading')));
     Events events = await rr.getEvents();
+    events.results.forEach((e) async {
+      await dbRepository.insertEventHelper(EventHelper.fromEvent(e));
+    });
     dme.events = events;
-    await ReadWriteFile()
-        .writeStringToFile(FileNames.EVENTS, jsonEncode(events));
+/*    await ReadWriteFile()
+        .writeStringToFile(FileNames.EVENTS, jsonEncode(events));*/
 
     //News information
     loadingTextBloc
         .dispatch(LoadTextEvent(text: allTranslations.text('news_loading')));
     Noticies noticies = await rr.getNoticies();
-    Dme().noticies = noticies;
-    await ReadWriteFile()
-        .writeStringToFile(FileNames.NOTICIES, jsonEncode(noticies));
+    noticies.results.forEach((n) async {
+      await dbRepository.insertNewsHelper(NewsHelper.fromNoticia(n));
+    });
+    dme.noticies = noticies;
+    /*await ReadWriteFile()
+        .writeStringToFile(FileNames.NOTICIES, jsonEncode(noticies));*/
 
     //Subjects information
     loadingTextBloc.dispatch(
         LoadTextEvent(text: allTranslations.text('subjects_loading')));
     Assignatures assignatures = await rr.getAssignatures();
+    assignatures.results.forEach((a) async {
+      await dbRepository.insertSubjectHelper(SubjectHelper.fromAssignatura(a, me.username));
+    });
     dme.assignatures = assignatures;
     _assignColor(assignatures, firstLogin);
-    await ReadWriteFile()
-        .writeStringToFile(FileNames.ASSIGNATURES, jsonEncode(assignatures));
+/*    await ReadWriteFile()
+        .writeStringToFile(FileNames.ASSIGNATURES, jsonEncode(assignatures));*/
     dme.assigURL = new HashMap();
     dme.assigGuia = new HashMap();
     for (Assignatura a in assignatures.results) {
@@ -384,65 +407,65 @@ class AuthenticationBloc
     //Exams information
     loadingTextBloc
         .dispatch(LoadTextEvent(text: allTranslations.text('exam_loading')));
-    //Lab exams
-    ExamensLaboratori examensLaboratori = await rr.getExamensLaboratori();
-    await ReadWriteFile().writeStringToFile(
-        FileNames.EXAMENS_LABORATORI, jsonEncode(examensLaboratori));
-    dme.labExams = examensLaboratori;
+
     //Semester to obtain exams information
     Quadrimestre actual = await rr.getQuadrimestreActual();
-    await ReadWriteFile()
-        .writeStringToFile(FileNames.QUADRIMESTRE, jsonEncode(actual));
     //Get exams
     Examens examens = await rr.getExamens(actual);
-    await ReadWriteFile()
-        .writeStringToFile(FileNames.EXAMENS, jsonEncode(examens));
+    examens.results.forEach((e) async {
+      await dbRepository.insertExamtHelper(ExamHelper.fromExamen(e, me.username));
+    });
+/*    await ReadWriteFile()
+        .writeStringToFile(FileNames.EXAMENS, jsonEncode(examens));*/
     dme.examens = examens;
 
     //Labs ocupation
     loadingTextBloc
         .dispatch(LoadTextEvent(text: allTranslations.text('labs_loading')));
-    Dme().A5 =  await rr.getImageA5();
-    Dme().B5 =  await rr.getImageB5();
-    Dme().C6 =  await rr.getImageC6();
-    user.writeToPreferences('a5', Dme().A5);
+    dme.A5 =  await rr.getImageA5();
+    dme.B5 =  await rr.getImageB5();
+    dme.C6 =  await rr.getImageC6();
+    await dbRepository.insertLabImage(LabImageHelper('a5',dme.A5));
+    await dbRepository.insertLabImage(LabImageHelper('b5',dme.B5));
+    await dbRepository.insertLabImage(LabImageHelper('c6',dme.C6));
+/*    user.writeToPreferences('a5', Dme().A5);
     user.writeToPreferences('b5', Dme().B5);
-    user.writeToPreferences('c6', Dme().C6);
+    user.writeToPreferences('c6', Dme().C6);*/
 
 
     //Custom events
     if (await ReadWriteFile().exists(FileNames.CUSTOM_EVENTS)) {
       //Load custom events
-      Dme().customEvents = CustomEvents.fromJson(jsonDecode(
+      dme.customEvents = CustomEvents.fromJson(jsonDecode(
           await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_EVENTS)));
     } else {
       List<CustomEvent> customEventList = new List<CustomEvent>();
-      Dme().customEvents = CustomEvents(0, customEventList);
+      dme.customEvents = CustomEvents(0, customEventList);
       await ReadWriteFile().writeStringToFile(
-          FileNames.CUSTOM_EVENTS, jsonEncode(Dme().customEvents));
+          FileNames.CUSTOM_EVENTS, jsonEncode(dme.customEvents));
     }
     //Custom grades
     if (await ReadWriteFile().exists(FileNames.CUSTOM_GRADES)) {
       //Load custom grades
-      Dme().customGrades = CustomGrades.fromJson(jsonDecode(
+      dme.customGrades = CustomGrades.fromJson(jsonDecode(
           await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_GRADES)));
     } else {
       List<CustomGrade> customGradesList = new List<CustomGrade>();
-      Dme().customGrades = CustomGrades(0, customGradesList);
+      dme.customGrades = CustomGrades(0, customGradesList);
       await ReadWriteFile().writeStringToFile(
-          FileNames.CUSTOM_GRADES, jsonEncode(Dme().customGrades));
+          FileNames.CUSTOM_GRADES, jsonEncode(dme.customGrades));
     }
 
     //Custom downloads
     if (await ReadWriteFile().exists(FileNames.CUSTOM_DOWNLOADS)) {
       //Load custom grades
-      Dme().customDownloads = CustomDownloads.fromJson(jsonDecode(
+      dme.customDownloads = CustomDownloads.fromJson(jsonDecode(
           await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_DOWNLOADS)));
     } else {
       List<String> customDownloadsList = new List<String>();
-      Dme().customDownloads = CustomDownloads(0, customDownloadsList);
+      dme.customDownloads = CustomDownloads(0, customDownloadsList);
       await ReadWriteFile().writeStringToFile(
-          FileNames.CUSTOM_DOWNLOADS, jsonEncode(Dme().customDownloads));
+          FileNames.CUSTOM_DOWNLOADS, jsonEncode(dme.customDownloads));
     }
 
   }

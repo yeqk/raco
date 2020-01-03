@@ -34,7 +34,6 @@ class Dme {
   Events events;
   Noticies noticies;
   Examens examens;
-  ExamensLaboratori labExams;
 
   String A5;
   String B5;

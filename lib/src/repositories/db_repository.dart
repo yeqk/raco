@@ -1,8 +1,17 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'package:raco/src/models/classes.dart';
+import 'package:raco/src/models/db_helpers/attachment_helper.dart';
+import 'package:raco/src/models/db_helpers/event_helper.dart';
+import 'package:raco/src/models/db_helpers/exam_helper.dart';
+import 'package:raco/src/models/db_helpers/lab_image_helper.dart';
+import 'package:raco/src/models/db_helpers/news_helper.dart';
+import 'package:raco/src/models/db_helpers/notice_helper.dart';
 import 'package:raco/src/models/db_helpers/schedule_helper.dart';
+import 'package:raco/src/models/db_helpers/subject_helper.dart';
 import 'package:raco/src/models/db_helpers/user_helper.dart';
 import 'package:raco/src/models/models.dart';
 import 'package:raco/src/models/requisits.dart';
@@ -15,7 +24,13 @@ class DbRepository {
 
   final String userTable = 'user';
   final String scheduleTable = "schedule";
-
+  final String noticeTable = "notice";
+  final String attachmentTable = "attachment";
+  final String eventTable = "event";
+  final String newsTable = "news";
+  final String subjectTable = "subject";
+  final String examTable = "exam";
+  final String labImageTable = "imageLab";
   //Singleton
   DbRepository._internal();
   static final DbRepository _dbRepository = DbRepository._internal();
@@ -56,6 +71,86 @@ class DbRepository {
         foreign key(username) references $userTable(username))
       ''');
 
+      await db.execute('''
+      create table $noticeTable (
+        id integer primary key,
+        titol text,
+        codiAssig text,
+        textContent text,
+        dataInsercio text,
+        dataModificacio text,
+        dataCaducitat text,
+        username text,
+        foreign key(username) references $userTable(username))
+      ''');
+
+      await db.execute('''
+      create table $attachmentTable (
+        id integer primary key autoincrement,
+        tipusMime text,
+        nom text,
+        url text,
+        dataModificacio text,
+        mida integer,
+        noticeId integer,
+        foreign key(noticeId) references $noticeTable(id))
+      ''');
+
+      await db.execute('''
+      create table $eventTable (
+        id integer primary key autoincrement,
+        nom text,
+        inici text,
+        fi text)
+      ''');
+
+      await db.execute('''
+      create table $newsTable (
+        id integer primary key autoincrement,
+        titol text,
+        link text,
+        descripcio text,
+        dataPublicacio text)
+      ''');
+
+      await db.execute('''
+      create table $subjectTable (
+        id text primary key,
+        url text,
+        guia text,
+        grup text,
+        sigles text,
+        codiUPC integer,
+        semestre text,
+        credits real,
+        nom text,
+        username text)
+      ''');
+
+      await db.execute('''
+      create table $examTable (
+        altid integer primary key autoincrement,
+        id,
+        assig text,
+        aules text,
+        inici text,
+        fi text,
+        quatr integer,
+        curs integer,
+        pla text,
+        tipus text,
+        comentaris text,
+        eslaboratori text,
+        username text,
+        foreign key(username) references $userTable(username))
+      ''');
+
+      await db.execute('''
+      create table $labImageTable (
+        name text primary key,
+        path text)
+      ''');
+
 
     });
   }
@@ -67,9 +162,12 @@ class DbRepository {
   Future deleteDB() async {
     var databasesPath = await getDatabasesPath();
     String path = databasesPath + '/'+  databaseName;
-    await deleteDatabase(path);
+    if (await File(path).exists()) {
+      await deleteDatabase(path);
+    }
   }
 
+  //me
   Future insertMeHelper(UserHelper userHelper) async {
     await db.insert(userTable, userHelper.toMap());
   }
@@ -81,6 +179,8 @@ class DbRepository {
     }
     return null;
   }
+
+  //schedule
 
   Future insertScheduleHelper(ScheduleHelper scheduleHelper) async {
     await db.insert(scheduleTable, scheduleHelper.toMap());
@@ -95,5 +195,127 @@ class DbRepository {
     return allResults;
   }
 
+  //notice
+  Future insertNoticeHelper(NoticeHelper noticeHelper) async {
+    await db.insert(noticeTable, noticeHelper.toMap());
+  }
+
+  Future<List<NoticeHelper>> getAllNoticeHelper() async {
+    List<Map> maps = await db.query(noticeTable);
+    List<NoticeHelper> allResults = List();
+    maps.forEach((map) {
+      allResults.add(NoticeHelper.fromMap(map));
+    });
+    return allResults;
+  }
+
+  Future clearNoticeHelperTalbe() async {
+    await db.delete(noticeTable);
+  }
+
+  //attachment
+  Future insertAttachmentHelper(AttachmentHelper attachmentHelper) async {
+    await db.insert(attachmentTable, attachmentHelper.toMap());
+  }
+
+  Future<List<AttachmentHelper>> getAllAttachmentHelper() async {
+    List<Map> maps = await db.query(attachmentTable);
+    List<AttachmentHelper> allResults = List();
+    maps.forEach((map) {
+      allResults.add(AttachmentHelper.fromMap(map));
+    });
+    return allResults;
+  }
+
+  Future<List<AttachmentHelper>> getAttachmentHelperByNoticeId(int noticeId) async {
+    List<Map> maps = await db.query(attachmentTable, where: "noticeId = ?", whereArgs: [noticeId]);
+    List<AttachmentHelper> allResults = List();
+    maps.forEach((map) {
+      allResults.add(AttachmentHelper.fromMap(map));
+    });
+    return allResults;
+  }
+
+  Future clearAttachmentHelperTable() async {
+    await db.delete(attachmentTable);
+  }
+
+  //event
+  Future insertEventHelper(EventHelper eventhmentHelper) async {
+    await db.insert(eventTable, eventhmentHelper.toMap());
+  }
+
+  Future<List<EventHelper>> getAllEventHelper() async {
+    List<Map> maps = await db.query(eventTable);
+    List<EventHelper> allResults = List();
+    maps.forEach((map) {
+      allResults.add(EventHelper.fromMap(map));
+    });
+    return allResults;
+  }
+
+  Future clearEventHelperTable() async {
+    await db.delete(eventTable);
+  }
+
+  //news
+  Future insertNewsHelper(NewsHelper eventhmentHelper) async {
+    await db.insert(newsTable, eventhmentHelper.toMap());
+  }
+
+  Future<List<NewsHelper>> getAllNewsHelper() async {
+    List<Map> maps = await db.query(newsTable);
+    List<NewsHelper> allResults = List();
+    maps.forEach((map) {
+      allResults.add(NewsHelper.fromMap(map));
+    });
+    return allResults;
+  }
+
+  Future clearNewsHelperTable() async {
+    await db.delete(newsTable);
+  }
+
+  //subjects
+  Future insertSubjectHelper(SubjectHelper subjectHelper) async {
+    await db.insert(subjectTable, subjectHelper.toMap());
+  }
+
+  Future<List<SubjectHelper>> getAllSubjectHelper() async {
+    List<Map> maps = await db.query(subjectTable);
+    List<SubjectHelper> allResults = List();
+    maps.forEach((map) {
+      allResults.add(SubjectHelper.fromMap(map));
+    });
+    return allResults;
+  }
+
+  //exams
+  Future insertExamtHelper(ExamHelper examHelper) async {
+    await db.insert(examTable, examHelper.toMap());
+  }
+
+  Future<List<ExamHelper>> getAllExamHelper() async {
+    List<Map> maps = await db.query(examTable);
+    List<ExamHelper> allResults = List();
+    maps.forEach((map) {
+      allResults.add(ExamHelper.fromMap(map));
+    });
+    return allResults;
+  }
+
+  //lab image
+  Future insertLabImage(LabImageHelper labImageHelper) async {
+    await db.insert(labImageTable, labImageHelper.toMap());
+  }
+
+  Future<String> getLabImagePathByName(String name) async {
+    List<Map> maps = await db.query(labImageTable, where: "name = ?", whereArgs: [name]);
+    return maps.first['path'];
+  }
+
+  Future updateLabImage(LabImageHelper labImageHelper) async {
+    await db.update(labImageTable, labImageHelper.toMap(), where: "name = ?", whereArgs: [labImageHelper.name]);
+  }
 }
 DbRepository dbRepository = DbRepository();

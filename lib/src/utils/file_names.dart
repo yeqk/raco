@@ -12,7 +12,6 @@ class FileNames {
   static final AVISOS  = 'avisos.json';
   static final NOTICIES = 'noticies.json';
   static final EVENTS = 'events.json';
-  static final QUADRIMESTRE = 'quadrimestre.json';
   static final EXAMENS = 'examens.json';
   static final EXAMENS_LABORATORI = 'examens_laboratori.json';
   static final CUSTOM_EVENTS = 'custom_events.json';

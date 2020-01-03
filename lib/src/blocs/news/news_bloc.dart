@@ -5,7 +5,9 @@ import 'package:meta/meta.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:raco/src/data/dme.dart';
+import 'package:raco/src/models/db_helpers/news_helper.dart';
 import 'package:raco/src/models/models.dart';
+import 'package:raco/src/repositories/db_repository.dart';
 import 'package:raco/src/repositories/raco_api_client.dart';
 import 'package:raco/src/repositories/raco_repository.dart';
 import 'package:raco/src/resources/authentication_data.dart';
@@ -61,8 +63,11 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
                   accessToken: accessToken,
                   lang: lang));
           Noticies noticies = await rr.getNoticies();
-          await ReadWriteFile()
-              .writeStringToFile(FileNames.NOTICIES, jsonEncode(noticies));
+/*          await ReadWriteFile()
+              .writeStringToFile(FileNames.NOTICIES, jsonEncode(noticies));*/
+          noticies.results.forEach((n) async {
+            await dbRepository.insertNewsHelper(NewsHelper.fromNoticia(n));
+          });
           Dme().noticies = noticies;
           user.writeToPreferences(
               Keys.LAST_NEWS_REFRESH, DateTime.now().toIso8601String());

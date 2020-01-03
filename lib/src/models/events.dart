@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:json_annotation/json_annotation.dart';
+import 'package:raco/src/models/db_helpers/event_helper.dart';
 
 part 'events.g.dart';
 
@@ -23,6 +26,12 @@ class Event {
 
 
   Event(this.nom, this.inici, this.fi);
+
+  Event.fromEventHelper(EventHelper eventHelper) {
+    this.nom = eventHelper.nom;
+    this.inici = eventHelper.inici;
+    this.fi = eventHelper.fi;
+  }
 
   factory Event.fromJson(Map<String, dynamic> json) =>
       _$EventFromJson(json);

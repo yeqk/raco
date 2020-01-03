@@ -9,7 +9,9 @@ import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:raco/src/blocs/events/events.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/models/custom_events.dart';
+import 'package:raco/src/models/db_helpers/event_helper.dart';
 import 'package:raco/src/models/models.dart';
+import 'package:raco/src/repositories/db_repository.dart';
 import 'package:raco/src/repositories/raco_api_client.dart';
 import 'package:raco/src/repositories/raco_repository.dart';
 import 'package:raco/src/resources/authentication_data.dart';
@@ -99,8 +101,12 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
                   accessToken: accessToken,
                   lang: lang));
           Events events = await rr.getEvents();
-          await ReadWriteFile()
-              .writeStringToFile(FileNames.EVENTS, jsonEncode(events));
+        /*  await ReadWriteFile()
+              .writeStringToFile(FileNames.EVENTS, jsonEncode(events));*/
+          dbRepository.clearEventHelperTable();
+          events.results.forEach((e) async {
+            await dbRepository.insertEventHelper(EventHelper.fromEvent(e));
+          });
           Dme().events = events;
           user.writeToPreferences(
               Keys.LAST_EVENTS_REFRESH, DateTime.now().toIso8601String());

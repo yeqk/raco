@@ -1,4 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:raco/flutter_datetime_picker-1.2.8-with-ca/src/date_format.dart';
+import 'package:raco/src/models/db_helpers/subject_helper.dart';
 
 part 'assignatures.g.dart';
 
@@ -30,6 +32,18 @@ class Assignatura {
 
   Assignatura(this.id, this.url, this.guia, this.grup, this.sigles,
       this.codiUPC, this.semestre, this.credits, this.nom);
+
+  Assignatura.fromSubjectHelper(SubjectHelper subjectHelper) {
+    this.id = subjectHelper.id;
+    this.url = subjectHelper.url;
+    this.guia = subjectHelper.guia;
+    this.grup = subjectHelper.grup;
+    this.sigles = subjectHelper.sigles;
+    this.codiUPC = subjectHelper.codiUPC;
+    this.semestre = subjectHelper.semestre;
+    this.credits = subjectHelper.credits;
+    this.nom = subjectHelper.nom;
+  }
 
   factory Assignatura.fromJson(Map<String, dynamic> json) =>
       _$AssignaturaFromJson(json);

@@ -8,7 +8,9 @@ import 'package:oauth2/oauth2.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:raco/src/blocs/labs/labs.dart';
 import 'package:raco/src/data/dme.dart';
+import 'package:raco/src/models/db_helpers/lab_image_helper.dart';
 import 'package:raco/src/models/models.dart';
+import 'package:raco/src/repositories/db_repository.dart';
 import 'package:raco/src/repositories/raco_api_client.dart';
 import 'package:raco/src/repositories/raco_repository.dart';
 import 'package:raco/src/resources/authentication_data.dart';
@@ -67,9 +69,9 @@ class LabsBloc extends Bloc<LabsEvent, LabsState> {
           Dme().A5 =  await rr.getImageA5();
           Dme().B5 =  await rr.getImageB5();
           Dme().C6 =  await rr.getImageC6();
-          user.writeToPreferences('a5', Dme().A5);
-          user.writeToPreferences('b5', Dme().B5);
-          user.writeToPreferences('c6', Dme().C6);
+          dbRepository.updateLabImage(LabImageHelper('a5',Dme().A5));
+          dbRepository.updateLabImage(LabImageHelper('b5',Dme().B5));
+          dbRepository.updateLabImage(LabImageHelper('c6',Dme().C6));
 
           user.writeToPreferences(Keys.LAST_LABS_REFRESH, DateTime.now().toIso8601String());
           yield UpdateLabsSuccessfullyState();

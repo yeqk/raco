@@ -5,7 +5,10 @@ import 'package:meta/meta.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:raco/src/data/dme.dart';
+import 'package:raco/src/models/db_helpers/attachment_helper.dart';
+import 'package:raco/src/models/db_helpers/notice_helper.dart';
 import 'package:raco/src/models/models.dart';
+import 'package:raco/src/repositories/db_repository.dart';
 import 'package:raco/src/repositories/raco_api_client.dart';
 import 'package:raco/src/repositories/raco_repository.dart';
 import 'package:raco/src/resources/authentication_data.dart';
@@ -57,6 +60,14 @@ class NoticesBloc extends Bloc<NoticesEvent, NoticesState> {
               racoApiClient: RacoApiClient(
                   httpClient: http.Client(), accessToken: accessToken, lang: lang));
           Avisos avisos = await rr.getAvisos();
+          dbRepository.clearAttachmentHelperTable();
+          dbRepository.clearNoticeHelperTalbe();
+          avisos.results.forEach((a) async {
+            await dbRepository.insertNoticeHelper(NoticeHelper.fromAvis(a, Dme().username));
+            a.adjunts.forEach((adj) async {
+              await dbRepository.insertAttachmentHelper(AttachmentHelper.fromAdjunt(adj, a.id));
+            });
+          });
           Dme().avisos = avisos;
           await ReadWriteFile()
               .writeStringToFile(FileNames.AVISOS, jsonEncode(avisos));

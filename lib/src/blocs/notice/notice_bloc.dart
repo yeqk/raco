@@ -55,6 +55,7 @@ class NoticeBloc extends Bloc<NoticeEvent, NoticeState> {
 
             yield NoticeAttachmentDownloadSuccessfullyState();
 
+            await Future.delayed(Duration(milliseconds:10));
             if (adjunt.tipusMime == 'application/pdf') {
               await OpenFile.open(filePath);
             } else {

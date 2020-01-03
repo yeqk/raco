@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:raco/src/models/db_helpers/exam_helper.dart';
 
 part 'examens.g.dart';
 
@@ -32,6 +33,20 @@ class Examen {
 
   Examen(this.id, this.assig, this.aules, this.inici, this.fi, this.quatr,
       this.curs, this.pla, this.tipus, this.comentaris, this.eslaboratori);
+
+  Examen.fromExamHelper(ExamHelper examHelper) {
+    this.id = examHelper.id;
+    this.assig = examHelper.assig;
+    this.aules = examHelper.aules;
+    this.inici = examHelper.inici;
+    this.fi = examHelper.fi;
+    this.quatr = examHelper.quatr;
+    this.curs = examHelper.curs;
+    this.pla = examHelper.pla;
+    this.tipus = examHelper.tipus;
+    this.comentaris = examHelper.comentaris;
+    this.eslaboratori = examHelper.eslaboratori;
+  }
 
   factory Examen.fromJson(Map<String, dynamic> json) =>
       _$ExamenFromJson(json);
