@@ -39,22 +39,18 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
           c = await c.refresh(identifier: AuthenticationData.identifier,secret: AuthenticationData.secret,);
           await user.persistCredentials(c);
         }
-      } catch(e) {
-        authenticationBloc.dispatch(LoggedOutEvent());
-      }
-      //update news
-      bool canUpdate = true;
-      if (await user.isPresentInPreferences(Keys.LAST_NEWS_REFRESH)) {
-        if (DateTime.now()
-            .difference(DateTime.parse(
-            await user.readFromPreferences(Keys.LAST_NEWS_REFRESH)))
-            .inMinutes <
-            5) {
-          canUpdate = false;
+        //update news
+        bool canUpdate = true;
+        if (await user.isPresentInPreferences(Keys.LAST_NEWS_REFRESH)) {
+          if (DateTime.now()
+              .difference(DateTime.parse(
+              await user.readFromPreferences(Keys.LAST_NEWS_REFRESH)))
+              .inMinutes <
+              5) {
+            canUpdate = false;
+          }
         }
-      }
-      if (canUpdate) {
-        try {
+        if (canUpdate) {
           String accessToken = await user.getAccessToken();
           String lang = await user.getPreferredLanguage();
           RacoRepository rr = new RacoRepository(
@@ -72,12 +68,13 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
           user.writeToPreferences(
               Keys.LAST_NEWS_REFRESH, DateTime.now().toIso8601String());
           yield UpdateNewsSuccessfullyState();
-        } catch (e) {
-          yield UpdateNewsErrorState();
+        } else {
+          yield UpdateNewsTooFrequentlyState();
         }
-      } else {
-        yield UpdateNewsTooFrequentlyState();
+      } catch(e) {
+        yield UpdateNewsErrorState();
       }
+
     }
   }
 }

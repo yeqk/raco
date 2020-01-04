@@ -42,18 +42,14 @@ class LabsBloc extends Bloc<LabsEvent, LabsState> {
           c = await c.refresh(identifier: AuthenticationData.identifier,secret: AuthenticationData.secret,);
           await user.persistCredentials(c);
         }
-      } catch(e) {
-        authenticationBloc.dispatch(LoggedOutEvent());
-      }
-      //update news
-      bool canUpdate = true;
-      if (await user.isPresentInPreferences(Keys.LAST_LABS_REFRESH)) {
-        if (DateTime.now().difference(DateTime.parse(await user.readFromPreferences(Keys.LAST_LABS_REFRESH))).inMinutes < 5) {
-          canUpdate = false;
+        //update news
+        bool canUpdate = true;
+        if (await user.isPresentInPreferences(Keys.LAST_LABS_REFRESH)) {
+          if (DateTime.now().difference(DateTime.parse(await user.readFromPreferences(Keys.LAST_LABS_REFRESH))).inMinutes < 5) {
+            canUpdate = false;
+          }
         }
-      }
-      if (canUpdate) {
-        try {
+        if (canUpdate) {
           String accessToken = await user.getAccessToken();
           String lang = await user.getPreferredLanguage();
           RacoRepository rr = new RacoRepository(
@@ -75,12 +71,13 @@ class LabsBloc extends Bloc<LabsEvent, LabsState> {
 
           user.writeToPreferences(Keys.LAST_LABS_REFRESH, DateTime.now().toIso8601String());
           yield UpdateLabsSuccessfullyState();
-        } catch (e) {
-          yield UpdateLabsErrorState();
+        } else {
+          yield UpdateLabsTooFrequentlyState();
         }
-      } else {
-        yield UpdateLabsTooFrequentlyState();
+      } catch(e) {
+        yield UpdateLabsErrorState();
       }
+
     }
   }
 }

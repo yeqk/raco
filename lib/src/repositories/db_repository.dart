@@ -17,6 +17,7 @@ import 'package:raco/src/models/db_helpers/subject_helper.dart';
 import 'package:raco/src/models/db_helpers/user_helper.dart';
 import 'package:raco/src/models/models.dart';
 import 'package:raco/src/models/requisits.dart';
+import 'package:raco/src/repositories/repositories.dart';
 import 'package:sqflite/sqflite.dart';
 import 'raco_api_client.dart';
 
@@ -41,6 +42,19 @@ class DbRepository {
   static final DbRepository _dbRepository = DbRepository._internal();
   factory DbRepository() {
     return _dbRepository;
+  }
+
+  Future cleanAllTable() async {
+    await db.delete(labImageTable);
+    await db.delete(examTable);
+    await db.delete(subjectTable);
+    await db.delete(newsTable);
+    await db.delete(eventTable);
+    await db.delete(attachmentTable);
+    await db.delete(noticeTable);
+    await db.delete(scheduleTable);
+    await db.delete(userTable);
+
   }
 
   Future openDB() async {
@@ -208,6 +222,9 @@ class DbRepository {
     return null;
   }
 
+  Future cleanUserTable() async {
+    await db.delete(userTable);
+  }
   //schedule
 
   Future insertScheduleHelper(ScheduleHelper scheduleHelper) async {
@@ -223,6 +240,9 @@ class DbRepository {
     return allResults;
   }
 
+  Future cleanScheduleTable() async {
+    await db.delete(scheduleTable);
+  }
   //notice
   Future insertNoticeHelper(NoticeHelper noticeHelper) async {
     await db.insert(noticeTable, noticeHelper.toMap());
@@ -237,7 +257,7 @@ class DbRepository {
     return allResults;
   }
 
-  Future clearNoticeHelperTalbe() async {
+  Future cleanNoticeHelperTalbe() async {
     await db.delete(noticeTable);
   }
 
@@ -266,9 +286,10 @@ class DbRepository {
     return allResults;
   }
 
-  Future clearAttachmentHelperTable() async {
+  Future cleanAttachmentHelperTable() async {
     await db.delete(attachmentTable);
   }
+  
 
   //event
   Future insertEventHelper(EventHelper eventhmentHelper) async {
@@ -284,7 +305,7 @@ class DbRepository {
     return allResults;
   }
 
-  Future clearEventHelperTable() async {
+  Future cleanEventHelperTable() async {
     await db.delete(eventTable);
   }
 
@@ -302,7 +323,7 @@ class DbRepository {
     return allResults;
   }
 
-  Future clearNewsHelperTable() async {
+  Future cleanNewsHelperTable() async {
     await db.delete(newsTable);
   }
 
@@ -320,6 +341,9 @@ class DbRepository {
     return allResults;
   }
 
+  Future cleanSubjectTable() async {
+    await db.delete(subjectTable);
+  }
   //exams
   Future insertExamtHelper(ExamHelper examHelper) async {
     await db.insert(examTable, examHelper.toMap());
@@ -334,6 +358,9 @@ class DbRepository {
     return allResults;
   }
 
+  Future cleanExamTable() async {
+    db.delete(examTable);
+  }
   //lab image
   Future insertLabImage(LabImageHelper labImageHelper) async {
     await db.insert(labImageTable, labImageHelper.toMap());
@@ -346,6 +373,10 @@ class DbRepository {
 
   Future updateLabImage(LabImageHelper labImageHelper) async {
     await db.update(labImageTable, labImageHelper.toMap(), where: "name = ?", whereArgs: [labImageHelper.name]);
+  }
+  
+  Future cleanLabsTable() async {
+    await db.delete(labImageTable);
   }
 
   //custom event
@@ -370,7 +401,7 @@ class DbRepository {
     await db.update(customEventTable, customEventHelper.toMap(), where: "id = ?", whereArgs: [customEventHelper.id]);
   }
   */
-  Future clearCustomEventHelperTable() async {
+  Future cleanCustomEventHelperTable() async {
     await db.delete(customEventTable);
   }
 
@@ -392,7 +423,7 @@ class DbRepository {
     await db.delete(customGradeTable, where: "id = ?", whereArgs: [idTodelete]);
   }
 
-  Future clearCustomGradeHelperTable() async {
+  Future cleanCustomGradeHelperTable() async {
     await db.delete(customGradeTable);
   }
 }

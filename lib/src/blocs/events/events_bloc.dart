@@ -67,7 +67,7 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
         return i.id == item.customId;
       });
       Dme().customEvents.results.add(customEvent);
-      await dbRepository.clearCustomEventHelperTable();
+      await dbRepository.cleanCustomEventHelperTable();
       Dme().customEvents.results.forEach((ce) async {
         await dbRepository.insertCustomEventHelper(CustomEventHelper.fromCustomEvent(ce, Dme().username));
       });
@@ -84,22 +84,18 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
           c = await c.refresh(identifier: AuthenticationData.identifier,secret: AuthenticationData.secret,);
           await user.persistCredentials(c);
         }
-      } catch(e) {
-        authenticationBloc.dispatch(LoggedOutEvent());
-      }
-//update events
-      bool canUpdate = true;
-      if (await user.isPresentInPreferences(Keys.LAST_EVENTS_REFRESH)) {
-        if (DateTime.now()
-            .difference(DateTime.parse(
-            await user.readFromPreferences(Keys.LAST_EVENTS_REFRESH)))
-            .inMinutes <
-            5) {
-          canUpdate = false;
+        //update events
+        bool canUpdate = true;
+        if (await user.isPresentInPreferences(Keys.LAST_EVENTS_REFRESH)) {
+          if (DateTime.now()
+              .difference(DateTime.parse(
+              await user.readFromPreferences(Keys.LAST_EVENTS_REFRESH)))
+              .inMinutes <
+              5) {
+            canUpdate = false;
+          }
         }
-      }
-      if (canUpdate) {
-        try {
+        if (canUpdate) {
           String accessToken = await user.getAccessToken();
           String lang = await user.getPreferredLanguage();
           RacoRepository rr = new RacoRepository(
@@ -108,9 +104,9 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
                   accessToken: accessToken,
                   lang: lang));
           Events events = await rr.getEvents();
-        /*  await ReadWriteFile()
+          /*  await ReadWriteFile()
               .writeStringToFile(FileNames.EVENTS, jsonEncode(events));*/
-          dbRepository.clearEventHelperTable();
+          dbRepository.cleanEventHelperTable();
           events.results.forEach((e) async {
             await dbRepository.insertEventHelper(EventHelper.fromEvent(e));
           });
@@ -118,12 +114,13 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
           user.writeToPreferences(
               Keys.LAST_EVENTS_REFRESH, DateTime.now().toIso8601String());
           yield UpdateEventsSuccessfullyState();
-        } catch (e) {
-          yield UpdateEventsErrorState();
+        } else {
+          yield UpdateEventsTooFrequentlyState();
         }
-      } else {
-        yield UpdateEventsTooFrequentlyState();
+      } catch(e) {
+        yield UpdateEventsErrorState();
       }
+
     }
   }
 }

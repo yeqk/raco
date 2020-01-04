@@ -41,27 +41,23 @@ class NoticesBloc extends Bloc<NoticesEvent, NoticesState> {
           c = await c.refresh(identifier: AuthenticationData.identifier,secret: AuthenticationData.secret,);
           await user.persistCredentials(c);
         }
-      } catch(e) {
-        authenticationBloc.dispatch(LoggedOutEvent());
-      }
-      //update notices
-      bool canUpdate = true;
-      if (await user.isPresentInPreferences(Keys.LAST_NOTICES_REFRESH)) {
-        if (DateTime.now().difference(DateTime.parse(await user.readFromPreferences(Keys.LAST_NOTICES_REFRESH))).inMinutes < 5) {
-          canUpdate = false;
+        //update notices
+        bool canUpdate = true;
+        if (await user.isPresentInPreferences(Keys.LAST_NOTICES_REFRESH)) {
+          if (DateTime.now().difference(DateTime.parse(await user.readFromPreferences(Keys.LAST_NOTICES_REFRESH))).inMinutes < 5) {
+            canUpdate = false;
+          }
         }
-      }
-      if (canUpdate)
-      {
-        try{
+        if (canUpdate)
+        {
           String accessToken = await user.getAccessToken();
           String lang = await user.getPreferredLanguage();
           RacoRepository rr = new RacoRepository(
               racoApiClient: RacoApiClient(
                   httpClient: http.Client(), accessToken: accessToken, lang: lang));
           Avisos avisos = await rr.getAvisos();
-          dbRepository.clearAttachmentHelperTable();
-          dbRepository.clearNoticeHelperTalbe();
+          dbRepository.cleanAttachmentHelperTable();
+          dbRepository.cleanNoticeHelperTalbe();
           avisos.results.forEach((a) async {
             await dbRepository.insertNoticeHelper(NoticeHelper.fromAvis(a, Dme().username));
             a.adjunts.forEach((adj) async {
@@ -73,12 +69,13 @@ class NoticesBloc extends Bloc<NoticesEvent, NoticesState> {
               .writeStringToFile(FileNames.AVISOS, jsonEncode(avisos));
           user.writeToPreferences(Keys.LAST_NOTICES_REFRESH, DateTime.now().toIso8601String());
           yield UpdateNoticesSuccessfullyState();
-        }catch(e) {
-          yield UpdateNoticesErrorState();
+        } else {
+          yield UpdateNoticesTooFrequentlyState();
         }
-      } else {
-        yield UpdateNoticesTooFrequentlyState();
+      } catch(e) {
+        yield UpdateNoticesErrorState();
       }
+
     }
   }
 }

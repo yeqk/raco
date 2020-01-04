@@ -56,7 +56,7 @@ class GradesBloc extends Bloc<GradesEvent, GradesState> {
 /*      await ReadWriteFile().writeStringToFile(
           FileNames.CUSTOM_GRADES,
           jsonEncode(Dme().customGrades));*/
-      await dbRepository.clearCustomGradeHelperTable();
+      await dbRepository.cleanCustomGradeHelperTable();
       Dme().customGrades.results.forEach((cg) async {
         await dbRepository.insertCustomGradeHelper(CustomGradeHelper.fromCustomGrade(cg, Dme().username));
       });
