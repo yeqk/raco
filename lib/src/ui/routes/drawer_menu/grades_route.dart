@@ -175,7 +175,6 @@ class GradesRouteState extends State<GradesRoute>
 
   void _onRefresh() async {
     //update subjects info
-    print('updated');
     _refreshController.refreshCompleted();
   }
 }

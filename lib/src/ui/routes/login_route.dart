@@ -213,7 +213,7 @@ class LoginRouteState extends State<LoginRoute> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           SizedBox(
-            height: ScreenUtil().setHeight(100),
+            height: ScreenUtil().setHeight(60),
           ),
           ButtonTheme(
             minWidth: MediaQuery.of(context).size.width / 2,

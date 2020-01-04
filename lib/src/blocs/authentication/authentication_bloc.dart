@@ -245,7 +245,6 @@ class AuthenticationBloc
         .dispatch(LoadTextEvent(text: allTranslations.text('events_loading')));
     try{
       Events eventstt = await rr.getEvents();
-      print('eeve;:' + eventstt.count.toString());
       dbRepository.cleanEventHelperTable();
       eventstt.results.forEach((e) async {
         await dbRepository.insertEventHelper(EventHelper.fromEvent(e));

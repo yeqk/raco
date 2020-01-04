@@ -53,7 +53,6 @@ class SubjectViewState extends State<SubjectView> {
     super.initState();
     if (Dme().assigGuia.containsKey(widget.assignatura.sigles) &&
         widget.assignatura.guia != null) {
-     print(Dme().assigGuia.containsKey(widget.assignatura.sigles));
       _fillItems();
     }
   }

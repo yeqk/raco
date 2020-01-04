@@ -317,7 +317,6 @@ class EventsRouteState extends State<EventsRoute>
               endDate: parser.parse(item.fi),
             );
             await calendar_events.Add2Calendar.addEvent2Cal(ce);
-            print('exported');
           }
         },
       );
@@ -437,7 +436,6 @@ class EventsRouteState extends State<EventsRoute>
               endDate: parser.parse(item.fi),
             );
             await calendar_events.Add2Calendar.addEvent2Cal(ce);
-            print('exported');
           }
         },
       );

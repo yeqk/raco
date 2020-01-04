@@ -96,7 +96,6 @@ class ConfigurationRouteState extends State<ConfigurationRoute>
     }
     _onUpdateData() async{
       if (DateTime.now().difference(DateTime.parse(await user.readFromPreferences(Keys.LAST_UPDATE))).inMinutes < 5) {
-        print(DateTime.parse(await user.readFromPreferences(Keys.LAST_UPDATE)).difference(DateTime.now()).inMinutes.toString());
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text(allTranslations.text('wait')),
         ));
@@ -130,7 +129,6 @@ class ConfigurationRouteState extends State<ConfigurationRoute>
                 child: MaterialPicker(
                   pickerColor: s,
                   onColorChanged: (Color c) {
-                    print(c.toString());
                     s = c;
                   },
                 ),

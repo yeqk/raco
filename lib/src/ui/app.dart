@@ -45,6 +45,7 @@ class App extends StatelessWidget {
           enableBallisticLoad:
               true, // trigger load more by BallisticScrollActivity
           child: MaterialApp(
+            debugShowCheckedModeBanner: false,
             title: "El Racó",
             theme: ThemeData(
               primaryColor: AppColors().primary,
