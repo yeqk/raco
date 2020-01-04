@@ -60,33 +60,9 @@ class AuthenticationBloc
 
       if (hasCredentials) {
         yield AuthenticationLoadingState();
-        try{
-          await _loadData();
-          Dme().lastUpdate = await user.readFromPreferences(Keys.LAST_UPDATE);
-          yield AuthenticationAuthenticatedState();
-        }catch (e) {
-          loadingTextBloc
-              .dispatch(LoadTextEvent(text: allTranslations.text('error_loading')));
-          if (await user.hasCredentials()) {
-            //Clear image cache to update avatar
-            imageCache.clear();
-            await user.deleteCredentials();
-          }
-          SharedPreferences preferences = await SharedPreferences.getInstance();
-          preferences.clear();
-          var dir = await getApplicationDocumentsDirectory();
-          List<FileSystemEntity> _files;
-          _files = dir.listSync(recursive: true, followLinks: false);
-          for (FileSystemEntity f in _files) {
-            if (!f.path.contains('flutter_assets')) {
-              f.deleteSync(recursive: false);
-            }
-          }
-          await dbRepository.closeDB();
-          await dbRepository.deleteDB();
-          await Future.delayed(Duration(seconds:2));
-          yield AuthenticationUnauthenticatedState();
-        }
+        await _loadData();
+        Dme().lastUpdate = await user.readFromPreferences(Keys.LAST_UPDATE);
+        yield AuthenticationAuthenticatedState();
       } else {
         yield AuthenticationUnauthenticatedState();
       }
@@ -366,7 +342,7 @@ class AuthenticationBloc
       customEventList.add(CustomEvent.fromCustomEventHelper(ce));
     });
     Dme().customEvents = CustomEvents(customEventList.length, customEventList);
-    await dbRepository.cleanCustomEventHelperTable();
+/*    await dbRepository.cleanCustomEventHelperTable();
     //remove outdated custom events
     for (CustomEvent e in Dme().customEvents.results) {
       DateTime fie = DateTime.parse(e.fi);
@@ -379,7 +355,7 @@ class AuthenticationBloc
     }
     Dme().customEvents.results.forEach((ce) async {
       await dbRepository.insertCustomEventHelper(CustomEventHelper.fromCustomEvent(ce, Dme().username));
-    });
+    });*/
 /*    await ReadWriteFile().writeStringToFile(
         FileNames.CUSTOM_EVENTS, jsonEncode(Dme().customEvents));*/
 
