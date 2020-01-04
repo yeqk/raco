@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:raco/src/models/db_helpers/custom_event_helper.dart';
 
 part 'custom_events.g.dart';
 
@@ -25,6 +26,14 @@ class CustomEvent {
 
 
   CustomEvent(this.id, this.title, this.description, this.inici, this.fi);
+
+  CustomEvent.fromCustomEventHelper(CustomEventHelper customEventHelper) {
+    this.id = customEventHelper.id;
+    this.title = customEventHelper.title;
+    this.description = customEventHelper.description;
+    this.inici = customEventHelper.inici;
+    this.fi = customEventHelper.fi;
+  }
 
   factory CustomEvent.fromJson(Map<String, dynamic> json) =>
       _$CustomEventFromJson(json);

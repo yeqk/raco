@@ -32,6 +32,7 @@ class ExamHelper {
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
+      'altid': altid,
       'id': id,
       'assig': assig,
       'aules': aules,

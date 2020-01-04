@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'package:raco/src/models/classes.dart';
 import 'package:raco/src/models/db_helpers/attachment_helper.dart';
+import 'package:raco/src/models/db_helpers/custom_event_helper.dart';
+import 'package:raco/src/models/db_helpers/custom_grade_helper.dart';
 import 'package:raco/src/models/db_helpers/event_helper.dart';
 import 'package:raco/src/models/db_helpers/exam_helper.dart';
 import 'package:raco/src/models/db_helpers/lab_image_helper.dart';
@@ -31,6 +33,9 @@ class DbRepository {
   final String subjectTable = "subject";
   final String examTable = "exam";
   final String labImageTable = "imageLab";
+  final String customEventTable = "customEvent";
+  final String customGradeTable = "customGrade";
+
   //Singleton
   DbRepository._internal();
   static final DbRepository _dbRepository = DbRepository._internal();
@@ -124,13 +129,14 @@ class DbRepository {
         semestre text,
         credits real,
         nom text,
-        username text)
+        username text,
+        foreign key(username) references $userTable(username))
       ''');
 
       await db.execute('''
       create table $examTable (
         altid integer primary key autoincrement,
-        id,
+        id integer,
         assig text,
         aules text,
         inici text,
@@ -151,7 +157,29 @@ class DbRepository {
         path text)
       ''');
 
+      await db.execute('''
+      create table $customEventTable (
+        id text primary key,
+        title text,
+        description text,
+        inici text,
+        fi text,
+        username text,
+        foreign key(username) references $userTable(username))
+      ''');
 
+      await db.execute('''
+      create table $customGradeTable (
+        id text primary key,
+        subjectId text,
+        name text,
+        comments text,
+        data text,
+        grade real,
+        percentage real,
+        username text,
+        foreign key(username) references $userTable(username))
+      ''');
     });
   }
 
@@ -217,6 +245,8 @@ class DbRepository {
   Future insertAttachmentHelper(AttachmentHelper attachmentHelper) async {
     await db.insert(attachmentTable, attachmentHelper.toMap());
   }
+
+
 
   Future<List<AttachmentHelper>> getAllAttachmentHelper() async {
     List<Map> maps = await db.query(attachmentTable);
@@ -316,6 +346,54 @@ class DbRepository {
 
   Future updateLabImage(LabImageHelper labImageHelper) async {
     await db.update(labImageTable, labImageHelper.toMap(), where: "name = ?", whereArgs: [labImageHelper.name]);
+  }
+
+  //custom event
+  Future<List<CustomEventHelper>> getAllCustomEventHelper() async {
+    List<Map> maps = await db.query(customEventTable);
+    List<CustomEventHelper> allResults = List();
+    maps.forEach((map) {
+      allResults.add(CustomEventHelper.fromMap(map));
+    });
+    return allResults;
+  }
+
+  Future insertCustomEventHelper(CustomEventHelper customEventHelper) async {
+    await db.insert(customEventTable, customEventHelper.toMap());
+  }
+
+  Future deleteCustomerEventById(String idTodelete) async {
+    await db.delete(customEventTable, where: "id = ?", whereArgs: [idTodelete]);
+  }
+
+/*  Future updateCustomerEventById(CustomEventHelper customEventHelper) async {
+    await db.update(customEventTable, customEventHelper.toMap(), where: "id = ?", whereArgs: [customEventHelper.id]);
+  }
+  */
+  Future clearCustomEventHelperTable() async {
+    await db.delete(customEventTable);
+  }
+
+  //custom grade
+  Future<List<CustomGradeHelper>> getAllCustomGradeHelper() async {
+    List<Map> maps = await db.query(customGradeTable);
+    List<CustomGradeHelper> allResults = List();
+    maps.forEach((map) {
+      allResults.add(CustomGradeHelper.fromMap(map));
+    });
+    return allResults;
+  }
+
+  Future insertCustomGradeHelper(CustomGradeHelper customGradeHelper) async {
+    await db.insert(customGradeTable, customGradeHelper.toMap());
+  }
+
+  Future deleteCustomGradeById(String idTodelete) async {
+    await db.delete(customGradeTable, where: "id = ?", whereArgs: [idTodelete]);
+  }
+
+  Future clearCustomGradeHelperTable() async {
+    await db.delete(customGradeTable);
   }
 }
 DbRepository dbRepository = DbRepository();

@@ -9,7 +9,6 @@ class AttachmentHelper {
   int mida;
   int noticeId;
 
-  AttachmentHelper(this.tipusMime, this.nom, this.url, this.dataModificacio, this.mida, this.noticeId);
 
   AttachmentHelper.fromAdjunt(Adjunt adjunt, int noticeId) {
     this.tipusMime = adjunt.tipusMime;

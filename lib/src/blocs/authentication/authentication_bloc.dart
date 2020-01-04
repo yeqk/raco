@@ -16,6 +16,8 @@ import 'package:raco/src/models/custom_downloads.dart';
 import 'package:raco/src/models/custom_events.dart';
 import 'package:raco/src/models/custom_grades.dart';
 import 'package:raco/src/models/db_helpers/attachment_helper.dart';
+import 'package:raco/src/models/db_helpers/custom_event_helper.dart';
+import 'package:raco/src/models/db_helpers/custom_grade_helper.dart';
 import 'package:raco/src/models/db_helpers/event_helper.dart';
 import 'package:raco/src/models/db_helpers/exam_helper.dart';
 import 'package:raco/src/models/db_helpers/lab_image_helper.dart';
@@ -265,8 +267,15 @@ class AuthenticationBloc
     Dme().C6 = await dbRepository.getLabImagePathByName('c6');
 
     //Load custom events
-    Dme().customEvents = CustomEvents.fromJson(jsonDecode(
-        await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_EVENTS)));
+/*    Dme().customEvents = CustomEvents.fromJson(jsonDecode(
+        await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_EVENTS)));*/
+    List<CustomEventHelper> customEventHelperList = await dbRepository.getAllCustomEventHelper();
+    List<CustomEvent> customEventList = List();
+    customEventHelperList.forEach((ce) {
+      customEventList.add(CustomEvent.fromCustomEventHelper(ce));
+    });
+    Dme().customEvents = CustomEvents(customEventList.length, customEventList);
+    await dbRepository.clearCustomEventHelperTable();
     //remove outdated custom events
     for (CustomEvent e in Dme().customEvents.results) {
       DateTime fie = DateTime.parse(e.fi);
@@ -277,12 +286,21 @@ class AuthenticationBloc
         Dme().customEvents.count -=1;
       }
     }
-    await ReadWriteFile().writeStringToFile(
-        FileNames.CUSTOM_EVENTS, jsonEncode(Dme().customEvents));
+    Dme().customEvents.results.forEach((ce) async {
+      await dbRepository.insertCustomEventHelper(CustomEventHelper.fromCustomEvent(ce, Dme().username));
+    });
+/*    await ReadWriteFile().writeStringToFile(
+        FileNames.CUSTOM_EVENTS, jsonEncode(Dme().customEvents));*/
 
     //Load custom grades
-    Dme().customGrades = CustomGrades.fromJson(jsonDecode(
-        await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_GRADES)));
+    List<CustomGradeHelper> customGradeHelperList = await dbRepository.getAllCustomGradeHelper();
+    List<CustomGrade> customGradeList = List();
+    customGradeHelperList.forEach((cg) {
+      customGradeList.add(CustomGrade.fromCustomGradeHelper(cg));
+    });
+    Dme().customGrades = CustomGrades(customGradeList.length, customGradeList);
+/*    Dme().customGrades = CustomGrades.fromJson(jsonDecode(
+        await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_GRADES)));*/
 
     //load custom downloads
     Dme().customDownloads = CustomDownloads.fromJson(jsonDecode(
@@ -434,26 +452,40 @@ class AuthenticationBloc
 
 
     //Custom events
-    if (await ReadWriteFile().exists(FileNames.CUSTOM_EVENTS)) {
+
+    List<CustomEventHelper> customEventHelperList = await dbRepository.getAllCustomEventHelper();
+    if (customEventHelperList.length > 0) {
       //Load custom events
-      dme.customEvents = CustomEvents.fromJson(jsonDecode(
-          await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_EVENTS)));
+/*      dme.customEvents = CustomEvents.fromJson(jsonDecode(
+          await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_EVENTS)));*/
+      List<CustomEvent> customEventList = List();
+      customEventHelperList.forEach((ce) {
+        customEventList.add(CustomEvent.fromCustomEventHelper(ce));
+      });
+      dme.customEvents = CustomEvents(customEventList.length, customEventList);
+
     } else {
       List<CustomEvent> customEventList = new List<CustomEvent>();
       dme.customEvents = CustomEvents(0, customEventList);
-      await ReadWriteFile().writeStringToFile(
-          FileNames.CUSTOM_EVENTS, jsonEncode(dme.customEvents));
+/*      await ReadWriteFile().writeStringToFile(
+          FileNames.CUSTOM_EVENTS, jsonEncode(dme.customEvents));*/
     }
     //Custom grades
-    if (await ReadWriteFile().exists(FileNames.CUSTOM_GRADES)) {
+    List<CustomGradeHelper> customGradeHelperList = await dbRepository.getAllCustomGradeHelper();
+    if (customGradeHelperList.length > 0) {
       //Load custom grades
-      dme.customGrades = CustomGrades.fromJson(jsonDecode(
-          await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_GRADES)));
+/*      dme.customGrades = CustomGrades.fromJson(jsonDecode(
+          await ReadWriteFile().readStringFromFile(FileNames.CUSTOM_GRADES)));*/
+      List<CustomGrade> customGradeList = List();
+      customGradeHelperList.forEach((cg) {
+        customGradeList.add(CustomGrade.fromCustomGradeHelper(cg));
+      });
+      dme.customGrades = CustomGrades(customGradeList.length, customGradeList);
     } else {
       List<CustomGrade> customGradesList = new List<CustomGrade>();
       dme.customGrades = CustomGrades(0, customGradesList);
-      await ReadWriteFile().writeStringToFile(
-          FileNames.CUSTOM_GRADES, jsonEncode(dme.customGrades));
+/*      await ReadWriteFile().writeStringToFile(
+          FileNames.CUSTOM_GRADES, jsonEncode(dme.customGrades));*/
     }
 
     //Custom downloads

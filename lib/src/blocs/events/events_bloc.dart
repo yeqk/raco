@@ -9,6 +9,7 @@ import 'package:raco/src/blocs/authentication/authentication.dart';
 import 'package:raco/src/blocs/events/events.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/models/custom_events.dart';
+import 'package:raco/src/models/db_helpers/custom_event_helper.dart';
 import 'package:raco/src/models/db_helpers/event_helper.dart';
 import 'package:raco/src/models/models.dart';
 import 'package:raco/src/repositories/db_repository.dart';
@@ -40,8 +41,9 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     if (event is EventsAddEvent) {
       Dme().customEvents.count += 1;
       Dme().customEvents.results.add(event.customEvent);
-      await ReadWriteFile().writeStringToFile(
-          FileNames.CUSTOM_EVENTS, jsonEncode(Dme().customEvents));
+/*      await ReadWriteFile().writeStringToFile(
+          FileNames.CUSTOM_EVENTS, jsonEncode(Dme().customEvents));*/
+      await dbRepository.insertCustomEventHelper(CustomEventHelper.fromCustomEvent(event.customEvent, Dme().username));
       yield EventAddedState();
     }
 
@@ -51,9 +53,10 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
         return i.id == item.customId;
       });
       Dme().customEvents.count -= 1;
-      await ReadWriteFile().writeStringToFile(
+      await dbRepository.deleteCustomerEventById(item.customId);
+/*      await ReadWriteFile().writeStringToFile(
           FileNames.CUSTOM_EVENTS,
-          jsonEncode(Dme().customEvents));
+          jsonEncode(Dme().customEvents));*/
       yield EventDeletedState();
     }
 
@@ -64,9 +67,13 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
         return i.id == item.customId;
       });
       Dme().customEvents.results.add(customEvent);
-      await ReadWriteFile().writeStringToFile(
+      await dbRepository.clearCustomEventHelperTable();
+      Dme().customEvents.results.forEach((ce) async {
+        await dbRepository.insertCustomEventHelper(CustomEventHelper.fromCustomEvent(ce, Dme().username));
+      });
+  /*    await ReadWriteFile().writeStringToFile(
           FileNames.CUSTOM_EVENTS,
-          jsonEncode(Dme().customEvents));
+          jsonEncode(Dme().customEvents));*/
       yield EventEditedState();
     }
 
