@@ -180,7 +180,7 @@ class GradeRouteState extends State<GradeRoute>
                                       overflow: TextOverflow.visible,
                                     ),
                                     Text(
-                                      g.data.toString() + 'asdf',
+                                      g.data.toString(),
                                       overflow: TextOverflow.visible,
                                     )
                                   ],
