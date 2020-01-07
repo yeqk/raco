@@ -27,4 +27,9 @@ class SubjectColorChangedState extends ConfigurationState {
   String toString() => 'SubjectColorChangedState';
 }
 
+class UpdateOptionsChangedState extends ConfigurationState {
+  @override
+  String toString() => 'UpdateOptionsChangedState';
+}
+
 

@@ -277,8 +277,7 @@ class _DestinationViewState extends State<DestinationView> {
     }
     DatePicker.showDateTimePicker(context,
         showTitleActions: true,
-        minTime: DateTime.now(),
-        maxTime: DateTime.now().add(Duration(days: 730)), onChanged: (date) {
+         onChanged: (date) {
       if (date.isAfter(_formatter.parse(_endDateController.text))) {
         _endDateController.text = _formatter.format(date);
       }
@@ -306,8 +305,7 @@ class _DestinationViewState extends State<DestinationView> {
     }
     DatePicker.showDateTimePicker(context,
         showTitleActions: true,
-        minTime: DateTime.now(),
-        maxTime: DateTime.now().add(Duration(days: 730)), onChanged: (date) {
+        onChanged: (date) {
       if (date.isBefore(_formatter.parse(_startDateController.text))) {
         _startDateController.text = _formatter.format(date);
       }

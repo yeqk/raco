@@ -40,6 +40,8 @@
   "clossing_loading" : "Tancant sessió...",
   "error_loading" : "Hi ha hagut un error. Siusplau, torni a intentar-ho més tard...",
 
+  "personal_info" : "Informació personal",
+
   "all" : "Tots",
   "attachments" : "fitxers adjunts",
   "downloading" : "Descarregant fitxer...",
@@ -150,5 +152,9 @@
   "grade_delete_confirmation" : "Estàs segur que vols suprimir aquesta nota?",
 
   "please_conditions" : "Si us plau, accepti primer els termes i condicions per iniciar sessió.",
-  "terms" : "Acceptar termes i condicions"
+  "terms" : "Acceptar termes i condicions",
+
+  "update_options" : "Opcions d'actualització",
+  "update_options_desc" : "Elements que s'actualitzen cada vegada que s'obre l'aplicació",
+  "source_code" : "Codi font"
 }

@@ -46,4 +46,12 @@ class Dme {
 
 
   CustomDownloads customDownloads;
+
+  bool bpersonal;
+  bool bschedule;
+  bool bnotices;
+  bool bevents;
+  bool bnews;
+  bool bsubjects;
+  bool blabs;
 }

@@ -14,9 +14,11 @@ import 'package:raco/src/blocs/translations/translations.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/resources/global_translations.dart';
 import 'package:raco/src/repositories/user_repository.dart';
+import 'package:raco/src/ui/routes/drawer_menu/configuration_update_route.dart';
 import 'package:raco/src/utils/app_colors.dart';
 import 'package:raco/src/utils/keys.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'subject_colors.dart';
 
@@ -92,6 +94,13 @@ class ConfigurationRouteState extends State<ConfigurationRoute>
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => SubjectColors()),
+      );
+    }
+
+    _onUpdateOptionsSelected() {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ConfigurationUpdateRoute()),
       );
     }
     _onUpdateData() async{
@@ -225,7 +234,11 @@ class ConfigurationRouteState extends State<ConfigurationRoute>
               Divider(),
               _subjectColor(() => _onSubjectSelected()),
               Divider(),
-              _updateData(() => _onUpdateData())
+              _updateOptions(() => _onUpdateOptionsSelected()),
+              Divider(),
+              _updateData(() => _onUpdateData()),
+              Divider(),
+              _sourceCode()
             ],
           ),
         ));
@@ -269,6 +282,17 @@ class ConfigurationRouteState extends State<ConfigurationRoute>
     );
   }
 
+  Widget _updateOptions(VoidCallback onTap) {
+    return ListTile(
+      onTap: () => onTap(),
+      title: Text(
+        allTranslations.text('update_options'),
+        overflow: TextOverflow.visible,
+      ),
+      subtitle: Text(allTranslations.text('update_options_desc'), overflow: TextOverflow.visible,),
+    );
+  }
+
   Widget _updateData(VoidCallback onTap) {
     return ListTile(
       onTap: () => onTap(),
@@ -281,6 +305,21 @@ class ConfigurationRouteState extends State<ConfigurationRoute>
     );
   }
 
+  Widget _sourceCode() {
+    return ListTile(
+      onTap: () async {
+        if (await canLaunch('https://github.com/yeqk97/raco')) {
+        await launch('https://github.com/yeqk97/raco');
+        } else {
+        throw 'Could not launch https://github.com/yeqk97/raco';
+        }
+      },
+      title: Text(
+        allTranslations.text('source_code'),
+        overflow: TextOverflow.visible,
+      ),
+    );
+  }
   String _updateText() {
     DateTime t = DateTime.parse(Dme().lastUpdate);
     DateFormat format = DateFormat.yMd(allTranslations.currentLanguage).add_Hm();

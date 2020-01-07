@@ -650,8 +650,7 @@ class EventsRouteState extends State<EventsRoute>
     }
     DatePicker.showDateTimePicker(context,
         showTitleActions: true,
-        minTime: DateTime.now(),
-        maxTime: DateTime.now().add(Duration(days: 730)), onChanged: (date) {
+         onChanged: (date) {
       if (date.isAfter(dateFormatWithHour.parse(_endDateController.text))) {
         _endDateController.text = dateFormatWithHour.format(date);
       }
@@ -679,8 +678,7 @@ class EventsRouteState extends State<EventsRoute>
     }
     DatePicker.showDateTimePicker(context,
         showTitleActions: true,
-        minTime: DateTime.now(),
-        maxTime: DateTime.now().add(Duration(days: 730)), onChanged: (date) {
+        onChanged: (date) {
       if (date.isBefore(dateFormatWithHour.parse(_startDateController.text))) {
         _startDateController.text = dateFormatWithHour.format(date);
       }

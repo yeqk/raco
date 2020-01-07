@@ -40,6 +40,9 @@
   "clossing_loading" : "Cerrando sesión...",
   "error_loading" : "Se produjo un error, por favor intente más tarde...",
 
+  "personal_info" : "Información personal",
+
+
   "all" : "Todos",
   "attachments" : "ficheros adjuntos",
   "downloading" : "Descargando archivo...",
@@ -149,5 +152,9 @@
   "grade_delete_confirmation" : "¿Seguro que quieres eliminar esta nota?",
 
   "please_conditions" : "Por favor, acepte primero los términos y condiciones  para iniciar sessión.",
-  "terms" : "Aceptar términos y condiciones"
+  "terms" : "Aceptar términos y condiciones",
+
+  "update_options" : "Opciones de actualización",
+  "update_options_desc" : "Elementos que se actualizan cada vez que se abre la aplicación",
+  "source_code" : "Codigo fuente"
 }

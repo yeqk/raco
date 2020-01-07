@@ -33,3 +33,12 @@ class ChangeSubjectColorEvent extends ConfigurationEvent {
   String toString() =>
       'ChangeSubjectColorEvent';
 }
+
+class ChangeUpdateOptionsEvent extends ConfigurationEvent {
+  final String option;
+  final String value;
+  ChangeUpdateOptionsEvent({@required this.option, @required this.value}) : super([option,value]);
+  @override
+  String toString() =>
+      'ChangeUpdateOptionsEvent';
+}

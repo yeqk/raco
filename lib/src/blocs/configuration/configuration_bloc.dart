@@ -27,17 +27,20 @@ class ConfigurationBloc extends Bloc<ConfigurationEvent, ConfigurationState> {
   @override
   Stream<ConfigurationState> mapEventToState(ConfigurationEvent event) async* {
    if (event is ChangePrimaryColorEvent) {
-     user.writeToPreferences('primary_color',
+     await user.writeToPreferences('primary_color',
         event.colorCode);
      yield PrimaryColorChangedState();
    } else if (event is ChangeSecondaryColorEvent) {
-     user.writeToPreferences('secondary_color',
+     await user.writeToPreferences('secondary_color',
          event.colorCode);
      yield SecondaryColorChangedState();
    } else if (event is ChangeSubjectColorEvent) {
      Dme().assigColors[event.subject] = event.colorCode;
-     user.writeToPreferences(event.subject, event.colorCode);
+     await user.writeToPreferences(event.subject, event.colorCode);
      yield SubjectColorChangedState();
+   } else if (event is ChangeUpdateOptionsEvent) {
+     await user.writeToPreferences(event.option, event.value);
+     yield UpdateOptionsChangedState();
    }
 
 

@@ -40,6 +40,10 @@
   "clossing_loading" : "Signing out...",
   "error_loading" : "An error accurred, please try again later...",
 
+  "personal_info" : "Personal information",
+
+
+
   "all" : "All",
   "attachments" : "attachments",
   "downloading" : "Downloading file...",
@@ -150,5 +154,9 @@
   "grade_delete_confirmation" : "Are you sure you want to delete this grade?",
 
   "please_conditions" : "Please accept the terms and conditions first in order to login.",
-  "terms" : "Accept terms and conditions"
+  "terms" : "Accept terms and conditions",
+
+  "update_options" : "Update options",
+  "update_options_desc" : "Items that are updated every time the application is opened",
+  "source_code" : "Source code"
 }
