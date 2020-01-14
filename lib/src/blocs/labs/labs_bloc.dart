@@ -36,8 +36,9 @@ class LabsBloc extends Bloc<LabsEvent, LabsState> {
       yield LabsInitState();
     }
     if (event is LabsChangedEvent) {
-      Credentials c = await user.getCredentials();
+
       try {
+        Credentials c = await user.getCredentials();
         if(c.isExpired) {
           c = await c.refresh(identifier: AuthenticationData.identifier,secret: AuthenticationData.secret,);
           await user.persistCredentials(c);

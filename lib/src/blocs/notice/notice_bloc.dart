@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
+import 'package:oauth2/oauth2.dart';
 import 'package:open_file/open_file.dart';
 import 'package:raco/src/data/dme.dart';
 import 'package:raco/src/models/models.dart';
 import 'package:raco/src/repositories/raco_api_client.dart';
 import 'package:raco/src/repositories/raco_repository.dart';
 import 'package:raco/src/repositories/user_repository.dart';
+import 'package:raco/src/resources/authentication_data.dart';
 import 'package:raco/src/utils/file_names.dart';
 import 'package:raco/src/utils/keys.dart';
 import 'package:raco/src/utils/read_write_file.dart';
@@ -27,6 +29,11 @@ class NoticeBloc extends Bloc<NoticeEvent, NoticeState> {
     if (event is NoticeDownloadAttachmentEvent) {
       Adjunt adjunt = event.adjunt;
       try {
+        Credentials c = await user.getCredentials();
+        if(c.isExpired ) {
+          c = await c.refresh(identifier: AuthenticationData.identifier,secret: AuthenticationData.secret,);
+          await user.persistCredentials(c);
+        }
 
         String accessToken = await user.getAccessToken();
         String lang = await user.getPreferredLanguage();

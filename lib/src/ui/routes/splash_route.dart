@@ -7,6 +7,7 @@ class SplashRoute extends StatelessWidget {
   Widget build(BuildContext context) {
 
     ScreenUtil.instance = ScreenUtil(width: 411.42857142857144, height: 683.4285714285714, allowFontScaling: true)..init(context);
+
     return Scaffold(
       backgroundColor: AppColors().primary,
       body: Center(
