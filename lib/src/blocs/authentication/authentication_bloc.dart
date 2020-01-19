@@ -386,7 +386,7 @@ class AuthenticationBloc
 
     //Load subjects information
     loadingTextBloc.dispatch(
-        LoadTextEvent(text: allTranslations.text('subjects')));
+        LoadTextEvent(text: allTranslations.text('subjects_loading')));
 
     if (await user.readFromPreferences('subjects') == 'true') {
       try{
