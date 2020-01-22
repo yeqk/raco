@@ -148,7 +148,8 @@ class SubjectViewState extends State<SubjectView> {
                     Container(
                       width: ScreenUtil().setWidth(100),
                       child: Text(allTranslations.text('requirements'),
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.visible),
                     ),
                     _requirements()
                   ],
@@ -263,10 +264,9 @@ class SubjectViewState extends State<SubjectView> {
     }).toList();
     if (profs.length > 0) {
       List<Widget> lines = List();
-      lines.add(Text(
-        allTranslations.text('person_in_charge'),
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ));
+      lines.add(Text(allTranslations.text('person_in_charge'),
+          style: TextStyle(fontWeight: FontWeight.bold),
+          overflow: TextOverflow.visible));
       profs.forEach((p) {
         String htmlListItem = '<ul><li>' +
             p.nom +
@@ -301,10 +301,9 @@ class SubjectViewState extends State<SubjectView> {
     }).toList();
     if (profs.length > 0) {
       List<Widget> lines = List();
-      lines.add(Text(
-        allTranslations.text('others'),
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ));
+      lines.add(Text(allTranslations.text('others'),
+          style: TextStyle(fontWeight: FontWeight.bold),
+          overflow: TextOverflow.visible));
       profs.forEach((p) {
         String htmlListItem = '<ul><li>' +
             p.nom +
@@ -429,11 +428,10 @@ class SubjectViewState extends State<SubjectView> {
         lines.add(Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
-              c.nom,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text(c.descripcio)
+            Text(c.nom,
+                style: TextStyle(fontWeight: FontWeight.bold),
+                overflow: TextOverflow.visible),
+            Text(c.descripcio, overflow: TextOverflow.visible)
           ],
         ));
         lines.add(SizedBox(
@@ -461,7 +459,8 @@ class SubjectViewState extends State<SubjectView> {
           padding: EdgeInsets.all(ScreenUtil().setWidth(5)),
           decoration:
               BoxDecoration(border: Border.all(color: Color(0xff21c2f8))),
-          child: Text(allTranslations.text('activity')),
+          child: Text(allTranslations.text('activity'),
+              overflow: TextOverflow.visible),
         ),
         SizedBox(
           width: ScreenUtil().setWidth(10),
@@ -470,7 +469,8 @@ class SubjectViewState extends State<SubjectView> {
           padding: EdgeInsets.all(ScreenUtil().setWidth(5)),
           decoration:
               BoxDecoration(border: Border.all(color: Color(0xfff36e44))),
-          child: Text(allTranslations.text('evaluation_act')),
+          child: Text(allTranslations.text('evaluation_act'),
+              overflow: TextOverflow.visible),
         )
       ],
     ));
@@ -491,20 +491,18 @@ class SubjectViewState extends State<SubjectView> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Text(
-                    activitat.nom,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  Text(activitat.nom,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.visible),
                   Expanded(
                     child: SizedBox(),
                   )
                 ],
               ),
-              Text(activitat.descripcio),
-              Text(
-                allTranslations.text('contents') + ':',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+              Text(activitat.descripcio, overflow: TextOverflow.visible),
+              Text(allTranslations.text('contents') + ':',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.visible),
               Html(
                 data: _activityContentString(activitat.continguts),
               ),
@@ -530,10 +528,9 @@ class SubjectViewState extends State<SubjectView> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Text(
-                    acteAvaluatiu.nom,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  Text(acteAvaluatiu.nom,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.visible),
                   Expanded(
                     child: SizedBox(),
                   )
@@ -542,25 +539,26 @@ class SubjectViewState extends State<SubjectView> {
               Text(acteAvaluatiu.descripcio),
               Row(
                 children: <Widget>[
-                  Text(
-                    allTranslations.text('week') + ': ',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  Text(allTranslations.text('week') + ': ',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.visible),
                   Text(acteAvaluatiu.setmana.toString()),
                   acteAvaluatiu.foraHoraris
-                      ? Text(' (' +
-                          allTranslations.text('outside_class_hours') +
-                          ')')
+                      ? Text(
+                          ' (' +
+                              allTranslations.text('outside_class_hours') +
+                              ')',
+                          overflow: TextOverflow.visible)
                       : SizedBox()
                 ],
               ),
               Row(
                 children: <Widget>[
-                  Text(
-                    allTranslations.text('type') + ': ',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Text(allTranslations.text(acteAvaluatiu.tipus))
+                  Text(allTranslations.text('type') + ': ',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.visible),
+                  Text(allTranslations.text(acteAvaluatiu.tipus),
+                      overflow: TextOverflow.visible)
                 ],
               ),
               _horariExams(
@@ -733,7 +731,8 @@ class SubjectViewState extends State<SubjectView> {
         margin: EdgeInsets.all(ScreenUtil().setWidth(10)),
         child: Column(
           children: <Widget>[
-            Text(widget.assignaturaGuia.metodologiaDocent)
+            Text(widget.assignaturaGuia.metodologiaDocent,
+                overflow: TextOverflow.visible)
           ],
         ));
   }
@@ -742,9 +741,7 @@ class SubjectViewState extends State<SubjectView> {
     return Container(
         margin: EdgeInsets.all(ScreenUtil().setWidth(10)),
         child: Column(
-          children: <Widget>[
-            Text(widget.assignaturaGuia.metodologiaAvaluacio)
-          ],
+          children: <Widget>[Text(widget.assignaturaGuia.metodologiaAvaluacio)],
         ));
   }
 
@@ -766,10 +763,9 @@ class SubjectViewState extends State<SubjectView> {
     List<Biblio> biblio = widget.assignaturaGuia.bibliografia.basica;
     if (biblio.length > 0) {
       List<Widget> lines = List();
-      lines.add(Text(
-        allTranslations.text('basic') + ':',
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ));
+      lines.add(Text(allTranslations.text('basic') + ':',
+          style: TextStyle(fontWeight: FontWeight.bold),
+          overflow: TextOverflow.visible));
       biblio.forEach((p) {
         String htmlListItem = '<ul><li>' +
             '<b>' +
@@ -779,7 +775,7 @@ class SubjectViewState extends State<SubjectView> {
             p.autor +
             '.' +
             p.editorial +
-            '.'+
+            '.' +
             p.anyBib +
             '. ISBN: ' +
             p.isbn +
@@ -790,7 +786,9 @@ class SubjectViewState extends State<SubjectView> {
             p.url +
             '</a>' +
             '</li></ul>';
-        lines.add(SizedBox(height: ScreenUtil().setHeight(10),));
+        lines.add(SizedBox(
+          height: ScreenUtil().setHeight(10),
+        ));
         lines
             .add(Html(data: htmlListItem, onLinkTap: (url) => _onMailTap(url)));
       });
@@ -806,10 +804,9 @@ class SubjectViewState extends State<SubjectView> {
     List<Biblio> biblio = widget.assignaturaGuia.bibliografia.complementaria;
     if (biblio.length > 0) {
       List<Widget> lines = List();
-      lines.add(Text(
-        allTranslations.text('complementary') + ':',
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ));
+      lines.add(Text(allTranslations.text('complementary') + ':',
+          style: TextStyle(fontWeight: FontWeight.bold),
+          overflow: TextOverflow.visible));
       biblio.forEach((p) {
         String htmlListItem = '<ul><li>' +
             '<b>' +
@@ -819,7 +816,7 @@ class SubjectViewState extends State<SubjectView> {
             p.autor +
             '.' +
             p.editorial +
-            '.'+
+            '.' +
             p.anyBib +
             '. ISBN: ' +
             p.isbn +
@@ -830,7 +827,9 @@ class SubjectViewState extends State<SubjectView> {
             p.url +
             '</a>' +
             '</li></ul>';
-        lines.add(SizedBox(height: ScreenUtil().setHeight(10),));
+        lines.add(SizedBox(
+          height: ScreenUtil().setHeight(10),
+        ));
         lines
             .add(Html(data: htmlListItem, onLinkTap: (url) => _onMailTap(url)));
       });
@@ -850,12 +849,12 @@ class SubjectViewState extends State<SubjectView> {
         children: <Widget>[
           Row(
             children: <Widget>[
-              Text(widget.assignaturaGuia.capacitatsPrevies),
-              Expanded(child: SizedBox(),)
+              Text(widget.assignaturaGuia.capacitatsPrevies,
+                  overflow: TextOverflow.visible),
             ],
           )
-
-        ],),
+        ],
+      ),
     );
   }
 
@@ -869,10 +868,9 @@ class SubjectViewState extends State<SubjectView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Text(
-                  allTranslations.text('no_info'),
-                  style: TextStyle(color: Colors.grey),
-                )
+                Text(allTranslations.text('no_info'),
+                    style: TextStyle(color: Colors.grey),
+                    overflow: TextOverflow.visible)
               ],
             ),
           )
@@ -894,11 +892,10 @@ class SubjectViewState extends State<SubjectView> {
                       margin: EdgeInsets.only(left: ScreenUtil().setWidth(15)),
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Text(
-                          item.header,
-                          style: TextStyle(
-                              fontSize: ScreenUtil().setSp(itemTitle)),
-                        ),
+                        child: Text(item.header,
+                            style: TextStyle(
+                                fontSize: ScreenUtil().setSp(itemTitle)),
+                            overflow: TextOverflow.visible),
                       ),
                     );
                   },

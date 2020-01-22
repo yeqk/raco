@@ -476,7 +476,7 @@ class GradeRouteState extends State<GradeRoute>
                                     ),
                                     //fillColor: Colors.green
                                   ),
-                                  keyboardType: TextInputType.number,
+                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                                 ),
                                 SizedBox(
                                   height: ScreenUtil().setHeight(10),
@@ -527,7 +527,7 @@ class GradeRouteState extends State<GradeRoute>
                                     ),
                                     //fillColor: Colors.green
                                   ),
-                                  keyboardType: TextInputType.number,
+                                  keyboardType:  TextInputType.numberWithOptions(decimal: true),
                                 ),
                               ],
                             ),
@@ -738,7 +738,7 @@ class GradeRouteState extends State<GradeRoute>
                                     ),
                                     //fillColor: Colors.green
                                   ),
-                                  keyboardType: TextInputType.number,
+                                  keyboardType:  TextInputType.numberWithOptions(decimal: true),
                                 ),
                                 SizedBox(
                                   height: ScreenUtil().setHeight(10),
@@ -790,7 +790,7 @@ class GradeRouteState extends State<GradeRoute>
                                     ),
                                     //fillColor: Colors.green
                                   ),
-                                  keyboardType: TextInputType.number,
+                                  keyboardType:  TextInputType.numberWithOptions(decimal: true),
                                 ),
                               ],
                             ),
